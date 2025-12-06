@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeZone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #ff3333;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 30px rgba(255,51,51,0.3);
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255,51,51,0.5);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255,51,51,0.5);
+        }
+
+        .bio {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .link-btn {
+            padding: 14px 40px;
+            background: rgba(20,20,20,0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,51,51,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .link-btn:hover::before {
+            left: 100%;
+        }
+
+        .link-btn:hover {
+            border-color: #ff3333;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,51,51,0.3);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .error-sub {
+            color: #888;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .home-link {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(255,51,51,0.1);
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .home-link:hover {
+            background: rgba(255,51,51,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Glitch effect for username */
+        .glitch {
+            position: relative;
+            color: #fff;
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 
+                0.05em 0 0 rgba(255,0,0,0.75),
+                -0.05em -0.025em 0 rgba(0,255,0,0.75),
+                0.025em 0.05em 0 rgba(0,0,255,0.75);
+            animation: glitch 500ms infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255,0,0,0.75),
+                    -0.05em -0.025em 0 rgba(0,255,0,0.75),
+                    0.025em 0.05em 0 rgba(0,0,255,0.75);
+            }
+            14% {
+                text-shadow: 
+                    0.05em 0 0 rgba(255,0,0,0.75),
+                    -0.05em -0.025em 0 rgba(0,255,0,0.75),
+                    0.025em 0.05em 0 rgba(0,0,255,0.75);
+            }
+            15% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255,0,0,0.75),
+                    0.025em 0.025em 0 rgba(0,255,0,0.75),
+                    -0.05em -0.05em 0 rgba(0,0,255,0.75);
+            }
+            49% {
+                text-shadow: 
+                    -0.05em -0.025em 0 rgba(255,0,0,0.75),
+                    0.025em 0.025em 0 rgba(0,255,0,0.75),
+                    -0.05em -0.05em 0 rgba(0,0,255,0.75);
+            }
+            50% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255,0,0,0.75),
+                    0.05em 0 0 rgba(0,255,0,0.75),
+                    0 -0.05em 0 rgba(0,0,255,0.75);
+            }
+            99% {
+                text-shadow: 
+                    0.025em 0.05em 0 rgba(255,0,0,0.75),
+                    0.05em 0 0 rgba(0,255,0,0.75),
+                    0 -0.05em 0 rgba(0,0,255,0.75);
+            }
+            100% {
+                text-shadow: 
+                    -0.025em 0 0 rgba(255,0,0,0.75),
+                    -0.025em -0.025em 0 rgba(0,255,0,0.75),
+                    -0.025em -0.05em 0 rgba(0,0,255,0.75);
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="particles" id="particles"></canvas>
+    
+    <div class="container" id="profileContainer">
+        <!-- Profile will be loaded here -->
+    </div>
+
+    <script>
+        // Particle effect
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speedY: Math.random() * 0.5 + 0.2,
+                color: Math.random() > 0.9 ? '#ff3333' : '#333'
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                p.y -= p.speedY;
+                if (p.y < 0) p.y = canvas.height;
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, getDoc, query, where, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
+            authDomain: "fakezone-f3c4a.firebaseapp.com",
+            projectId: "fakezone-f3c4a",
+            storageBucket: "fakezone-f3c4a.firebasestorage.app",
+            messagingSenderId: "795138686378",
+            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadProfile() {
+            const container = document.getElementById('profileContainer');
+            
+            // Get username from URL path
+            const path = window.location.pathname.substring(1); // Remove leading /
+            const username = path.toLowerCase();
+
+            // Skip if it's a system page
+            if (!username || username === 'index.html' || username === 'dashboard.html' || username === '404.html') {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                // Get user ID from username
+                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                
+                if (!usernameDoc.exists()) {
+                    container.innerHTML = `
+                        <div class="error">User not found</div>
+                        <div class="error-sub">@${username} doesn't exist</div>
+                        <a href="/" class="home-link">Go Home</a>
+                    `;
+                    return;
+                }
+
+                const uid = usernameDoc.data().uid;
+                
+                // Get user profile
+                const userDoc = await getDoc(doc(db, 'users', uid));
+                
+                if (!userDoc.exists()) {
+                    container.innerHTML = `
+                        <div class="error">Profile error</div>
+                        <a href="/" class="home-link">Go Home</a>
+                    `;
+                    return;
+                }
+
+                const profile = userDoc.data();
+                
+                // Build profile HTML
+                let linksHTML = '';
+                if (profile.links && profile.links.length > 0) {
+                    profile.links.forEach(link => {
+                        linksHTML += `<a href="${link.url}" target="_blank" class="link-btn">${link.title}</a>`;
+                    });
+                }
+
+                container.innerHTML = `
+                    <img src="${profile.avatar || 'https://via.placeholder.com/120'}" alt="Avatar" class="avatar">
+                    <h1 class="glitch">@${profile.username}</h1>
+                    <p class="bio">${profile.bio || 'Welcome to my zone'}</p>
+                    <div class="links">
+                        ${linksHTML}
+                    </div>
+                `;
+
+                // Update page title
+                document.title = `@${profile.username} - FakeZone`;
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                container.innerHTML = `
+                    <div class="error">Error loading profile</div>
+                    <a href="/" class="home-link">Go Home</a>
+                `;
+            }
+        }
+
+        // Load profile on page load
+        loadProfile();
+    </script>
+</body>
+</html>
