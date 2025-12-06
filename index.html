@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FakeZone</title>
+    <title>FakeZone - Login</title>
     <style>
         * {
             margin: 0;
@@ -16,64 +16,113 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            background: linear-gradient(135deg, #000000, #1a1a1a);
             font-family: 'Segoe UI', sans-serif;
-            overflow: hidden;
+            color: #fff;
         }
 
         .container {
-            text-align: center;
-            z-index: 1;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            margin-bottom: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .avatar:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            background: rgba(20,20,20,0.8);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 0 40px rgba(255,0,0,0.1);
         }
 
         h1 {
-            color: #fff;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .bio {
-            color: #888;
+            text-align: center;
             margin-bottom: 30px;
+            font-size: 32px;
+            background: linear-gradient(45deg, #fff, #ff3333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .links {
+        .tab-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .link-btn {
-            padding: 14px 40px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            color: #fff;
-            text-decoration: none;
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            cursor: pointer;
+            border-radius: 5px;
             transition: all 0.3s;
-            backdrop-filter: blur(10px);
         }
 
-        .link-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .tab-btn:hover {
+            border-color: #ff3333;
         }
 
+        .tab-btn.active {
+            background: rgba(255,51,51,0.1);
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff3333;
+            box-shadow: 0 0 10px rgba(255,51,51,0.2);
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,51,51,0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: #ff3333;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Animated background particles */
         .particles {
             position: fixed;
             top: 0;
@@ -81,6 +130,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            opacity: 0.5;
         }
     </style>
 </head>
@@ -88,40 +138,64 @@
     <canvas class="particles" id="particles"></canvas>
     
     <div class="container">
-        <img src="https://via.placeholder.com/120" alt="Avatar" class="avatar">
         <h1>FakeZone</h1>
-        <p class="bio">welcome to the zone</p>
-        
-        <div class="links">
-            <a href="#" class="link-btn">Discord</a>
-            <a href="#" class="link-btn">Twitter</a>
-            <a href="#" class="link-btn">Instagram</a>
-            <a href="#" class="link-btn">GitHub</a>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('login')">Login</button>
+            <button class="tab-btn" onclick="showTab('register')">Register</button>
         </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" placeholder="Password" required>
+            </div>
+            <button type="submit">LOGIN</button>
+            <div id="loginError" class="error"></div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <input type="text" id="registerUsername" placeholder="Username (a-z, 0-9, _)" pattern="[a-z0-9_]{3,20}" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="registerEmail" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="registerPassword" placeholder="Password (min 6 chars)" minlength="6" required>
+            </div>
+            <button type="submit">REGISTER</button>
+            <div id="registerError" class="error"></div>
+        </form>
     </div>
 
     <script>
+        // Particle effect
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         const particles = [];
-
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 50; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 size: Math.random() * 2,
-                speedY: Math.random() * 0.5 + 0.2
+                speedY: Math.random() * 0.5 + 0.2,
+                color: Math.random() > 0.8 ? '#ff3333' : '#333'
             });
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(255,255,255,0.5)';
             
             particles.forEach(p => {
+                ctx.fillStyle = p.color;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -133,6 +207,103 @@
             requestAnimationFrame(animate);
         }
         animate();
+    </script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
+            authDomain: "fakezone-f3c4a.firebaseapp.com",
+            projectId: "fakezone-f3c4a",
+            storageBucket: "fakezone-f3c4a.firebasestorage.app",
+            messagingSenderId: "795138686378",
+            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // Login
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Invalid credentials';
+            }
+        };
+
+        // Register
+        window.handleRegister = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.toLowerCase();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                // Check if username exists
+                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                if (usernameDoc.exists()) {
+                    document.getElementById('registerError').textContent = 'Username already taken';
+                    return;
+                }
+
+                // Create user
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Save username mapping
+                await setDoc(doc(db, 'usernames', username), {
+                    uid: user.uid
+                });
+
+                // Create user profile
+                await setDoc(doc(db, 'users', user.uid), {
+                    username: username,
+                    bio: 'welcome to my zone',
+                    avatar: 'https://via.placeholder.com/120',
+                    links: []
+                });
+
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                document.getElementById('registerError').textContent = error.message;
+            }
+        };
+
+        // Tab switching
+        window.showTab = (tab) => {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        };
     </script>
 </body>
 </html>
