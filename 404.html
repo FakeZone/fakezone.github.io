@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Background */
         .bg-image {
             position: fixed;
             top: 0;
@@ -46,7 +45,6 @@
             z-index: -1;
         }
 
-        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -57,7 +55,6 @@
             z-index: 0;
         }
 
-        /* Container */
         .container {
             text-align: center;
             z-index: 1;
@@ -70,12 +67,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Profile Card */
         .profile-card {
             transition: all 0.3s;
         }
 
-        /* Avatar */
         .avatar-wrapper {
             position: relative;
             display: inline-block;
@@ -106,14 +101,12 @@
             pointer-events: none;
         }
 
-        /* Username */
         .username {
             font-size: 32px;
             margin-bottom: 10px;
             font-weight: bold;
         }
 
-        /* Bio */
         .bio {
             margin-bottom: 25px;
             font-size: 16px;
@@ -123,7 +116,6 @@
             margin-right: auto;
         }
 
-        /* Discord Info */
         .discord-info {
             display: inline-flex;
             align-items: center;
@@ -152,7 +144,6 @@
             font-weight: 500;
         }
 
-        /* Links */
         .links {
             display: flex;
             flex-direction: column;
@@ -195,7 +186,6 @@
             box-shadow: 0 10px 30px rgba(255,51,51,0.3);
         }
 
-        /* Audio Control */
         .audio-control {
             position: fixed;
             bottom: 20px;
@@ -238,7 +228,6 @@
             50% { box-shadow: 0 0 0 15px rgba(255,51,51,0); }
         }
 
-        /* Username Effects */
         .effect-glitch {
             animation: glitch 0.5s infinite;
         }
@@ -293,7 +282,6 @@
             50% { border-color: transparent; }
         }
 
-        /* Error */
         .error-container {
             text-align: center;
         }
@@ -326,7 +314,6 @@
             transform: translateY(-2px);
         }
 
-        /* Loading */
         .loading {
             text-align: center;
         }
@@ -359,7 +346,7 @@
     <div class="container" id="profileContainer">
         <div class="loading">
             <div class="spinner"></div>
-            <div class="loading-text">Ładowanie profilu...</div>
+            <div class="loading-text">Loading profile...</div>
         </div>
     </div>
 
@@ -448,7 +435,6 @@
             const container = document.getElementById('profileContainer');
             const path = window.location.pathname.substring(1).toLowerCase().replace(/\/$/, '');
 
-            // Skip system pages
             const systemPages = ['index.html', 'dashboard.html', '404.html', 'discord-callback.html', 'discord-callback', ''];
             if (systemPages.includes(path)) {
                 window.location.href = '/';
@@ -456,11 +442,10 @@
             }
 
             try {
-                // Get username doc
                 const usernameDoc = await getDoc(doc(db, 'usernames', path));
                 
                 if (!usernameDoc.exists()) {
-                    showError(container, 'Nie znaleziono', `Użytkownik @${path} nie istnieje`);
+                    showError(container, 'Not Found', `User @${path} does not exist`);
                     return;
                 }
 
@@ -468,7 +453,7 @@
                 const userDoc = await getDoc(doc(db, 'users', uid));
                 
                 if (!userDoc.exists()) {
-                    showError(container, 'Błąd profilu', 'Nie można załadować profilu');
+                    showError(container, 'Profile Error', 'Could not load profile');
                     return;
                 }
 
@@ -477,7 +462,7 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                showError(container, 'Błąd', error.message);
+                showError(container, 'Error', error.message);
             }
         }
 
@@ -486,13 +471,12 @@
                 <div class="error-container">
                     <div class="error">${title}</div>
                     <div class="error-sub">${message}</div>
-                    <a href="/" class="home-link">Strona główna</a>
+                    <a href="/" class="home-link">Home</a>
                 </div>
             `;
         }
 
         function renderProfile(container, profile) {
-            // Get settings
             const displayName = profile.displayName || profile.username;
             const bio = profile.bio || 'Welcome to my zone';
             const bioFont = profile.bioFont || 'Segoe UI';
@@ -502,12 +486,10 @@
             const opacity = (profile.profileOpacity ?? 100) / 100;
             const blur = (profile.profileBlur || 0) / 10;
             
-            // Toggle settings
             const useDiscordAvatar = profile.useDiscordAvatar || false;
             const showVolumeControl = profile.showVolumeControl || false;
             const showAvatarDecoration = profile.showAvatarDecoration || false;
 
-            // Determine avatar
             let avatarUrl = 'https://via.placeholder.com/120';
             if (useDiscordAvatar && profile.discord?.avatar) {
                 avatarUrl = profile.discord.avatar;
@@ -517,12 +499,10 @@
                 avatarUrl = profile.discord.avatar;
             }
 
-            // Background image
             if (profile.bgImage) {
                 document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
             }
 
-            // Audio
             if (profile.bgAudio) {
                 const audio = document.getElementById('bgAudio');
                 audio.src = profile.bgAudio;
@@ -533,14 +513,12 @@
                 }
             }
 
-            // Avatar decoration (Discord)
             let decorationHTML = '';
             if (showAvatarDecoration && profile.discord?.avatar_decoration_data?.asset) {
                 const decorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.discord.avatar_decoration_data.asset}.png`;
                 decorationHTML = `<img src="${decorationUrl}" class="avatar-decoration" alt="">`;
             }
 
-            // Discord info
             let discordHTML = '';
             if (profile.discord) {
                 discordHTML = `
@@ -551,7 +529,6 @@
                 `;
             }
 
-            // Links
             let linksHTML = '';
             if (profile.links && profile.links.length > 0) {
                 linksHTML = '<div class="links">';
@@ -561,10 +538,8 @@
                 linksHTML += '</div>';
             }
 
-            // Username effect class
             const effectClass = usernameEffect !== 'none' ? `effect-${usernameEffect}` : '';
 
-            // Render
             container.innerHTML = `
                 <div class="profile-card" style="opacity: ${opacity}; filter: blur(${blur}px);">
                     <div class="avatar-wrapper">
@@ -578,7 +553,6 @@
                 </div>
             `;
 
-            // Update page title
             document.title = `@${displayName} - FakeZone`;
         }
 
