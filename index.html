@@ -369,7 +369,7 @@
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, updateDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -387,6 +387,53 @@
         let youtubePlayer = null;
         let audioElement = null;
         let isPlaying = false;
+
+        // ========================================
+        // FUNKCJA POBIERAJĄCA NASTĘPNY UID
+        // ========================================
+        async function getNextUidNumber() {
+            const counterRef = doc(db, 'counters', 'uidCounter');
+            
+            try {
+                // Używamy transakcji, żeby uniknąć konfliktów przy jednoczesnej rejestracji
+                const nextUid = await runTransaction(db, async (transaction) => {
+                    const counterDoc = await transaction.get(counterRef);
+                    
+                    let newUid;
+                    if (counterDoc.exists()) {
+                        // Zwiększ licznik o 1
+                        newUid = (counterDoc.data().currentUid || 0) + 1;
+                    } else {
+                        // Pierwszy użytkownik (Ty jako owner masz 1, więc następny to 2)
+                        newUid = 1;
+                    }
+                    
+                    // Zapisz nowy licznik
+                    transaction.set(counterRef, { currentUid: newUid });
+                    
+                    return newUid;
+                });
+                
+                return nextUid;
+            } catch (error) {
+                console.error('Error getting next UID:', error);
+                // Fallback - pobierz aktualny stan i dodaj 1
+                try {
+                    const counterDoc = await getDoc(counterRef);
+                    if (counterDoc.exists()) {
+                        const newUid = (counterDoc.data().currentUid || 0) + 1;
+                        await setDoc(counterRef, { currentUid: newUid });
+                        return newUid;
+                    } else {
+                        await setDoc(counterRef, { currentUid: 1 });
+                        return 1;
+                    }
+                } catch (fallbackError) {
+                    console.error('Fallback also failed:', fallbackError);
+                    throw new Error('Unable to generate UID');
+                }
+            }
+        }
 
         // Check if URL is a profile
         function checkPage() {
@@ -549,8 +596,11 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await sendEmailVerification(userCredential.user);
                 
-                // Create user profile
-                const uidNumber = Math.floor(Math.random() * 9000) + 1000;
+                // ========================================
+                // POBIERZ NASTĘPNY UID (SEKWENCYJNIE!)
+                // ========================================
+                const uidNumber = await getNextUidNumber();
+                console.log(`Assigned UID: #${String(uidNumber).padStart(4, '0')}`);
                 
                 await setDoc(doc(db, 'usernames', username), {
                     uid: userCredential.user.uid,
@@ -561,7 +611,7 @@
                     username: username,
                     displayName: username,
                     email: email,
-                    uidNumber: uidNumber,
+                    uidNumber: uidNumber,  // ← Teraz to jest sekwencyjny numer!
                     emailVerified: false,
                     bio: 'Welcome to my zone',
                     createdAt: new Date().toISOString(),
@@ -592,14 +642,14 @@
                     used_at: new Date().toISOString()
                 });
 
-                document.getElementById('registerSuccess').textContent = 'Registration successful! Check your email to verify your account.';
+                document.getElementById('registerSuccess').textContent = `Registration successful! Your UID is #${String(uidNumber).padStart(4, '0')}. Check your email to verify your account.`;
                 registerBtn.innerHTML = 'SUCCESS!';
                 
                 // Redirect after delay
                 setTimeout(() => {
                     auth.signOut();
                     showTab('login');
-                }, 3000);
+                }, 4000);
 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -608,6 +658,8 @@
                     document.getElementById('registerError').textContent = 'Email is already registered';
                 } else if (error.code === 'auth/weak-password') {
                     document.getElementById('registerError').textContent = 'Password is too weak';
+                } else if (error.message === 'Unable to generate UID') {
+                    document.getElementById('registerError').textContent = 'System error. Please try again.';
                 } else {
                     document.getElementById('registerError').textContent = 'Registration failed. Please try again.';
                 }
