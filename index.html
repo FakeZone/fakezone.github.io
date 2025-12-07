@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FakeZone - Login</title>
+    <title>FakeZone</title>
     <style>
         * {
             margin: 0;
@@ -13,15 +13,21 @@
 
         body {
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #000000, #1a1a1a);
+            background: #0a0a0a;
             font-family: 'Segoe UI', sans-serif;
             color: #fff;
         }
 
-        .container {
+        /* LOGIN STYLES */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+        }
+
+        .login-container {
             background: rgba(20,20,20,0.8);
             padding: 40px;
             border-radius: 15px;
@@ -89,10 +95,6 @@
             box-shadow: 0 0 10px rgba(255,51,51,0.2);
         }
 
-        input::placeholder {
-            color: #666;
-        }
-
         button[type="submit"] {
             width: 100%;
             padding: 12px;
@@ -111,131 +113,225 @@
             box-shadow: 0 5px 20px rgba(255,51,51,0.4);
         }
 
-        button[type="submit"]:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        /* PROFILE STYLES */
+        .profile-page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        .error {
-            color: #ff3333;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .success {
-            color: #00ff00;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .particles {
+        .bg-image {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            opacity: 0.5;
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .profile-card {
+            background: rgba(17, 17, 17, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid #ff3333;
+            object-fit: cover;
+        }
+
+        .username {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bio {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .audio-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .audio-controls.show {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error {
+            color: #ff3333;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas class="particles" id="particles"></canvas>
-    
-    <div class="container">
-        <h1>FakeZone</h1>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-page hidden">
+        <div class="login-container">
+            <h1>FakeZone</h1>
 
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="showTab('login')">Login</button>
-            <button class="tab-btn" onclick="showTab('register')">Register</button>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('login')">Login</button>
+                <button class="tab-btn" onclick="showTab('register')">Register</button>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+                <button type="submit">LOGIN</button>
+                <div id="loginError" class="error"></div>
+            </form>
+
+            <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <input type="text" id="registerUsername" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="registerEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="registerPassword" placeholder="Password" required>
+                </div>
+                <button type="submit">REGISTER</button>
+                <div id="registerError" class="error"></div>
+            </form>
         </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Password" required>
-            </div>
-            <button type="submit" id="loginBtn">LOGIN</button>
-            <div id="loginError" class="error"></div>
-        </form>
-
-        <!-- Register Form -->
-        <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
-            <div class="form-group">
-                <input type="text" id="registerUsername" placeholder="Username (min. 3 characters)" minlength="3" maxlength="20" required>
-            </div>
-            <div class="form-group">
-                <input type="email" id="registerEmail" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="registerPassword" 
-                       placeholder="Password (8+ chars, 1 upper, 1 digit, 1 special)" 
-                       pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
-                       title="Min. 8 characters, 1 uppercase, 1 digit, 1 special (@$!%*?&#)"
-                       required>
-            </div>
-            <button type="submit" id="registerBtn">REGISTER</button>
-            <div id="registerError" class="error"></div>
-            <div id="registerSuccess" class="success"></div>
-        </form>
     </div>
 
-    <script>
-        // Particles
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    <!-- PROFILE PAGE -->
+    <div id="profilePage" class="profile-page hidden">
+        <div class="bg-image" id="bgImage"></div>
+        <div class="bg-overlay"></div>
+        
+        <div class="profile-card">
+            <div class="loading" id="loading">Loading profile...</div>
+            <div class="error hidden" id="profileError">User not found</div>
+            <div class="hidden" id="profileContent">
+                <img class="avatar" id="avatar" src="https://via.placeholder.com/120">
+                <h1 class="username" id="username">@username</h1>
+                <p class="bio" id="bio">Bio loading...</p>
+            </div>
+        </div>
 
-        const particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2,
-                speedY: Math.random() * 0.5 + 0.2,
-                color: Math.random() > 0.8 ? '#ff3333' : '#333'
-            });
+        <div class="audio-controls" id="audioControls">
+            <button onclick="toggleAudio()" id="playBtn">⏸</button>
+            <input type="range" id="volumeSlider" min="0" max="100" value="50">
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audioPlayer" loop style="display:none;"></audio>
+    <div id="youtubePlayer" style="position:fixed; top:-1000px; left:-1000px;"></div>
+
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
+            authDomain: "fakezone-f3c4a.firebaseapp.com",
+            projectId: "fakezone-f3c4a",
+            storageBucket: "fakezone-f3c4a.firebasestorage.app",
+            messagingSenderId: "795138686378",
+            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let youtubePlayer = null;
+        let audioElement = null;
+        let isPlaying = false;
+
+        // Check if URL is a profile
+        function checkPage() {
+            const path = window.location.pathname.substring(1);
+            
+            if (path && path !== 'index.html' && !path.includes('.html') && !path.includes('.')) {
+                // Show profile page
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('profilePage').classList.remove('hidden');
+                loadProfile(path);
+            } else {
+                // Show login page
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('profilePage').classList.add('hidden');
+                checkAuth();
+            }
         }
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-                p.y -= p.speedY;
-                if (p.y < 0) p.y = canvas.height;
+        // Check authentication
+        function checkAuth() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    window.location.href = '/dashboard.html';
+                }
             });
-            requestAnimationFrame(animate);
         }
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
 
         // Tab switching
         window.showTab = function(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             const tabs = document.querySelectorAll('.tab-btn');
-
-            document.getElementById('loginError').textContent = '';
-            document.getElementById('registerError').textContent = '';
-            document.getElementById('registerSuccess').textContent = '';
 
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
@@ -249,223 +345,194 @@
                 tabs[1].classList.add('active');
             }
         };
-    </script>
 
-<script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        // Login handler
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
-        authDomain: "fakezone-f3c4a.firebaseapp.com",
-        projectId: "fakezone-f3c4a",
-        storageBucket: "fakezone-f3c4a.firebasestorage.app",
-        messagingSenderId: "795138686378",
-        appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Get next UID using transaction (atomic operation)
-    async function getNextUidNumber() {
-        const counterRef = doc(db, 'counters', 'users');
-        
-        try {
-            const newUid = await runTransaction(db, async (transaction) => {
-                const counterDoc = await transaction.get(counterRef);
-                
-                let nextUid = 1;
-                
-                if (counterDoc.exists()) {
-                    nextUid = (counterDoc.data().lastUid || 0) + 1;
-                }
-                
-                transaction.set(counterRef, { lastUid: nextUid });
-                
-                return nextUid;
-            });
-            
-            return newUid;
-        } catch (e) {
-            console.error('Error getting UID:', e);
-            return Date.now(); // Fallback to timestamp
-        }
-    }
-
-    // Format UID number to #0001 format
-    function formatUid(num) {
-        return '#' + String(num).padStart(4, '0');
-    }
-
-    // Check if already logged in
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            if (userDoc.exists()) {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = '/dashboard.html';
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Invalid credentials';
             }
-        }
-    });
+        };
 
-    // Login
-    window.handleLogin = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const btn = document.getElementById('loginBtn');
-        const errorEl = document.getElementById('loginError');
+        // Register handler
+        window.handleRegister = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.toLowerCase();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
 
-        btn.disabled = true;
-        btn.textContent = 'Logging in...';
-        errorEl.textContent = '';
-
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-            
-            if (!userDoc.exists()) {
-                errorEl.style.color = '#ffaa00';
-                errorEl.textContent = 'Creating profile...';
-                
-                const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '').substring(0, 20);
-                let finalUsername = username;
-                let counter = 1;
-                
-                while (true) {
-                    const usernameDoc = await getDoc(doc(db, 'usernames', finalUsername));
-                    if (!usernameDoc.exists()) break;
-                    finalUsername = username + counter;
-                    counter++;
+            try {
+                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                if (usernameDoc.exists()) {
+                    document.getElementById('registerError').textContent = 'Username taken';
+                    return;
                 }
+
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                const uidNumber = await getNextUidNumber();
-                
-                await setDoc(doc(db, 'users', userCredential.user.uid), {
-                    username: finalUsername,
-                    displayName: finalUsername,
-                    bio: 'Welcome to my zone',
-                    avatar: '',
-                    links: [],
-                    uidNumber: uidNumber,
-                    createdAt: new Date().toISOString()
-                });
-                
-                await setDoc(doc(db, 'usernames', finalUsername), {
+                await setDoc(doc(db, 'usernames', username), {
                     uid: userCredential.user.uid
                 });
-            }
-            
-            window.location.href = '/dashboard.html';
-            
-        } catch (error) {
-            btn.disabled = false;
-            btn.textContent = 'LOGIN';
-            
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                errorEl.textContent = 'Invalid email or password';
-            } else if (error.code === 'auth/too-many-requests') {
-                errorEl.textContent = 'Too many attempts. Try later.';
-            } else {
-                errorEl.textContent = 'Login error: ' + error.message;
-            }
-        }
-    };
 
-    // Register
-    window.handleRegister = async (e) => {
-        e.preventDefault();
-        const username = document.getElementById('registerUsername').value.toLowerCase().trim();
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const btn = document.getElementById('registerBtn');
-        const errorEl = document.getElementById('registerError');
-        const successEl = document.getElementById('registerSuccess');
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    username: username,
+                    displayName: username,
+                    bio: 'Welcome to my zone',
+                    createdAt: new Date().toISOString()
+                });
 
-        btn.disabled = true;
-        btn.textContent = 'Registering...';
-        errorEl.textContent = '';
-        successEl.textContent = '';
-
-        if (username.length < 3) {
-            errorEl.textContent = 'Username must be at least 3 characters';
-            btn.disabled = false;
-            btn.textContent = 'REGISTER';
-            return;
-        }
-
-        if (!/^[a-z0-9_]+$/.test(username)) {
-            errorEl.textContent = 'Username can only contain a-z, 0-9, _';
-            btn.disabled = false;
-            btn.textContent = 'REGISTER';
-            return;
-        }
-
-        try {
-            const usernameDoc = await getDoc(doc(db, 'usernames', username));
-            if (usernameDoc.exists()) {
-                errorEl.textContent = 'Username already taken';
-                btn.disabled = false;
-                btn.textContent = 'REGISTER';
-                return;
-            }
-
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            // Get unique UID number
-            const uidNumber = await getNextUidNumber();
-
-            await setDoc(doc(db, 'usernames', username), {
-                uid: user.uid
-            });
-
-            await setDoc(doc(db, 'users', user.uid), {
-                username: username,
-                displayName: username,
-                bio: 'Welcome to my zone',
-                avatar: '',
-                links: [],
-                discord: null,
-                bgImage: '',
-                bgAudio: '',
-                audioVolume: 50,
-                bioFont: 'Segoe UI',
-                bioColor: '#888888',
-                usernameColor: '#ffffff',
-                usernameEffect: 'none',
-                profileOpacity: 100,
-                profileBlur: 0,
-                useDiscordAvatar: false,
-                showVolumeControl: false,
-                showAvatarDecoration: false,
-                uidNumber: uidNumber,
-                createdAt: new Date().toISOString()
-            });
-
-            successEl.textContent = '✓ Account created! Redirecting...';
-            
-            setTimeout(() => {
                 window.location.href = '/dashboard.html';
-            }, 1000);
+            } catch (error) {
+                document.getElementById('registerError').textContent = error.message;
+            }
+        };
 
-        } catch (error) {
-            btn.disabled = false;
-            btn.textContent = 'REGISTER';
+        // Extract YouTube ID
+        function extractYouTubeId(url) {
+            const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+            return match ? match[1] : null;
+        }
 
-            if (error.code === 'auth/email-already-in-use') {
-                errorEl.textContent = 'Email already in use';
-            } else if (error.code === 'auth/weak-password') {
-                errorEl.textContent = 'Password is too weak';
-            } else if (error.code === 'auth/invalid-email') {
-                errorEl.textContent = 'Invalid email';
-            } else {
-                errorEl.textContent = 'Registration error: ' + error.message;
+        // Load profile
+        async function loadProfile(username) {
+            try {
+                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                if (!usernameDoc.exists()) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('profileError').classList.remove('hidden');
+                    return;
+                }
+
+                const uid = usernameDoc.data().uid;
+                const userDoc = await getDoc(doc(db, 'users', uid));
+                
+                if (!userDoc.exists()) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('profileError').classList.remove('hidden');
+                    return;
+                }
+
+                const userData = userDoc.data();
+                
+                // Set background
+                if (userData.bgImage) {
+                    document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
+                }
+                
+                // Set profile info
+                document.getElementById('avatar').src = userData.avatar || 'https://via.placeholder.com/120';
+                document.getElementById('username').textContent = '@' + (userData.displayName || userData.username);
+                document.getElementById('bio').textContent = userData.bio || 'Welcome to my zone';
+                
+                // Apply styles
+                if (userData.usernameColor) {
+                    document.getElementById('username').style.color = userData.usernameColor;
+                }
+                if (userData.bioColor) {
+                    document.getElementById('bio').style.color = userData.bioColor;
+                }
+                
+                // Initialize audio
+                if (userData.bgAudio) {
+                    initAudio(userData.bgAudio, userData.audioVolume || 50);
+                    
+                    if (userData.showVolumeControl) {
+                        document.getElementById('audioControls').classList.add('show');
+                    }
+                }
+                
+                // Show profile
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('profileContent').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('profileError').classList.remove('hidden');
             }
         }
-    };
-</script>
+
+        // Initialize audio
+        function initAudio(url, volume) {
+            const videoId = extractYouTubeId(url);
+            
+            if (videoId) {
+                // YouTube
+                window.onYouTubeIframeAPIReady = function() {
+                    youtubePlayer = new YT.Player('youtubePlayer', {
+                        height: '1',
+                        width: '1',
+                        videoId: videoId,
+                        playerVars: {
+                            autoplay: 1,
+                            loop: 1,
+                            playlist: videoId
+                        },
+                        events: {
+                            onReady: function(event) {
+                                event.target.setVolume(volume);
+                                event.target.playVideo();
+                                isPlaying = true;
+                            }
+                        }
+                    });
+                };
+            } else {
+                // Direct audio
+                audioElement = document.getElementById('audioPlayer');
+                audioElement.src = url;
+                audioElement.volume = volume / 100;
+                
+                // Try autoplay
+                audioElement.play().catch(() => {
+                    // Autoplay blocked, wait for user interaction
+                    document.addEventListener('click', () => {
+                        audioElement.play();
+                    }, { once: true });
+                });
+                
+                isPlaying = true;
+            }
+            
+            // Volume control
+            document.getElementById('volumeSlider').value = volume;
+            document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                const newVolume = e.target.value;
+                if (youtubePlayer && youtubePlayer.setVolume) {
+                    youtubePlayer.setVolume(newVolume);
+                } else if (audioElement) {
+                    audioElement.volume = newVolume / 100;
+                }
+            });
+        }
+
+        // Toggle audio
+        window.toggleAudio = function() {
+            if (youtubePlayer) {
+                if (isPlaying) {
+                    youtubePlayer.pauseVideo();
+                } else {
+                    youtubePlayer.playVideo();
+                }
+            } else if (audioElement) {
+                if (isPlaying) {
+                    audioElement.pause();
+                } else {
+                    audioElement.play();
+                }
+            }
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').textContent = isPlaying ? '⏸' : '▶';
+        };
+
+        // Initialize
+        checkPage();
+    </script>
 </body>
 </html>
