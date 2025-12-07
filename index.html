@@ -251,213 +251,221 @@
         };
     </script>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, collection, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
-            authDomain: "fakezone-f3c4a.firebaseapp.com",
-            projectId: "fakezone-f3c4a",
-            storageBucket: "fakezone-f3c4a.firebasestorage.app",
-            messagingSenderId: "795138686378",
-            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
+        authDomain: "fakezone-f3c4a.firebaseapp.com",
+        projectId: "fakezone-f3c4a",
+        storageBucket: "fakezone-f3c4a.firebasestorage.app",
+        messagingSenderId: "795138686378",
+        appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        // Get next UID number
-        async function getNextUidNumber() {
-            try {
-                const usersRef = collection(db, 'users');
-                const q = query(usersRef, orderBy('uidNumber', 'desc'), limit(1));
-                const snapshot = await getDocs(q);
+    // Get next UID using transaction (atomic operation)
+    async function getNextUidNumber() {
+        const counterRef = doc(db, 'counters', 'users');
+        
+        try {
+            const newUid = await runTransaction(db, async (transaction) => {
+                const counterDoc = await transaction.get(counterRef);
                 
-                if (snapshot.empty) {
-                    return 1;
+                let nextUid = 1;
+                
+                if (counterDoc.exists()) {
+                    nextUid = (counterDoc.data().lastUid || 0) + 1;
                 }
                 
-                const lastUser = snapshot.docs[0].data();
-                return (lastUser.uidNumber || 0) + 1;
-            } catch (e) {
-                console.error('Error getting UID:', e);
-                return 1;
-            }
+                transaction.set(counterRef, { lastUid: nextUid });
+                
+                return nextUid;
+            });
+            
+            return newUid;
+        } catch (e) {
+            console.error('Error getting UID:', e);
+            return Date.now(); // Fallback to timestamp
         }
+    }
 
-        // Format UID number to #0001 format
-        function formatUid(num) {
-            return '#' + String(num).padStart(4, '0');
-        }
+    // Format UID number to #0001 format
+    function formatUid(num) {
+        return '#' + String(num).padStart(4, '0');
+    }
 
-        // Check if already logged in
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    window.location.href = '/dashboard.html';
-                }
-            }
-        });
-
-        // Login
-        window.handleLogin = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginBtn');
-            const errorEl = document.getElementById('loginError');
-
-            btn.disabled = true;
-            btn.textContent = 'Logging in...';
-            errorEl.textContent = '';
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-                
-                if (!userDoc.exists()) {
-                    errorEl.style.color = '#ffaa00';
-                    errorEl.textContent = 'Creating profile...';
-                    
-                    const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '').substring(0, 20);
-                    let finalUsername = username;
-                    let counter = 1;
-                    
-                    while (true) {
-                        const usernameDoc = await getDoc(doc(db, 'usernames', finalUsername));
-                        if (!usernameDoc.exists()) break;
-                        finalUsername = username + counter;
-                        counter++;
-                    }
-                    
-                    const uidNumber = await getNextUidNumber();
-                    
-                    await setDoc(doc(db, 'users', userCredential.user.uid), {
-                        username: finalUsername,
-                        displayName: finalUsername,
-                        bio: 'Welcome to my zone',
-                        avatar: '',
-                        links: [],
-                        uidNumber: uidNumber,
-                        createdAt: new Date().toISOString()
-                    });
-                    
-                    await setDoc(doc(db, 'usernames', finalUsername), {
-                        uid: userCredential.user.uid
-                    });
-                }
-                
+    // Check if already logged in
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
                 window.location.href = '/dashboard.html';
+            }
+        }
+    });
+
+    // Login
+    window.handleLogin = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const btn = document.getElementById('loginBtn');
+        const errorEl = document.getElementById('loginError');
+
+        btn.disabled = true;
+        btn.textContent = 'Logging in...';
+        errorEl.textContent = '';
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+            
+            if (!userDoc.exists()) {
+                errorEl.style.color = '#ffaa00';
+                errorEl.textContent = 'Creating profile...';
                 
-            } catch (error) {
-                btn.disabled = false;
-                btn.textContent = 'LOGIN';
+                const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '').substring(0, 20);
+                let finalUsername = username;
+                let counter = 1;
                 
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    errorEl.textContent = 'Invalid email or password';
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorEl.textContent = 'Too many attempts. Try later.';
-                } else {
-                    errorEl.textContent = 'Login error: ' + error.message;
+                while (true) {
+                    const usernameDoc = await getDoc(doc(db, 'usernames', finalUsername));
+                    if (!usernameDoc.exists()) break;
+                    finalUsername = username + counter;
+                    counter++;
                 }
-            }
-        };
-
-        // Register
-        window.handleRegister = async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('registerUsername').value.toLowerCase().trim();
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const btn = document.getElementById('registerBtn');
-            const errorEl = document.getElementById('registerError');
-            const successEl = document.getElementById('registerSuccess');
-
-            btn.disabled = true;
-            btn.textContent = 'Registering...';
-            errorEl.textContent = '';
-            successEl.textContent = '';
-
-            if (username.length < 3) {
-                errorEl.textContent = 'Username must be at least 3 characters';
-                btn.disabled = false;
-                btn.textContent = 'REGISTER';
-                return;
-            }
-
-            if (!/^[a-z0-9_]+$/.test(username)) {
-                errorEl.textContent = 'Username can only contain a-z, 0-9, _';
-                btn.disabled = false;
-                btn.textContent = 'REGISTER';
-                return;
-            }
-
-            try {
-                const usernameDoc = await getDoc(doc(db, 'usernames', username));
-                if (usernameDoc.exists()) {
-                    errorEl.textContent = 'Username already taken';
-                    btn.disabled = false;
-                    btn.textContent = 'REGISTER';
-                    return;
-                }
-
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
+                
                 const uidNumber = await getNextUidNumber();
-
-                await setDoc(doc(db, 'usernames', username), {
-                    uid: user.uid
-                });
-
-                await setDoc(doc(db, 'users', user.uid), {
-                    username: username,
-                    displayName: username,
+                
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    username: finalUsername,
+                    displayName: finalUsername,
                     bio: 'Welcome to my zone',
                     avatar: '',
                     links: [],
-                    discord: null,
-                    bgImage: '',
-                    bgAudio: '',
-                    audioVolume: 50,
-                    bioFont: 'Segoe UI',
-                    bioColor: '#888888',
-                    usernameColor: '#ffffff',
-                    usernameEffect: 'none',
-                    profileOpacity: 100,
-                    profileBlur: 0,
-                    useDiscordAvatar: false,
-                    showVolumeControl: false,
-                    showAvatarDecoration: false,
                     uidNumber: uidNumber,
                     createdAt: new Date().toISOString()
                 });
-
-                successEl.textContent = '✓ Account created! Redirecting...';
                 
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 1000);
+                await setDoc(doc(db, 'usernames', finalUsername), {
+                    uid: userCredential.user.uid
+                });
+            }
+            
+            window.location.href = '/dashboard.html';
+            
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = 'LOGIN';
+            
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                errorEl.textContent = 'Invalid email or password';
+            } else if (error.code === 'auth/too-many-requests') {
+                errorEl.textContent = 'Too many attempts. Try later.';
+            } else {
+                errorEl.textContent = 'Login error: ' + error.message;
+            }
+        }
+    };
 
-            } catch (error) {
+    // Register
+    window.handleRegister = async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value.toLowerCase().trim();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const btn = document.getElementById('registerBtn');
+        const errorEl = document.getElementById('registerError');
+        const successEl = document.getElementById('registerSuccess');
+
+        btn.disabled = true;
+        btn.textContent = 'Registering...';
+        errorEl.textContent = '';
+        successEl.textContent = '';
+
+        if (username.length < 3) {
+            errorEl.textContent = 'Username must be at least 3 characters';
+            btn.disabled = false;
+            btn.textContent = 'REGISTER';
+            return;
+        }
+
+        if (!/^[a-z0-9_]+$/.test(username)) {
+            errorEl.textContent = 'Username can only contain a-z, 0-9, _';
+            btn.disabled = false;
+            btn.textContent = 'REGISTER';
+            return;
+        }
+
+        try {
+            const usernameDoc = await getDoc(doc(db, 'usernames', username));
+            if (usernameDoc.exists()) {
+                errorEl.textContent = 'Username already taken';
                 btn.disabled = false;
                 btn.textContent = 'REGISTER';
-
-                if (error.code === 'auth/email-already-in-use') {
-                    errorEl.textContent = 'Email already in use';
-                } else if (error.code === 'auth/weak-password') {
-                    errorEl.textContent = 'Password is too weak';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorEl.textContent = 'Invalid email';
-                } else {
-                    errorEl.textContent = 'Registration error: ' + error.message;
-                }
+                return;
             }
-        };
-    </script>
+
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Get unique UID number
+            const uidNumber = await getNextUidNumber();
+
+            await setDoc(doc(db, 'usernames', username), {
+                uid: user.uid
+            });
+
+            await setDoc(doc(db, 'users', user.uid), {
+                username: username,
+                displayName: username,
+                bio: 'Welcome to my zone',
+                avatar: '',
+                links: [],
+                discord: null,
+                bgImage: '',
+                bgAudio: '',
+                audioVolume: 50,
+                bioFont: 'Segoe UI',
+                bioColor: '#888888',
+                usernameColor: '#ffffff',
+                usernameEffect: 'none',
+                profileOpacity: 100,
+                profileBlur: 0,
+                useDiscordAvatar: false,
+                showVolumeControl: false,
+                showAvatarDecoration: false,
+                uidNumber: uidNumber,
+                createdAt: new Date().toISOString()
+            });
+
+            successEl.textContent = '✓ Account created! Redirecting...';
+            
+            setTimeout(() => {
+                window.location.href = '/dashboard.html';
+            }, 1000);
+
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = 'REGISTER';
+
+            if (error.code === 'auth/email-already-in-use') {
+                errorEl.textContent = 'Email already in use';
+            } else if (error.code === 'auth/weak-password') {
+                errorEl.textContent = 'Password is too weak';
+            } else if (error.code === 'auth/invalid-email') {
+                errorEl.textContent = 'Invalid email';
+            } else {
+                errorEl.textContent = 'Registration error: ' + error.message;
+            }
+        }
+    };
+</script>
 </body>
 </html>
