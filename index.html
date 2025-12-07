@@ -220,6 +220,13 @@
             font-size: 13px;
         }
 
+        .info {
+            color: #3399ff;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
         .loading {
             text-align: center;
             color: #666;
@@ -271,20 +278,89 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .forgot-password-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password-link a {
+            color: #ff3333;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .forgot-password-link a:hover {
+            color: #fff;
+        }
+
+        .resend-verification {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .resend-btn {
+            background: transparent;
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .resend-btn:hover {
+            background: rgba(255,51,51,0.1);
+        }
+
+        .resend-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .back-link a:hover {
+            color: #ff3333;
+        }
+
+        .reset-info {
+            background: rgba(51,153,255,0.1);
+            border: 1px solid rgba(51,153,255,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #3399ff;
+            line-height: 1.5;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- LOGIN PAGE -->
     <div id="loginPage" class="login-page hidden">
-        <div class="login-container">
+        <div class="login-container" id="authContainer">
             <h1>FakeZone</h1>
 
-            <div class="tab-buttons">
+            <div class="tab-buttons" id="tabButtons">
                 <button class="tab-btn active" onclick="showTab('login')">Login</button>
                 <button class="tab-btn" onclick="showTab('register')">Register</button>
             </div>
 
+            <!-- LOGIN FORM -->
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <input type="email" id="loginEmail" placeholder="Email" required>
@@ -294,8 +370,19 @@
                 </div>
                 <button type="submit" id="loginBtn">LOGIN</button>
                 <div id="loginError" class="error"></div>
+                
+                <div class="forgot-password-link">
+                    <a href="#" onclick="showResetPassword()">Forgot password?</a>
+                </div>
+                
+                <div class="resend-verification hidden" id="resendVerificationDiv">
+                    <button type="button" class="resend-btn" id="resendVerificationBtn" onclick="resendVerificationEmail()">
+                        Resend verification email
+                    </button>
+                </div>
             </form>
 
+            <!-- REGISTER FORM -->
             <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
                 <div class="form-group">
                     <input type="text" id="registerUsername" placeholder="Username" required>
@@ -314,6 +401,23 @@
                 <div class="verification-info" id="verificationInfo">
                     <h3>📧 Verify your email</h3>
                     <p>We've sent a verification link to your email. Please check your inbox and click the link to activate your account.</p>
+                </div>
+            </form>
+
+            <!-- RESET PASSWORD FORM -->
+            <form id="resetForm" class="hidden" onsubmit="handleResetPassword(event)">
+                <div class="reset-info">
+                    Enter your email address and we'll send you a link to reset your password.
+                </div>
+                <div class="form-group">
+                    <input type="email" id="resetEmail" placeholder="Email" required>
+                </div>
+                <button type="submit" id="resetBtn">SEND RESET LINK</button>
+                <div id="resetError" class="error"></div>
+                <div id="resetSuccess" class="success"></div>
+                
+                <div class="back-link">
+                    <a href="#" onclick="showTab('login')">← Back to login</a>
                 </div>
             </form>
         </div>
@@ -354,6 +458,7 @@
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             sendEmailVerification,
+            sendPasswordResetEmail,
             onAuthStateChanged 
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { 
@@ -365,7 +470,8 @@
             collection,
             query,
             where,
-            getDocs
+            getDocs,
+            updateDoc
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -384,6 +490,7 @@
         let youtubePlayer = null;
         let audioElement = null;
         let isPlaying = false;
+        let tempUserForVerification = null;
 
         // Username validation on input
         document.getElementById('registerUsername').addEventListener('input', function(e) {
@@ -420,25 +527,47 @@
         window.showTab = function(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
+            const resetForm = document.getElementById('resetForm');
             const tabs = document.querySelectorAll('.tab-btn');
+            const tabButtons = document.getElementById('tabButtons');
+
+            // Hide all forms
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            resetForm.classList.add('hidden');
 
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
+                tabButtons.style.display = 'flex';
                 tabs[0].classList.add('active');
                 tabs[1].classList.remove('active');
-            } else {
-                loginForm.classList.add('hidden');
+            } else if (tab === 'register') {
                 registerForm.classList.remove('hidden');
+                tabButtons.style.display = 'flex';
                 tabs[0].classList.remove('active');
                 tabs[1].classList.add('active');
+            } else if (tab === 'reset') {
+                resetForm.classList.remove('hidden');
+                tabButtons.style.display = 'none';
             }
 
-            // Clear errors
+            // Clear all messages
+            clearAllMessages();
+            document.getElementById('verificationInfo').classList.remove('show');
+            document.getElementById('resendVerificationDiv').classList.add('hidden');
+        };
+
+        function clearAllMessages() {
             document.getElementById('loginError').textContent = '';
             document.getElementById('registerError').textContent = '';
             document.getElementById('registerSuccess').textContent = '';
-            document.getElementById('verificationInfo').classList.remove('show');
+            document.getElementById('resetError').textContent = '';
+            document.getElementById('resetSuccess').textContent = '';
+        }
+
+        // Show reset password form
+        window.showResetPassword = function() {
+            showTab('reset');
         };
 
         // Login handler
@@ -456,7 +585,8 @@
                 
                 if (!userCredential.user.emailVerified) {
                     document.getElementById('loginError').textContent = 'Please verify your email first. Check your inbox.';
-                    await auth.signOut();
+                    document.getElementById('resendVerificationDiv').classList.remove('hidden');
+                    tempUserForVerification = userCredential.user;
                     loginBtn.disabled = false;
                     loginBtn.innerHTML = 'LOGIN';
                     return;
@@ -486,8 +616,7 @@
             const registerBtn = document.getElementById('registerBtn');
 
             // Clear previous messages
-            document.getElementById('registerError').textContent = '';
-            document.getElementById('registerSuccess').textContent = '';
+            clearAllMessages();
 
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -595,8 +724,7 @@
                 // Redirect to login after delay
                 setTimeout(() => {
                     showTab('login');
-                    document.getElementById('loginError').textContent = '';
-                    document.getElementById('loginError').className = 'success';
+                    document.getElementById('loginError').className = 'info';
                     document.getElementById('loginError').textContent = 'Please check your email to verify your account';
                 }, 3000);
 
@@ -615,6 +743,77 @@
                 
                 registerBtn.disabled = false;
                 registerBtn.innerHTML = 'REGISTER';
+            }
+        };
+
+        // Reset password handler
+        window.handleResetPassword = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value.trim();
+            const resetBtn = document.getElementById('resetBtn');
+
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = 'SENDING<span class="loading-spinner"></span>';
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                document.getElementById('resetSuccess').textContent = 'Password reset email sent! Check your inbox.';
+                document.getElementById('resetError').textContent = '';
+                resetBtn.innerHTML = 'EMAIL SENT!';
+                
+                // Clear form after 3 seconds and go back to login
+                setTimeout(() => {
+                    document.getElementById('resetEmail').value = '';
+                    showTab('login');
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Reset error:', error);
+                if (error.code === 'auth/user-not-found') {
+                    document.getElementById('resetError').textContent = 'No account found with this email';
+                } else if (error.code === 'auth/invalid-email') {
+                    document.getElementById('resetError').textContent = 'Invalid email address';
+                } else {
+                    document.getElementById('resetError').textContent = 'Failed to send reset email. Please try again.';
+                }
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = 'SEND RESET LINK';
+            }
+        };
+
+        // Resend verification email
+        window.resendVerificationEmail = async function() {
+            const btn = document.getElementById('resendVerificationBtn');
+            
+            if (!tempUserForVerification && auth.currentUser) {
+                tempUserForVerification = auth.currentUser;
+            }
+            
+            if (!tempUserForVerification) {
+                document.getElementById('loginError').textContent = 'Please login again to resend verification';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = 'SENDING<span class="loading-spinner"></span>';
+            
+            try {
+                await sendEmailVerification(tempUserForVerification);
+                document.getElementById('loginError').className = 'success';
+                document.getElementById('loginError').textContent = 'Verification email sent! Check your inbox.';
+                btn.innerHTML = 'EMAIL SENT!';
+                
+                // Re-enable after 30 seconds
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Resend verification email';
+                }, 30000);
+                
+            } catch (error) {
+                console.error('Error resending verification:', error);
+                document.getElementById('loginError').textContent = 'Failed to send verification email. Please try again.';
+                btn.disabled = false;
+                btn.innerHTML = 'Resend verification email';
             }
         };
 
