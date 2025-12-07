@@ -23,7 +23,7 @@
             overflow: hidden;
         }
 
-        /* Background Image */
+        /* Background */
         .bg-image {
             position: fixed;
             top: 0;
@@ -42,24 +42,44 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: -1;
         }
 
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Container */
         .container {
             text-align: center;
             z-index: 1;
-            animation: fadeIn 0.5s ease;
             padding: 20px;
+            animation: fadeIn 0.6s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Profile Card */
         .profile-card {
             transition: all 0.3s;
+        }
+
+        /* Avatar */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
         .avatar {
@@ -67,10 +87,9 @@
             height: 120px;
             border-radius: 50%;
             border: 3px solid #ff3333;
-            margin-bottom: 20px;
+            object-fit: cover;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 0 30px rgba(255,51,51,0.3);
-            object-fit: cover;
         }
 
         .avatar:hover {
@@ -78,17 +97,30 @@
             box-shadow: 0 0 50px rgba(255,51,51,0.5);
         }
 
+        .avatar-decoration {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 140px;
+            height: 140px;
+            pointer-events: none;
+        }
+
+        /* Username */
         .username {
             font-size: 32px;
             margin-bottom: 10px;
             font-weight: bold;
         }
 
+        /* Bio */
         .bio {
             margin-bottom: 25px;
             font-size: 16px;
             max-width: 400px;
-            line-height: 1.5;
+            line-height: 1.6;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Discord Info */
@@ -101,6 +133,11 @@
             background: rgba(88, 101, 242, 0.15);
             border: 1px solid rgba(88, 101, 242, 0.3);
             border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .discord-info:hover {
+            background: rgba(88, 101, 242, 0.25);
         }
 
         .discord-avatar {
@@ -158,72 +195,59 @@
             box-shadow: 0 10px 30px rgba(255,51,51,0.3);
         }
 
-        /* Particles */
-        .particles {
+        /* Audio Control */
+        .audio-control {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: none;
         }
 
-        /* Error State */
-        .error-container {
-            text-align: center;
+        .audio-control.visible {
+            display: block;
         }
 
-        .error {
+        .audio-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(20,20,20,0.9);
+            border: 2px solid #ff3333;
             color: #ff3333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .error-sub {
-            color: #888;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .home-link {
-            display: inline-block;
-            padding: 12px 25px;
-            background: rgba(255,51,51,0.1);
-            border: 1px solid #ff3333;
-            color: #ff3333;
-            text-decoration: none;
-            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
-        .home-link:hover {
+        .audio-btn:hover {
             background: rgba(255,51,51,0.2);
-            transform: translateY(-2px);
+            transform: scale(1.1);
+        }
+
+        .audio-btn.playing {
+            animation: audioPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes audioPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,51,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(255,51,51,0); }
         }
 
         /* Username Effects */
-        .effect-none {
-            /* default */
-        }
-
         .effect-glitch {
             animation: glitch 0.5s infinite;
         }
 
         @keyframes glitch {
-            0%, 100% {
-                text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
-            }
-            25% {
-                text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-            }
-            50% {
-                text-shadow: 2px 2px #ff0000, -2px -2px #00ffff;
-            }
-            75% {
-                text-shadow: -2px 2px #ff0000, 2px -2px #00ffff;
-            }
+            0%, 100% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 2px #ff0000, -2px -2px #00ffff; }
+            75% { text-shadow: -2px 2px #ff0000, 2px -2px #00ffff; }
         }
 
         .effect-rainbow {
@@ -244,12 +268,8 @@
         }
 
         @keyframes glowPulse {
-            0%, 100% {
-                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-            }
-            50% {
-                text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
-            }
+            0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+            50% { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
         }
 
         .effect-wave {
@@ -259,67 +279,62 @@
 
         @keyframes wave {
             0%, 100% { transform: translateY(0); }
-            25% { transform: translateY(-5px); }
-            75% { transform: translateY(5px); }
+            25% { transform: translateY(-8px); }
+            75% { transform: translateY(8px); }
         }
 
         .effect-typing {
-            border-right: 3px solid;
-            animation: typing-cursor 0.7s step-end infinite;
+            border-right: 3px solid currentColor;
+            animation: typingCursor 0.8s step-end infinite;
         }
 
-        @keyframes typing-cursor {
+        @keyframes typingCursor {
             0%, 100% { border-color: currentColor; }
             50% { border-color: transparent; }
         }
 
-        /* Audio Player */
-        .audio-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
+        /* Error */
+        .error-container {
+            text-align: center;
         }
 
-        .audio-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(20,20,20,0.9);
-            border: 2px solid #ff3333;
+        .error {
             color: #ff3333;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .error-sub {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,51,51,0.1);
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            text-decoration: none;
+            border-radius: 6px;
             transition: all 0.3s;
         }
 
-        .audio-btn:hover {
+        .home-link:hover {
             background: rgba(255,51,51,0.2);
-            transform: scale(1.1);
-        }
-
-        .audio-btn.playing {
-            animation: audioPulse 1s ease-in-out infinite;
-        }
-
-        @keyframes audioPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,51,0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(255,51,51,0); }
+            transform: translateY(-2px);
         }
 
         /* Loading */
         .loading {
-            color: #888;
-            font-size: 18px;
+            text-align: center;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #333;
+            width: 50px;
+            height: 50px;
+            border: 3px solid #222;
             border-top-color: #ff3333;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -328,6 +343,11 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #888;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -339,14 +359,12 @@
     <div class="container" id="profileContainer">
         <div class="loading">
             <div class="spinner"></div>
-            Ładowanie profilu...
+            <div class="loading-text">Ładowanie profilu...</div>
         </div>
     </div>
 
-    <div class="audio-control" id="audioControl" style="display:none;">
-        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">
-            🔇
-        </button>
+    <div class="audio-control" id="audioControl">
+        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">🔇</button>
     </div>
 
     <audio id="bgAudio" loop></audio>
@@ -355,17 +373,22 @@
         // Particles
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
         const particles = [];
         for (let i = 0; i < 80; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                size: Math.random() * 2,
+                size: Math.random() * 2 + 0.5,
                 speedY: Math.random() * 0.5 + 0.2,
-                color: Math.random() > 0.9 ? '#ff3333' : '#333'
+                color: Math.random() > 0.85 ? '#ff3333' : '#333'
             });
         }
 
@@ -377,16 +400,14 @@
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
                 p.y -= p.speedY;
-                if (p.y < 0) p.y = canvas.height;
+                if (p.y < 0) {
+                    p.y = canvas.height;
+                    p.x = Math.random() * canvas.width;
+                }
             });
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
 
         // Audio
         let isPlaying = false;
@@ -399,7 +420,7 @@
                 audioBtn.textContent = '🔇';
                 audioBtn.classList.remove('playing');
             } else {
-                audio.play();
+                audio.play().catch(e => console.log('Audio play failed:', e));
                 audioBtn.textContent = '🔊';
                 audioBtn.classList.add('playing');
             }
@@ -428,7 +449,8 @@
             const path = window.location.pathname.substring(1).toLowerCase().replace(/\/$/, '');
 
             // Skip system pages
-            if (!path || path === 'index.html' || path === 'dashboard.html' || path === '404.html' || path === 'discord-callback.html' || path === 'discord-callback') {
+            const systemPages = ['index.html', 'dashboard.html', '404.html', 'discord-callback.html', 'discord-callback', ''];
+            if (systemPages.includes(path)) {
                 window.location.href = '/';
                 return;
             }
@@ -438,13 +460,7 @@
                 const usernameDoc = await getDoc(doc(db, 'usernames', path));
                 
                 if (!usernameDoc.exists()) {
-                    container.innerHTML = `
-                        <div class="error-container">
-                            <div class="error">Nie znaleziono</div>
-                            <div class="error-sub">Użytkownik @${path} nie istnieje</div>
-                            <a href="/" class="home-link">Strona główna</a>
-                        </div>
-                    `;
+                    showError(container, 'Nie znaleziono', `Użytkownik @${path} nie istnieje`);
                     return;
                 }
 
@@ -452,94 +468,118 @@
                 const userDoc = await getDoc(doc(db, 'users', uid));
                 
                 if (!userDoc.exists()) {
-                    container.innerHTML = `
-                        <div class="error-container">
-                            <div class="error">Błąd profilu</div>
-                            <a href="/" class="home-link">Strona główna</a>
-                        </div>
-                    `;
+                    showError(container, 'Błąd profilu', 'Nie można załadować profilu');
                     return;
                 }
 
                 const profile = userDoc.data();
-                
-                // Apply customizations
-                applyCustomizations(profile);
-                
-                // Build profile HTML
-                const displayName = profile.displayName || profile.username;
-                const avatar = profile.avatar || profile.discord?.avatar || 'https://via.placeholder.com/120';
-                const bio = profile.bio || 'Welcome to my zone';
-                const bioFont = profile.bioFont || 'Segoe UI';
-                const bioColor = profile.bioColor || '#888888';
-                const usernameColor = profile.usernameColor || '#ffffff';
-                const usernameEffect = profile.usernameEffect || 'none';
-                const opacity = (profile.profileOpacity ?? 100) / 100;
-                const blur = (profile.profileBlur || 0) / 10;
-
-                // Discord HTML
-                let discordHTML = '';
-                if (profile.discord) {
-                    discordHTML = `
-                        <div class="discord-info">
-                            <img class="discord-avatar" src="${profile.discord.avatar}" alt="">
-                            <span class="discord-name">${profile.discord.username}#${profile.discord.discriminator || '0'}</span>
-                        </div>
-                    `;
-                }
-
-                // Links HTML
-                let linksHTML = '';
-                if (profile.links && profile.links.length > 0) {
-                    linksHTML = '<div class="links">';
-                    profile.links.forEach(link => {
-                        linksHTML += `<a href="${link.url}" target="_blank" class="link-btn">${link.title}</a>`;
-                    });
-                    linksHTML += '</div>';
-                }
-
-                // Username effect class
-                const effectClass = usernameEffect !== 'none' ? `effect-${usernameEffect}` : '';
-
-                container.innerHTML = `
-                    <div class="profile-card" style="opacity: ${opacity}; filter: blur(${blur}px);">
-                        <img src="${avatar}" alt="Avatar" class="avatar">
-                        <div class="username ${effectClass}" style="color: ${usernameColor};">@${displayName}</div>
-                        <div class="bio" style="color: ${bioColor}; font-family: '${bioFont}', sans-serif;">${bio}</div>
-                        ${discordHTML}
-                        ${linksHTML}
-                    </div>
-                `;
-
-                // Update page title
-                document.title = `@${displayName} - FakeZone`;
+                renderProfile(container, profile);
 
             } catch (error) {
                 console.error('Error:', error);
-                container.innerHTML = `
-                    <div class="error-container">
-                        <div class="error">Błąd ładowania</div>
-                        <div class="error-sub">${error.message}</div>
-                        <a href="/" class="home-link">Strona główna</a>
-                    </div>
-                `;
+                showError(container, 'Błąd', error.message);
             }
         }
 
-        function applyCustomizations(profile) {
-            // Background Image
-            if (profile.bgImage) {
-                document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
-                document.getElementById('bgOverlay').style.display = 'block';
+        function showError(container, title, message) {
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error">${title}</div>
+                    <div class="error-sub">${message}</div>
+                    <a href="/" class="home-link">Strona główna</a>
+                </div>
+            `;
+        }
+
+        function renderProfile(container, profile) {
+            // Get settings
+            const displayName = profile.displayName || profile.username;
+            const bio = profile.bio || 'Welcome to my zone';
+            const bioFont = profile.bioFont || 'Segoe UI';
+            const bioColor = profile.bioColor || '#888888';
+            const usernameColor = profile.usernameColor || '#ffffff';
+            const usernameEffect = profile.usernameEffect || 'none';
+            const opacity = (profile.profileOpacity ?? 100) / 100;
+            const blur = (profile.profileBlur || 0) / 10;
+            
+            // Toggle settings
+            const useDiscordAvatar = profile.useDiscordAvatar || false;
+            const showVolumeControl = profile.showVolumeControl || false;
+            const showAvatarDecoration = profile.showAvatarDecoration || false;
+
+            // Determine avatar
+            let avatarUrl = 'https://via.placeholder.com/120';
+            if (useDiscordAvatar && profile.discord?.avatar) {
+                avatarUrl = profile.discord.avatar;
+            } else if (profile.avatar) {
+                avatarUrl = profile.avatar;
+            } else if (profile.discord?.avatar) {
+                avatarUrl = profile.discord.avatar;
             }
 
-            // Background Audio
+            // Background image
+            if (profile.bgImage) {
+                document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
+            }
+
+            // Audio
             if (profile.bgAudio) {
                 const audio = document.getElementById('bgAudio');
                 audio.src = profile.bgAudio;
                 audio.volume = (profile.audioVolume || 50) / 100;
-                document.getElementById('audioControl').style.display = 'block';
+                
+                if (showVolumeControl) {
+                    document.getElementById('audioControl').classList.add('visible');
+                }
             }
+
+            // Avatar decoration (Discord)
+            let decorationHTML = '';
+            if (showAvatarDecoration && profile.discord?.avatar_decoration_data?.asset) {
+                const decorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.discord.avatar_decoration_data.asset}.png`;
+                decorationHTML = `<img src="${decorationUrl}" class="avatar-decoration" alt="">`;
+            }
+
+            // Discord info
+            let discordHTML = '';
+            if (profile.discord) {
+                discordHTML = `
+                    <div class="discord-info">
+                        <img class="discord-avatar" src="${profile.discord.avatar}" alt="">
+                        <span class="discord-name">${profile.discord.username}#${profile.discord.discriminator || '0'}</span>
+                    </div>
+                `;
+            }
+
+            // Links
+            let linksHTML = '';
+            if (profile.links && profile.links.length > 0) {
+                linksHTML = '<div class="links">';
+                profile.links.forEach(link => {
+                    linksHTML += `<a href="${link.url}" target="_blank" rel="noopener" class="link-btn">${link.title}</a>`;
+                });
+                linksHTML += '</div>';
+            }
+
+            // Username effect class
+            const effectClass = usernameEffect !== 'none' ? `effect-${usernameEffect}` : '';
+
+            // Render
+            container.innerHTML = `
+                <div class="profile-card" style="opacity: ${opacity}; filter: blur(${blur}px);">
+                    <div class="avatar-wrapper">
+                        <img src="${avatarUrl}" alt="Avatar" class="avatar">
+                        ${decorationHTML}
+                    </div>
+                    <div class="username ${effectClass}" style="color: ${usernameColor};">@${displayName}</div>
+                    <div class="bio" style="color: ${bioColor}; font-family: '${bioFont}', sans-serif;">${bio}</div>
+                    ${discordHTML}
+                    ${linksHTML}
+                </div>
+            `;
+
+            // Update page title
+            document.title = `@${displayName} - FakeZone`;
         }
 
         loadProfile();
