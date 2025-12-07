@@ -716,6 +716,49 @@
             margin-top: 20px;
         }
 
+        /* Audio Controls */
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-audio {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-audio:hover {
+            border-color: #ff3333;
+        }
+
+        .btn-audio.playing {
+            background: rgba(255,51,51,0.2);
+            border-color: #ff3333;
+        }
+
+        .audio-status {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .audio-status.playing {
+            color: #00ff00;
+        }
+
+        .audio-info {
+            font-size: 11px;
+            color: #666;
+            margin-top: 8px;
+        }
+
         @media (max-width: 1200px) {
             .tile-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -947,7 +990,8 @@
                     <div class="tile-content">
                         <div class="form-group">
                             <label>Music URL</label>
-                            <input type="url" id="bg-audio" placeholder="https://example.com/music.mp3">
+                            <input type="url" id="bg-audio" placeholder="YouTube or MP3 URL" oninput="validateAudioURL(this.value)">
+                            <div class="audio-info">Supports: YouTube, MP3, WAV, OGG</div>
                         </div>
                         <div class="form-group">
                             <label>Volume</label>
@@ -955,6 +999,12 @@
                                 <input type="range" class="range-slider" id="audio-volume" min="0" max="100" value="50" oninput="updateVolumeLabel()">
                                 <span class="range-value" id="audio-volume-label">50%</span>
                             </div>
+                        </div>
+                        <div class="audio-controls">
+                            <button class="btn-audio" id="audio-test-btn" onclick="toggleTestAudio()">
+                                <span id="audio-test-text">▶ Test Audio</span>
+                            </button>
+                            <span class="audio-status" id="audio-status"></span>
                         </div>
                     </div>
                 </div>
@@ -1135,6 +1185,15 @@
         </div>
     </div>
 
+    <!-- Hidden YouTube Player -->
+    <div id="youtube-player" style="display:none;"></div>
+    
+    <!-- Hidden Audio Element -->
+    <audio id="test-audio" style="display:none;"></audio>
+
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -1156,6 +1215,9 @@
         let currentUser = null;
         let userProfile = null;
         let selectedEffect = 'none';
+        let youtubePlayer = null;
+        let audioPlayer = null;
+        let isPlaying = false;
 
         // Format UID
         function formatUid(num) {
@@ -1182,6 +1244,122 @@
         function maskEmail(email) {
             if (email.length <= 5) return email;
             return email.substring(0, 5) + '*'.repeat(email.length - 5);
+        }
+
+        // Extract YouTube Video ID
+        function extractYouTubeId(url) {
+            const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        // Validate Audio URL
+        window.validateAudioURL = function(url) {
+            if (!url) return true;
+            
+            const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.webm'];
+            const isDirectAudio = audioExtensions.some(ext => url.toLowerCase().includes(ext));
+            const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
+            
+            const statusEl = document.getElementById('audio-status');
+            
+            if (isYouTube) {
+                statusEl.textContent = 'YouTube detected ✓';
+                statusEl.className = 'audio-status playing';
+            } else if (isDirectAudio) {
+                statusEl.textContent = 'Direct audio detected ✓';
+                statusEl.className = 'audio-status playing';
+            } else if (url) {
+                statusEl.textContent = 'Unknown format - may not work';
+                statusEl.className = 'audio-status';
+            } else {
+                statusEl.textContent = '';
+            }
+            
+            return true;
+        };
+
+        // YouTube API Ready
+        window.onYouTubeIframeAPIReady = function() {
+            console.log('YouTube API ready');
+        };
+
+        // Toggle Test Audio
+        window.toggleTestAudio = function() {
+            const url = document.getElementById('bg-audio').value;
+            const volume = document.getElementById('audio-volume').value;
+            const btn = document.getElementById('audio-test-btn');
+            const textEl = document.getElementById('audio-test-text');
+            
+            if (!url) {
+                alert('Please enter an audio URL first');
+                return;
+            }
+            
+            if (isPlaying) {
+                stopAllAudio();
+                btn.classList.remove('playing');
+                textEl.textContent = '▶ Test Audio';
+                isPlaying = false;
+            } else {
+                playTestAudio(url, volume);
+                btn.classList.add('playing');
+                textEl.textContent = '⏸ Stop';
+                isPlaying = true;
+            }
+        };
+
+        // Stop all audio
+        function stopAllAudio() {
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer = null;
+            }
+            if (youtubePlayer) {
+                youtubePlayer.destroy();
+                youtubePlayer = null;
+            }
+        }
+
+        // Play test audio
+        function playTestAudio(url, volume) {
+            stopAllAudio();
+            
+            const videoId = extractYouTubeId(url);
+            
+            if (videoId) {
+                // YouTube
+                youtubePlayer = new YT.Player('youtube-player', {
+                    height: '0',
+                    width: '0',
+                    videoId: videoId,
+                    playerVars: {
+                        autoplay: 1,
+                        loop: 1,
+                        playlist: videoId
+                    },
+                    events: {
+                        onReady: function(event) {
+                            event.target.setVolume(volume);
+                            event.target.playVideo();
+                        },
+                        onError: function(error) {
+                            alert('Error loading YouTube video. Check the URL.');
+                            toggleTestAudio();
+                        }
+                    }
+                });
+            } else {
+                // Direct audio file
+                audioPlayer = document.getElementById('test-audio');
+                audioPlayer.src = url;
+                audioPlayer.volume = volume / 100;
+                audioPlayer.loop = true;
+                audioPlayer.play().catch(e => {
+                    alert('Error playing audio. Check the URL or try a different format.');
+                    toggleTestAudio();
+                });
+            }
         }
 
         // Auth check
@@ -1344,6 +1522,14 @@
         // Range labels
         window.updateVolumeLabel = function() {
             document.getElementById('audio-volume-label').textContent = document.getElementById('audio-volume').value + '%';
+            
+            // Update volume if audio is playing
+            if (audioPlayer && !audioPlayer.paused) {
+                audioPlayer.volume = document.getElementById('audio-volume').value / 100;
+            }
+            if (youtubePlayer && youtubePlayer.setVolume) {
+                youtubePlayer.setVolume(document.getElementById('audio-volume').value);
+            }
         };
         window.updateOpacityLabel = function() {
             document.getElementById('profile-opacity-label').textContent = document.getElementById('profile-opacity').value + '%';
@@ -1355,6 +1541,8 @@
         // Save customization
         window.saveCustomization = async function() {
             try {
+                stopAllAudio(); // Stop audio before saving
+                
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     avatar: document.getElementById('avatar').value,
                     bio: document.getElementById('bio').value,
@@ -1371,10 +1559,20 @@
                     showVolumeControl: document.getElementById('toggle-volume-control').checked,
                     showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked
                 });
-                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Saved!</div>';
+                
+                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Saved! Your profile has been updated.</div>';
                 setTimeout(() => document.getElementById('customizeSaveStatus').innerHTML = '', 3000);
+                
+                // Reset audio button
+                const btn = document.getElementById('audio-test-btn');
+                const textEl = document.getElementById('audio-test-text');
+                btn.classList.remove('playing');
+                textEl.textContent = '▶ Test Audio';
+                isPlaying = false;
+                
             } catch (error) {
-                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-error">Error saving</div>';
+                console.error('Error saving:', error);
+                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-error">Error saving changes</div>';
             }
         };
 
@@ -1497,9 +1695,15 @@
         };
 
         window.logout = async function() {
+            stopAllAudio();
             await signOut(auth);
             window.location.href = '/';
         };
+
+        // Clean up audio on page unload
+        window.addEventListener('beforeunload', function() {
+            stopAllAudio();
+        });
     </script>
 </body>
 </html>
