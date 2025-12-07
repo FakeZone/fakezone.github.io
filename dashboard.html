@@ -928,15 +928,13 @@
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Email</div>
-                        <div class="setting-value" style="display: flex; align-items: center; gap: 10px;">
-                            <span id="settings-email-display">-</span>
-                            <button class="btn btn-small" style="padding: 4px 8px; min-width: auto;" onclick="toggleEmailVisibility()">
-                                <span id="email-toggle-icon">👁</span>
-                            </button>
-                        </div>
+                        <div class="setting-value" id="settings-email-display">-</div>
                         <div id="email-status"></div>
                     </div>
                     <div class="setting-action" id="email-view-mode">
+                        <button class="btn btn-small" onclick="toggleEmailVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
+                            <span id="email-toggle-icon">👁</span>
+                        </button>
                         <button class="btn btn-small" onclick="startEditEmail()">Change</button>
                     </div>
                     <div class="setting-action hidden" id="email-edit-mode">
@@ -955,6 +953,9 @@
                         <div id="password-status"></div>
                     </div>
                     <div class="setting-action" id="password-view-mode">
+                        <button class="btn btn-small" onclick="togglePasswordVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
+                            <span id="password-toggle-icon">👁</span>
+                        </button>
                         <button class="btn btn-small" onclick="startEditPassword()">Change</button>
                     </div>
                     <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
