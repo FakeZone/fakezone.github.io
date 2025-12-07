@@ -2096,16 +2096,6 @@ function playTestAudio(url, volume) {
             previewContainer.style.opacity = opacity / 100;
             previewContainer.style.filter = `blur(${blur / 10}px)`;
         };
-            
-            const bioEl = document.getElementById('previewBio');
-            bioEl.textContent = bio;
-            bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
-            bioEl.style.color = bioColor;
-
-            previewContainer.style.opacity = opacity / 100;
-            previewContainer.style.filter = `blur(${blur / 10}px)`;
-        };
-
         window.selectEffect = function(effect) {
             selectedEffect = effect;
             document.querySelectorAll('.effect-option').forEach(opt => {
