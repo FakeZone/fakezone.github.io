@@ -910,13 +910,17 @@
                 if (userData.bgImage) {
                     document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
     
-                    // Apply custom overlay color and opacity
-                    const overlayColor = userData.bgOverlayColor || '#000000';
-                    const overlayOpacity = userData.bgOverlayOpacity ?? 60;
-                    const rgb = hexToRgb(overlayColor);
-    
-                    document.getElementById('bgOverlay').style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${overlayOpacity / 100})`;
+                    // Stałe przyciemnienie banneru
+                    document.getElementById('bgOverlay').style.background = 'rgba(0, 0, 0, 0.6)';
                 }
+
+                // ============ KOLOR BOKSU PROFILU ============
+                const profileCard = document.getElementById('profileCard');
+                const boxColor = userData.bgOverlayColor || '#111111';
+                const boxOpacity = userData.bgOverlayOpacity ?? 95;
+                const rgb = hexToRgb(boxColor);
+
+                profileCard.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${boxOpacity / 100})`;
                 
                 let avatarUrl = 'https://via.placeholder.com/120';
                 if (userData.useDiscordAvatar && userData.discord?.avatar) {
