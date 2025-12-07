@@ -567,8 +567,8 @@
         }
 
         .setting-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
+            border-bottom: none
+                        padding-bottom: 0;
         }
 
         .setting-info {
@@ -928,10 +928,23 @@
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Email</div>
-                        <div class="setting-value" id="settings-email">-</div>
+                        <div class="setting-value" style="display: flex; align-items: center; gap: 10px;">
+                            <span id="settings-email-display">-</span>
+                            <button class="btn btn-small" style="padding: 4px 8px; min-width: auto;" onclick="toggleEmailVisibility()">
+                                <span id="email-toggle-icon">👁</span>
+                            </button>
+                        </div>
+                        <div id="email-status"></div>
                     </div>
-                    <div class="setting-action">
-                        <button class="btn btn-small" onclick="alert('Coming soon')">Change</button>
+                    <div class="setting-action" id="email-view-mode">
+                        <button class="btn btn-small" onclick="startEditEmail()">Change</button>
+                    </div>
+                    <div class="setting-action hidden" id="email-edit-mode">
+                        <input type="email" class="edit-input" id="new-email" placeholder="New email">
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveEmail()">Send Verification</button>
+                            <button class="btn-cancel" onclick="cancelEditEmail()">Cancel</button>
+                        </div>
                     </div>
                 </div>
 
@@ -939,9 +952,19 @@
                     <div class="setting-info">
                         <div class="setting-label">Password</div>
                         <div class="setting-value">••••••••</div>
+                        <div id="password-status"></div>
                     </div>
-                    <div class="setting-action">
-                        <button class="btn btn-small" onclick="alert('Coming soon')">Change</button>
+                    <div class="setting-action" id="password-view-mode">
+                        <button class="btn btn-small" onclick="startEditPassword()">Change</button>
+                    </div>
+                    <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
+                        <input type="password" class="edit-input" id="current-password" placeholder="Current password">
+                        <input type="password" class="edit-input" id="new-password" placeholder="New password">
+                        <input type="password" class="edit-input" id="confirm-password" placeholder="Confirm new password">
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="savePassword()">Change Password</button>
+                            <button class="btn-cancel" onclick="cancelEditPassword()">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1439,8 +1462,29 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, updateDoc, deleteDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut,
+            updateEmail,
+            sendEmailVerification,
+            EmailAuthProvider,
+            reauthenticateWithCredential,
+            updatePassword
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            deleteDoc, 
+            setDoc,
+            collection,
+            query,
+            where,
+            getDocs,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -1461,9 +1505,16 @@
         let youtubePlayer = null;
         let audioPlayer = null;
         let isPlaying = false;
+        let emailVisible = false;
+        let fullEmail = '';
 
         function formatUid(num) {
             return '#' + String(num).padStart(4, '0');
+        }
+
+        function maskEmail(email) {
+            if (email.length <= 5) return email;
+            return email.substring(0, 5) + '*'.repeat(email.length - 5);
         }
 
         window.toggleMenu = function(menuId) {
@@ -1479,11 +1530,6 @@
             document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
             if (linkElement) linkElement.classList.add('active');
         };
-
-        function maskEmail(email) {
-            if (email.length <= 5) return email;
-            return email.substring(0, 5) + '*'.repeat(email.length - 5);
-        }
 
         function extractYouTubeId(url) {
             const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/;
@@ -1609,13 +1655,41 @@
             }
             currentUser = user;
             await loadProfile();
+            recordProfileView();
         });
+
+        async function recordProfileView() {
+            if (!userProfile) return;
+
+            try {
+                const viewsRef = doc(db, 'profileViews', currentUser.uid);
+                const viewsDoc = await getDoc(viewsRef);
+                
+                const now = Date.now();
+                const lastViewTime = viewsDoc.exists() ? viewsDoc.data().lastViewTime : 0;
+                const cooldownMs = 5 * 60 * 1000; // 5 minutes in milliseconds
+                
+                // Only record view if cooldown has passed
+                if (now - lastViewTime >= cooldownMs) {
+                    const currentViews = viewsDoc.exists() ? viewsDoc.data().count : 0;
+                    
+                    await setDoc(viewsRef, {
+                        count: currentViews + 1,
+                        lastViewTime: now,
+                        uid: currentUser.uid
+                    });
+                }
+            } catch (error) {
+                console.error('Error recording profile view:', error);
+            }
+        }
 
         async function loadProfile() {
             const docSnap = await getDoc(doc(db, 'users', currentUser.uid));
             if (docSnap.exists()) {
                 userProfile = docSnap.data();
                 const profileUrl = `${window.location.origin}/${userProfile.username}`;
+                fullEmail = currentUser.email;
                 const maskedEmail = maskEmail(currentUser.email);
 
                 document.getElementById('overview-username').textContent = userProfile.username;
@@ -1626,7 +1700,7 @@
 
                 document.getElementById('settings-username-display').textContent = userProfile.username;
                 document.getElementById('settings-displayname-display').textContent = userProfile.displayName || userProfile.username;
-                document.getElementById('settings-email').textContent = maskedEmail;
+                document.getElementById('settings-email-display').textContent = maskedEmail;
 
                 document.getElementById('avatar').value = userProfile.avatar || '';
                 document.getElementById('bio').value = userProfile.bio || '';
@@ -1641,7 +1715,6 @@
                 document.getElementById('profile-opacity').value = userProfile.profileOpacity ?? 100;
                 document.getElementById('profile-blur').value = userProfile.profileBlur || 0;
 
-                // NEW: Background and Icons colors
                 document.getElementById('bg-overlay-color').value = userProfile.bgOverlayColor || '#000000';
                 document.getElementById('bg-overlay-color-hex').value = userProfile.bgOverlayColor || '#000000';
                 document.getElementById('bg-overlay-opacity').value = userProfile.bgOverlayOpacity ?? 60;
@@ -1686,6 +1759,130 @@
             }
         }
 
+        window.toggleEmailVisibility = function() {
+            const emailDisplay = document.getElementById('settings-email-display');
+            const toggleIcon = document.getElementById('email-toggle-icon');
+            
+            if (emailVisible) {
+                emailDisplay.textContent = maskEmail(fullEmail);
+                toggleIcon.textContent = '👁';
+                emailVisible = false;
+            } else {
+                emailDisplay.textContent = fullEmail;
+                toggleIcon.textContent = '👁‍🗨';
+                emailVisible = true;
+            }
+        };
+
+        window.startEditEmail = function() {
+            document.getElementById('email-view-mode').classList.add('hidden');
+            document.getElementById('email-edit-mode').classList.remove('hidden');
+            document.getElementById('new-email').value = '';
+        };
+
+        window.cancelEditEmail = function() {
+            document.getElementById('email-view-mode').classList.remove('hidden');
+            document.getElementById('email-edit-mode').classList.add('hidden');
+            document.getElementById('email-status').innerHTML = '';
+        };
+
+        window.saveEmail = async function() {
+            const newEmail = document.getElementById('new-email').value.trim();
+            
+            if (!newEmail) {
+                document.getElementById('email-status').innerHTML = '<span class="status-error">Please enter new email</span>';
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newEmail)) {
+                document.getElementById('email-status').innerHTML = '<span class="status-error">Invalid email format</span>';
+                return;
+            }
+
+            try {
+                await updateEmail(currentUser, newEmail);
+                await sendEmailVerification(currentUser);
+                
+                document.getElementById('email-status').innerHTML = '<span class="status-success">✓ Verification sent! Check your new email.</span>';
+                
+                setTimeout(() => {
+                    cancelEditEmail();
+                    auth.signOut();
+                    window.location.href = '/';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Email update error:', error);
+                
+                if (error.code === 'auth/requires-recent-login') {
+                    document.getElementById('email-status').innerHTML = '<span class="status-error">Please log out and log in again</span>';
+                } else if (error.code === 'auth/email-already-in-use') {
+                    document.getElementById('email-status').innerHTML = '<span class="status-error">This email is already in use</span>';
+                } else {
+                    document.getElementById('email-status').innerHTML = '<span class="status-error">Failed to update email</span>';
+                }
+            }
+        };
+
+        window.startEditPassword = function() {
+            document.getElementById('password-view-mode').classList.add('hidden');
+            document.getElementById('password-edit-mode').classList.remove('hidden');
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        };
+
+        window.cancelEditPassword = function() {
+            document.getElementById('password-view-mode').classList.remove('hidden');
+            document.getElementById('password-edit-mode').classList.add('hidden');
+            document.getElementById('password-status').innerHTML = '';
+        };
+
+        window.savePassword = async function() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                document.getElementById('password-status').innerHTML = '<span class="status-error">Please fill all fields</span>';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                document.getElementById('password-status').innerHTML = '<span class="status-error">Password must be at least 6 characters</span>';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('password-status').innerHTML = '<span class="status-error">Passwords do not match</span>';
+                return;
+            }
+
+            try {
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+                await reauthenticateWithCredential(currentUser, credential);
+                await updatePassword(currentUser, newPassword);
+                
+                document.getElementById('password-status').innerHTML = '<span class="status-success">✓ Password changed successfully!</span>';
+                
+                setTimeout(() => {
+                    cancelEditPassword();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Password update error:', error);
+                
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    document.getElementById('password-status').innerHTML = '<span class="status-error">Current password is incorrect</span>';
+                } else if (error.code === 'auth/weak-password') {
+                    document.getElementById('password-status').innerHTML = '<span class="status-error">New password is too weak</span>';
+                } else {
+                    document.getElementById('password-status').innerHTML = '<span class="status-error">Failed to update password</span>';
+                }
+            }
+        };
+
         window.updatePreview = function() {
             const useDiscordAvatar = document.getElementById('toggle-discord-avatar').checked;
             const customAvatar = document.getElementById('avatar').value;
@@ -1700,7 +1897,6 @@
                 previewBgOverlay.style.display = 'block';
                 previewContainer.classList.add('has-bg');
                 
-                // Apply background overlay color
                 const bgOverlayColor = document.getElementById('bg-overlay-color').value;
                 const bgOverlayOpacity = document.getElementById('bg-overlay-opacity').value;
                 const rgb = hexToRgb(bgOverlayColor);
@@ -1774,7 +1970,6 @@
             }
         };
 
-        // NEW: Background overlay color functions
         window.updateBgOverlayColorHex = function() {
             document.getElementById('bg-overlay-color-hex').value = document.getElementById('bg-overlay-color').value;
         };
@@ -1788,7 +1983,6 @@
             document.getElementById('bg-overlay-opacity-label').textContent = document.getElementById('bg-overlay-opacity').value + '%';
         };
 
-        // NEW: Icons color functions
         window.updateIconsColorHex = function() {
             document.getElementById('icons-color-hex').value = document.getElementById('icons-color').value;
         };
@@ -1816,7 +2010,6 @@
             document.getElementById('profile-blur-label').textContent = document.getElementById('profile-blur').value + '%';
         };
 
-        // ============ SAVE LINKS ============
         window.saveLinks = async function() {
             try {
                 await updateDoc(doc(db, 'users', currentUser.uid), {
