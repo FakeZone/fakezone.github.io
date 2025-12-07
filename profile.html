@@ -909,12 +909,12 @@
                 // ============ BACKGROUND & OVERLAY ============
                 if (userData.bgImage) {
                     document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
-                    
+    
                     // Apply custom overlay color and opacity
                     const overlayColor = userData.bgOverlayColor || '#000000';
                     const overlayOpacity = userData.bgOverlayOpacity ?? 60;
                     const rgb = hexToRgb(overlayColor);
-                    
+    
                     document.getElementById('bgOverlay').style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${overlayOpacity / 100})`;
                 }
                 
