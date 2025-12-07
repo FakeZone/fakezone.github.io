@@ -13,382 +13,468 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #000000, #1a1a1a);
+            background: #0a0a0a;
             font-family: 'Segoe UI', sans-serif;
             color: #fff;
-            padding: 20px;
-        }
-
-        .navbar {
-            background: rgba(20,20,20,0.9);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            margin-bottom: 30px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .navbar h1 {
-            font-size: 24px;
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #000;
+            border-right: 1px solid #1a1a1a;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 40px;
             background: linear-gradient(45deg, #fff, #ff3333);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
+            padding: 10px 0;
         }
 
-        .logout-btn {
-            padding: 8px 20px;
-            background: #1a1a1a;
-            border: 1px solid #ff3333;
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .menu-header:hover {
+            border-color: #ff3333;
+            background: #151515;
+        }
+
+        .menu-header.active {
+            border-color: #ff3333;
+            background: rgba(255,51,51,0.05);
+        }
+
+        .menu-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .menu-arrow {
+            transition: transform 0.3s;
+            color: #666;
+        }
+
+        .menu-header.active .menu-arrow {
+            transform: rotate(180deg);
             color: #ff3333;
+        }
+
+        .menu-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .menu-content.active {
+            max-height: 500px;
+        }
+
+        .menu-item {
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
             border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .menu-item label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item .value {
+            font-size: 14px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .menu-item .value.masked {
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .edit-btn {
+            padding: 4px 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            border-radius: 4px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        .logout-btn:hover {
-            background: rgba(255,51,51,0.1);
-            transform: translateY(-2px);
+        .edit-btn:hover {
+            border-color: #ff3333;
+            color: #ff3333;
+            background: rgba(255,51,51,0.05);
         }
 
-        .main-container {
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .page-title {
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            border-color: #ff3333;
+            background: rgba(255,51,51,0.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,51,51,0.4);
+        }
+
+        .logout-btn {
+            border-color: #ff3333;
+            color: #ff3333;
+        }
+
+        /* Content Panels */
+        .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
         .panel {
-            background: rgba(20,20,20,0.8);
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid #333;
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 25px;
         }
 
-        .panel h2 {
-            margin-bottom: 20px;
+        .panel h3 {
+            font-size: 16px;
             color: #ff3333;
-            font-size: 20px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
-        label {
+        .form-group label {
             display: block;
-            margin-bottom: 5px;
+            font-size: 12px;
             color: #888;
-            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        input, textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 12px;
             background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 5px;
+            border: 1px solid #222;
+            border-radius: 6px;
             color: #fff;
             font-size: 14px;
             transition: all 0.3s;
         }
 
-        input:focus, textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #ff3333;
-            box-shadow: 0 0 10px rgba(255,51,51,0.2);
+            background: #0f0f0f;
         }
 
-        input::placeholder, textarea::placeholder {
-            color: #666;
-        }
-
-        textarea {
-            resize: vertical;
+        .form-group textarea {
             min-height: 100px;
+            resize: vertical;
+        }
+
+        .discord-connect {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 6px;
         }
 
         .discord-btn {
-            width: 100%;
-            padding: 12px;
+            padding: 10px 20px;
             background: #5865F2;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             color: #fff;
-            font-size: 14px;
-            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
+            gap: 8px;
+            transition: all 0.3s;
         }
 
         .discord-btn:hover {
             background: #4752C4;
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(88,101,242,0.4);
         }
 
-        .discord-info {
-            margin-top: 10px;
-            padding: 10px;
+        /* Preview */
+        .preview-box {
             background: #0a0a0a;
-            border-radius: 5px;
-            border: 1px solid #333;
-            display: none;
-        }
-
-        .discord-info.active {
-            display: block;
-        }
-
-        .discord-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .discord-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #5865F2;
-        }
-
-        .discord-details {
-            flex: 1;
-        }
-
-        .discord-name {
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .discord-status {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .disconnect-btn {
-            padding: 5px 10px;
-            background: #ff3333;
-            border: none;
-            border-radius: 3px;
-            color: #fff;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .links-container {
-            margin-bottom: 15px;
-        }
-
-        .link-item {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .link-item input {
-            flex: 1;
-        }
-
-        .remove-link {
-            padding: 8px 15px;
-            background: #1a1a1a;
-            border: 1px solid #ff3333;
-            color: #ff3333;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .remove-link:hover {
-            background: rgba(255,51,51,0.2);
-        }
-
-        .add-link {
-            padding: 10px 20px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #888;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-        }
-
-        .add-link:hover {
-            border-color: #ff3333;
-            color: #ff3333;
-        }
-
-        .save-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #ff3333, #cc0000);
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .save-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255,51,51,0.4);
-        }
-
-        .preview {
-            background: #0a0a0a;
+            border-radius: 10px;
             padding: 30px;
-            border-radius: 15px;
             text-align: center;
         }
 
         .preview-avatar {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             border: 2px solid #ff3333;
             margin-bottom: 15px;
-            object-fit: cover;
         }
 
-        .preview-username {
-            font-size: 24px;
+        .preview-name {
+            font-size: 20px;
             margin-bottom: 10px;
         }
 
         .preview-bio {
             color: #888;
             margin-bottom: 20px;
-        }
-
-        .preview-link {
-            display: block;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 5px;
-            color: #fff;
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-
-        .preview-link:hover {
-            border-color: #ff3333;
-            background: rgba(255,51,51,0.05);
-        }
-
-        .profile-url {
-            background: #0a0a0a;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 15px;
-            word-break: break-all;
             font-size: 14px;
+        }
+
+        /* Profile URL */
+        .profile-url {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 6px;
+        }
+
+        .profile-url label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
         .profile-url a {
             color: #ff3333;
             text-decoration: none;
+            font-size: 14px;
         }
 
-        .success {
-            color: #00ff00;
-            text-align: center;
-            margin-top: 10px;
+        .profile-url a:hover {
+            text-decoration: underline;
         }
 
-        .error {
-            color: #ff3333;
-            text-align: center;
-            margin-top: 10px;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .main-container {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+            .content-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>FakeZone Dashboard</h1>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-
-    <div class="main-container">
-        <div class="panel">
-            <h2>Edit Profile</h2>
-            
-            <!-- Discord Connection -->
-            <div class="form-group">
-                <label>Discord Account</label>
-                <button type="button" class="discord-btn" onclick="connectDiscord()" id="discordBtn">
-                    <svg width="20" height="20" viewBox="0 0 71 55" fill="currentColor">
-                        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z"/>
-                    </svg>
-                    Connect Discord
-                </button>
-                <div class="discord-info" id="discordInfo">
-                    <div class="discord-user">
-                        <img class="discord-avatar" id="discordAvatar" src="">
-                        <div class="discord-details">
-                            <div class="discord-name" id="discordName">-</div>
-                            <div class="discord-status">Connected</div>
-                        </div>
-                        <button class="disconnect-btn" onclick="disconnectDiscord()">Disconnect</button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">FakeZone</div>
+        
+        <!-- Account Section -->
+        <div class="menu-section">
+            <div class="menu-header" onclick="toggleMenu('account')">
+                <span class="menu-title">Account</span>
+                <span class="menu-arrow">▼</span>
+            </div>
+            <div class="menu-content" id="account-menu">
+                <div class="menu-item">
+                    <label>Username</label>
+                    <div class="value">
+                        <span id="sidebar-username">-</span>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <label>Email</label>
+                    <div class="value masked">
+                        <span id="sidebar-email">-</span>
+                        <button class="edit-btn" onclick="alert('Email change coming soon')">Edit</button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" readonly style="opacity: 0.5;">
+        <!-- Profile Section -->
+        <div class="menu-section">
+            <div class="menu-header active" onclick="toggleMenu('profile')">
+                <span class="menu-title">Profile</span>
+                <span class="menu-arrow">▼</span>
             </div>
-
-            <div class="form-group">
-                <label>Avatar URL</label>
-                <input type="url" id="avatar" placeholder="https://example.com/image.jpg">
+            <div class="menu-content active" id="profile-menu">
+                <div class="menu-item">
+                    <label>Profile URL</label>
+                    <div class="value">
+                        <a href="#" id="sidebar-profile-url" style="color:#ff3333; text-decoration:none; font-size:12px;">Loading...</a>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label>Bio</label>
-                <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Links</label>
-                <div id="linksContainer" class="links-container"></div>
-                <button class="add-link" onclick="addLink()">+ Add Link</button>
-            </div>
-
-            <button class="save-btn" onclick="saveProfile()">SAVE CHANGES</button>
-            <div id="saveStatus"></div>
-
-            <div class="profile-url">
-                Your profile: <span id="profileUrl"></span>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <div class="header-actions">
+                <button class="btn" onclick="viewProfile()">View Profile</button>
+                <button class="btn logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
 
-        <div class="panel">
-            <h2>Preview</h2>
-            <div class="preview">
-                <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/100">
-                <div id="previewUsername" class="preview-username">@username</div>
-                <div id="previewBio" class="preview-bio">Bio here...</div>
-                <div id="previewLinks"></div>
+        <div class="content-grid">
+            <!-- Edit Profile Panel -->
+            <div class="panel">
+                <h3>Edit Profile</h3>
+                
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="username" readonly style="opacity: 0.5;">
+                </div>
+
+                <div class="form-group">
+                    <label>Avatar URL</label>
+                    <input type="url" id="avatar" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Discord Connection</label>
+                    <div class="discord-connect">
+                        <button class="discord-btn" onclick="connectDiscord()" id="discordBtn">
+                            <svg width="20" height="15" viewBox="0 0 71 55" fill="currentColor">
+                                <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/>
+                            </svg>
+                            Connect Discord
+                        </button>
+                        <div id="discordInfo" style="display:none;">
+                            <span id="discordName">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveProfile()" style="width:100%; margin-top:20px;">
+                    Save Changes
+                </button>
+                <div id="saveStatus"></div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="panel">
+                <h3>Preview</h3>
+                <div class="preview-box">
+                    <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/80">
+                    <div id="previewUsername" class="preview-name">@username</div>
+                    <div id="previewBio" class="preview-bio">Your bio here...</div>
+                </div>
+
+                <div class="profile-url">
+                    <label>Your Profile URL</label>
+                    <a href="#" id="profileUrl" target="_blank">Loading...</a>
+                </div>
             </div>
         </div>
     </div>
@@ -414,9 +500,14 @@
         let currentUser = null;
         let userProfile = null;
 
-        // Make functions global
-        window.auth = auth;
-        window.db = db;
+        // Toggle menu
+        window.toggleMenu = function(menuId) {
+            const menu = document.getElementById(menuId + '-menu');
+            const header = menu.previousElementSibling;
+            
+            menu.classList.toggle('active');
+            header.classList.toggle('active');
+        };
 
         // Check auth
         onAuthStateChanged(auth, async (user) => {
@@ -426,7 +517,12 @@
             }
             
             currentUser = user;
-            window.currentUser = user;
+            
+            // Mask email
+            const email = user.email;
+            const maskedEmail = email.substring(0, 5) + '*'.repeat(email.length - 5);
+            document.getElementById('sidebar-email').textContent = maskedEmail;
+            
             await loadProfile();
         });
 
@@ -437,109 +533,64 @@
             
             if (docSnap.exists()) {
                 userProfile = docSnap.data();
-                window.userProfile = userProfile;
                 
-                // Load data into form
+                // Update sidebar
+                document.getElementById('sidebar-username').textContent = userProfile.username;
+                const profileUrl = `${window.location.origin}/${userProfile.username}`;
+                document.getElementById('sidebar-profile-url').href = profileUrl;
+                document.getElementById('sidebar-profile-url').textContent = `/${userProfile.username}`;
+                
+                // Update form
                 document.getElementById('username').value = userProfile.username;
                 document.getElementById('avatar').value = userProfile.avatar || '';
                 document.getElementById('bio').value = userProfile.bio || '';
                 
-                // Load links
-                loadLinks();
-                
                 // Update preview
                 updatePreview();
                 
-                // Show Discord if connected
-                if (userProfile.discord) {
-                    showDiscordInfo();
-                }
-                
-                // Show profile URL
-                const profileUrl = `${window.location.origin}/${userProfile.username}`;
-                document.getElementById('profileUrl').innerHTML = `<a href="${profileUrl}" target="_blank">${profileUrl}</a>`;
+                // Update profile URL
+                document.getElementById('profileUrl').href = profileUrl;
+                document.getElementById('profileUrl').textContent = profileUrl;
             }
         }
-
-        // Show Discord info
-        function showDiscordInfo() {
-            if (userProfile.discord) {
-                document.getElementById('discordBtn').style.display = 'none';
-                document.getElementById('discordInfo').classList.add('active');
-                document.getElementById('discordAvatar').src = userProfile.discord.avatar;
-                document.getElementById('discordName').textContent = `${userProfile.discord.username}#${userProfile.discord.discriminator || '0'}`;
-            }
-        }
-
-        // Load links
-        function loadLinks() {
-            const container = document.getElementById('linksContainer');
-            container.innerHTML = '';
-            
-            if (userProfile.links && userProfile.links.length > 0) {
-                userProfile.links.forEach((link) => {
-                    addLinkField(link.title, link.url);
-                });
-            }
-        }
-
-        // Add link field
-        window.addLink = function() {
-            addLinkField('', '');
-        };
-
-        function addLinkField(title = '', url = '') {
-            const container = document.getElementById('linksContainer');
-            const linkDiv = document.createElement('div');
-            linkDiv.className = 'link-item';
-            
-            linkDiv.innerHTML = `
-                <input type="text" placeholder="Title" value="${title}" class="link-title" oninput="updatePreview()">
-                <input type="url" placeholder="URL" value="${url}" class="link-url" oninput="updatePreview()">
-                <button class="remove-link" onclick="removeLink(this)">X</button>
-            `;
-            
-            container.appendChild(linkDiv);
-            updatePreview();
-        }
-
-        // Remove link
-        window.removeLink = function(button) {
-            button.parentElement.remove();
-            updatePreview();
-        };
 
         // Update preview
         window.updatePreview = function() {
-            const avatar = document.getElementById('avatar').value || 'https://via.placeholder.com/100';
-            const bio = document.getElementById('bio').value || 'Bio here...';
+            const avatar = document.getElementById('avatar').value || 'https://via.placeholder.com/80';
+            const bio = document.getElementById('bio').value || 'Your bio here...';
             const username = document.getElementById('username').value;
             
             document.getElementById('previewAvatar').src = avatar;
             document.getElementById('previewUsername').textContent = '@' + username;
             document.getElementById('previewBio').textContent = bio;
-            
-            // Update links preview
-            const linksPreview = document.getElementById('previewLinks');
-            linksPreview.innerHTML = '';
-            
-            const linkItems = document.querySelectorAll('.link-item');
-            linkItems.forEach(item => {
-                const title = item.querySelector('.link-title').value;
-                const url = item.querySelector('.link-url').value;
-                
-                if (title && url) {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.target = '_blank';
-                    a.className = 'preview-link';
-                    a.textContent = title;
-                    linksPreview.appendChild(a);
-                }
-            });
         };
 
-        // Discord OAuth
+        // Save profile
+        window.saveProfile = async function() {
+            const avatar = document.getElementById('avatar').value;
+            const bio = document.getElementById('bio').value;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    avatar: avatar,
+                    bio: bio
+                });
+                
+                document.getElementById('saveStatus').innerHTML = '<div style="color:#00ff00; margin-top:10px;">✓ Saved!</div>';
+                setTimeout(() => {
+                    document.getElementById('saveStatus').innerHTML = '';
+                }, 3000);
+            } catch (error) {
+                document.getElementById('saveStatus').innerHTML = '<div style="color:#ff3333; margin-top:10px;">Error saving</div>';
+            }
+        };
+
+        // View profile
+        window.viewProfile = function() {
+            window.open(`/${userProfile.username}`, '_blank');
+        };
+
+        // Discord connect
         window.connectDiscord = function() {
             const clientId = '1447016560559390923';
             const redirectUri = 'https://fakezone.github.io/discord-callback';
@@ -550,62 +601,13 @@
             window.location.href = authUrl;
         };
 
-        // Disconnect Discord
-        window.disconnectDiscord = async function() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    discord: null
-                });
-                
-                document.getElementById('discordBtn').style.display = 'block';
-                document.getElementById('discordInfo').classList.remove('active');
-                
-                alert('Discord disconnected');
-            } catch (error) {
-                console.error('Error disconnecting Discord:', error);
-            }
-        };
-
-        // Save profile
-        window.saveProfile = async function() {
-            const avatar = document.getElementById('avatar').value;
-            const bio = document.getElementById('bio').value;
-            
-            // Collect links
-            const links = [];
-            const linkItems = document.querySelectorAll('.link-item');
-            linkItems.forEach(item => {
-                const title = item.querySelector('.link-title').value;
-                const url = item.querySelector('.link-url').value;
-                if (title && url) {
-                    links.push({ title, url });
-                }
-            });
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    avatar: avatar,
-                    bio: bio,
-                    links: links
-                });
-                
-                document.getElementById('saveStatus').innerHTML = '<div class="success">✓ Saved successfully!</div>';
-                setTimeout(() => {
-                    document.getElementById('saveStatus').innerHTML = '';
-                }, 3000);
-            } catch (error) {
-                console.error(error);
-                document.getElementById('saveStatus').innerHTML = '<div class="error">Error saving profile</div>';
-            }
-        };
-
         // Logout
         window.logout = async function() {
             await signOut(auth);
             window.location.href = '/';
         };
 
-        // Initialize preview listeners
+        // Initialize listeners
         document.getElementById('avatar').addEventListener('input', updatePreview);
         document.getElementById('bio').addEventListener('input', updatePreview);
     </script>
