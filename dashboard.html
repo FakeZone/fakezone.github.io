@@ -830,37 +830,82 @@
                 grid-template-columns: 1fr;
             }
         }
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .view-profile-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .view-profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255,51,51,0.4);
+        }
+
+        .view-profile-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+    }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">FakeZone</div>
-        
-        <div class="menu-section">
-            <div class="menu-header active" onclick="toggleMenu('account')">
-                <span class="menu-title">Account</span>
-                <span class="menu-arrow">▼</span>
-            </div>
-            <div class="menu-dropdown active" id="account-dropdown">
-                <a href="#" class="menu-link active" onclick="showPage('overview', this)">Overview</a>
-                <a href="#" class="menu-link" onclick="showPage('settings', this)">Settings</a>
-            </div>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">FakeZone</div>
+    
+    <div class="menu-section">
+        <div class="menu-header active" onclick="toggleMenu('account')">
+            <span class="menu-title">Account</span>
+            <span class="menu-arrow">▼</span>
         </div>
-
-        <div class="menu-section">
-            <div class="menu-header" onclick="toggleMenu('profile')">
-                <span class="menu-title">Profile</span>
-                <span class="menu-arrow">▼</span>
-            </div>
-            <div class="menu-dropdown" id="profile-dropdown">
-                <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
-                <a href="#" class="menu-link" onclick="showPage('links', this)">Links</a>
-                <a href="#" class="menu-link" onclick="viewProfile()">View Profile</a>
-            </div>
+        <div class="menu-dropdown active" id="account-dropdown">
+            <a href="#" class="menu-link active" onclick="showPage('overview', this)">Overview</a>
+            <a href="#" class="menu-link" onclick="showPage('settings', this)">Settings</a>
         </div>
     </div>
+
+    <div class="menu-section">
+        <div class="menu-header" onclick="toggleMenu('profile')">
+            <span class="menu-title">Profile</span>
+            <span class="menu-arrow">▼</span>
+        </div>
+        <div class="menu-dropdown" id="profile-dropdown">
+            <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
+            <a href="#" class="menu-link" onclick="showPage('links', this)">Links</a>
+            <!-- Usunięte View Profile stąd -->
+        </div>
+    </div>
+
+    <!-- Nowy przycisk View Profile na dole -->
+    <div class="sidebar-footer">
+        <button class="view-profile-btn" onclick="viewProfile()">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+            View Profile
+        </button>
+    </div>
+</div>
 
     <!-- Main Content -->
     <div class="main-content">
