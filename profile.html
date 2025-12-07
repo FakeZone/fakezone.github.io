@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeZone Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Image */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(17, 17, 17, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid #ff3333;
+            object-fit: cover;
+        }
+
+        .username {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .bio {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .audio-controls.show {
+            opacity: 1;
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .audio-btn:hover {
+            color: #ff3333;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #ff3333;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #ff3333;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Effects */
+        .effect-glitch {
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+            }
+            25% {
+                text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+            }
+            50% {
+                text-shadow: 2px 0 #00ffff, -2px 0 #ff0000;
+            }
+            75% {
+                text-shadow: -2px 0 #00ffff, 2px 0 #ff0000;
+            }
+        }
+
+        .effect-rainbow {
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .effect-glow {
+            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+        }
+
+        .effect-wave {
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .effect-typing::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            color: #ff3333;
+        }
+
+        /* Click to play overlay */
+        .click-to-play {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .click-to-play.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .click-to-play-text {
+            font-size: 24px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-image" id="bgImage"></div>
+    <div class="bg-overlay" id="bgOverlay"></div>
+
+    <!-- Click to play overlay -->
+    <div class="click-to-play" id="clickToPlay">
+        <div class="click-to-play-text">
+            <span class="pulse">🎵</span>
+            <span>Click anywhere to play music</span>
+        </div>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card" id="profileCard">
+        <div class="loading" id="loading">Loading profile...</div>
+        <div class="error hidden" id="error">User not found</div>
+        <div class="hidden" id="profileContent">
+            <img class="avatar" id="avatar" src="https://via.placeholder.com/120" alt="Avatar">
+            <h1 class="username" id="username">@username</h1>
+            <p class="bio" id="bio">Bio loading...</p>
+        </div>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls">
+        <button class="audio-btn" id="playPauseBtn">⏸</button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+        <span id="volumeLabel">50%</span>
+    </div>
+
+    <!-- Hidden Audio Elements -->
+    <audio id="audioPlayer" loop style="display:none;"></audio>
+    <div id="youtubePlayer" style="position:fixed; top:-200px; left:-200px; width:1px; height:1px;"></div>
+
+    <!-- YouTube API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
+            authDomain: "fakezone-f3c4a.firebaseapp.com",
+            projectId: "fakezone-f3c4a",
+            storageBucket: "fakezone-f3c4a.firebasestorage.app",
+            messagingSenderId: "795138686378",
+            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let youtubePlayer = null;
+        let audioPlayer = null;
+        let currentVolume = 50;
+        let isPlaying = false;
+        let audioType = null;
+        let musicReady = false;
+
+        // Get username from URL
+        function getUsernameFromURL() {
+            const path = window.location.pathname;
+            const username = path.substring(1).toLowerCase();
+            return username || null;
+        }
+
+        // Extract YouTube ID
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/,
+                /^([a-zA-Z0-9_-]{11})$/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        // Detect audio type
+        function detectAudioType(url) {
+            if (!url) return null;
+            
+            // YouTube
+            if (extractYouTubeId(url)) return 'youtube';
+            
+            // SoundCloud
+            if (url.includes('soundcloud.com')) return 'soundcloud';
+            
+            // Spotify (needs special handling)
+            if (url.includes('spotify.com')) return 'spotify';
+            
+            // Direct audio files
+            const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.webm', '.opus', '.flac', '.aac'];
+            if (audioExtensions.some(ext => url.toLowerCase().includes(ext))) return 'direct';
+            
+            // Try any URL as direct audio
+            return 'direct';
+        }
+
+        // YouTube API Ready
+        window.onYouTubeIframeAPIReady = function() {
+            console.log('YouTube API ready');
+        };
+
+        // Initialize YouTube Player
+        function initYouTubePlayer(videoId, volume) {
+            if (youtubePlayer) {
+                youtubePlayer.destroy();
+            }
+            
+            youtubePlayer = new YT.Player('youtubePlayer', {
+                height: '1',
+                width: '1',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    loop: 1,
+                    controls: 0,
+                    disablekb: 1,
+                    enablejsapi: 1,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    playlist: videoId
+                },
+                events: {
+                    onReady: function(event) {
+                        event.target.setVolume(volume);
+                        event.target.playVideo();
+                        isPlaying = true;
+                        musicReady = true;
+                        updatePlayPauseButton();
+                    },
+                    onError: function(error) {
+                        console.error('YouTube error:', error);
+                        // Try fallback with iframe
+                        initYouTubeIframe(videoId, volume);
+                    }
+                }
+            });
+        }
+
+        // Fallback YouTube iframe
+        function initYouTubeIframe(videoId, volume) {
+            const container = document.getElementById('youtubePlayer');
+            container.innerHTML = `
+                <iframe 
+                    width="1" 
+                    height="1" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&enablejsapi=1" 
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+                </iframe>
+            `;
+            isPlaying = true;
+            musicReady = true;
+        }
+
+        // Initialize Direct Audio
+        function initDirectAudio(url, volume) {
+            audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = url;
+            audioPlayer.volume = volume / 100;
+            
+            audioPlayer.addEventListener('canplay', () => {
+                musicReady = true;
+                audioPlayer.play().catch(e => {
+                    console.log('Autoplay prevented, waiting for user interaction');
+                    showClickToPlay();
+                });
+            });
+            
+            audioPlayer.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseButton();
+            });
+            
+            audioPlayer.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseButton();
+            });
+            
+            audioPlayer.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                // Try as stream
+                tryAsStream(url, volume);
+            });
+            
+            audioPlayer.load();
+        }
+
+        // Try as stream (for radio stations, etc.)
+        function tryAsStream(url, volume) {
+            const audio = new Audio(url);
+            audio.volume = volume / 100;
+            audio.play().catch(e => {
+                console.log('Stream autoplay prevented');
+                showClickToPlay();
+            });
+            audioPlayer = audio;
+            isPlaying = true;
+            musicReady = true;
+        }
+
+        // SoundCloud embed
+        function initSoundCloud(url, volume) {
+            // Extract track ID or use oEmbed API
+            const container = document.getElementById('youtubePlayer');
+            container.innerHTML = `
+                <iframe 
+                    width="1" 
+                    height="1" 
+                    scrolling="no" 
+                    frameborder="no" 
+                    allow="autoplay" 
+                    src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
+                </iframe>
+            `;
+            isPlaying = true;
+            musicReady = true;
+        }
+
+        // Show click to play overlay
+        function showClickToPlay() {
+            const overlay = document.getElementById('clickToPlay');
+            overlay.classList.add('show');
+            
+            overlay.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                startMusic();
+            }, { once: true });
+        }
+
+        // Start music playback
+        function startMusic() {
+            if (audioType === 'youtube' && youtubePlayer && youtubePlayer.playVideo) {
+                youtubePlayer.playVideo();
+            } else if (audioPlayer) {
+                audioPlayer.play();
+            }
+            isPlaying = true;
+            updatePlayPauseButton();
+        }
+
+        // Play/Pause toggle
+        function togglePlayPause() {
+            if (!musicReady) return;
+            
+            if (audioType === 'youtube' && youtubePlayer) {
+                if (isPlaying) {
+                    youtubePlayer.pauseVideo();
+                } else {
+                    youtubePlayer.playVideo();
+                }
+                isPlaying = !isPlaying;
+            } else if (audioPlayer) {
+                if (isPlaying) {
+                    audioPlayer.pause();
+                } else {
+                    audioPlayer.play();
+                }
+            }
+            updatePlayPauseButton();
+        }
+
+        // Update play/pause button
+        function updatePlayPauseButton() {
+            const btn = document.getElementById('playPauseBtn');
+            btn.textContent = isPlaying ? '⏸' : '▶';
+        }
+
+        // Volume control
+        function updateVolume(value) {
+            currentVolume = value;
+            document.getElementById('volumeLabel').textContent = value + '%';
+            
+            if (audioType === 'youtube' && youtubePlayer && youtubePlayer.setVolume) {
+                youtubePlayer.setVolume(value);
+            } else if (audioPlayer) {
+                audioPlayer.volume = value / 100;
+            }
+        }
+
+        // Load user profile
+        async function loadProfile() {
+            const username = getUsernameFromURL();
+            
+            if (!username) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Get username document to find UID
+                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                if (!usernameDoc.exists()) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('error').classList.remove('hidden');
+                    return;
+                }
+
+                const uid = usernameDoc.data().uid;
+                
+                // Get user profile
+                const userDoc = await getDoc(doc(db, 'users', uid));
+                if (!userDoc.exists()) {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('error').classList.remove('hidden');
+                    return;
+                }
+
+                const userData = userDoc.data();
+                
+                // Update page title
+                document.title = `@${userData.displayName || userData.username} - FakeZone`;
+                
+                // Set background
+                if (userData.bgImage) {
+                    document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
+                    document.getElementById('bgOverlay').style.background = 'rgba(0, 0, 0, 0.6)';
+                }
+                
+                // Set avatar
+                let avatarUrl = 'https://via.placeholder.com/120';
+                if (userData.useDiscordAvatar && userData.discord?.avatar) {
+                    avatarUrl = userData.discord.avatar;
+                } else if (userData.avatar) {
+                    avatarUrl = userData.avatar;
+                } else if (userData.discord?.avatar) {
+                    avatarUrl = userData.discord.avatar;
+                }
+                document.getElementById('avatar').src = avatarUrl;
+                
+                // Set username with effect
+                const usernameEl = document.getElementById('username');
+                usernameEl.textContent = '@' + (userData.displayName || userData.username);
+                if (userData.usernameColor) {
+                    usernameEl.style.color = userData.usernameColor;
+                }
+                if (userData.usernameEffect && userData.usernameEffect !== 'none') {
+                    usernameEl.className = 'username effect-' + userData.usernameEffect;
+                }
+                
+                // Set bio
+                const bioEl = document.getElementById('bio');
+                bioEl.textContent = userData.bio || 'Welcome to my zone';
+                if (userData.bioColor) {
+                    bioEl.style.color = userData.bioColor;
+                }
+                if (userData.bioFont) {
+                    bioEl.style.fontFamily = `'${userData.bioFont}', sans-serif`;
+                }
+                
+                // Set profile card effects
+                const profileCard = document.getElementById('profileCard');
+                if (userData.profileOpacity !== undefined) {
+                    profileCard.style.opacity = userData.profileOpacity / 100;
+                }
+                if (userData.profileBlur) {
+                    profileCard.style.filter = `blur(${userData.profileBlur / 10}px)`;
+                }
+                
+                // Initialize audio
+                if (userData.bgAudio) {
+                    const volume = userData.audioVolume || 50;
+                    currentVolume = volume;
+                    document.getElementById('volumeSlider').value = volume;
+                    document.getElementById('volumeLabel').textContent = volume + '%';
+                    
+                    audioType = detectAudioType(userData.bgAudio);
+                    console.log('Audio type detected:', audioType);
+                    
+                    switch(audioType) {
+                        case 'youtube':
+                            const videoId = extractYouTubeId(userData.bgAudio);
+                            if (videoId) {
+                                initYouTubePlayer(videoId, volume);
+                            }
+                            break;
+                        
+                        case 'soundcloud':
+                            initSoundCloud(userData.bgAudio, volume);
+                            break;
+                        
+                        case 'spotify':
+                            // Spotify needs special handling (Web API)
+                            console.log('Spotify not supported yet');
+                            break;
+                        
+                        case 'direct':
+                        default:
+                            initDirectAudio(userData.bgAudio, volume);
+                            break;
+                    }
+                    
+                    // Show volume controls if enabled
+                    if (userData.showVolumeControl && userData.bgAudio) {
+                        document.getElementById('audioControls').classList.add('show');
+                    }
+                }
+                
+                // Show profile
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('profileContent').classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            updateVolume(e.target.value);
+        });
+
+        // Start loading
+        loadProfile();
+
+        // Handle visibility change (pause when tab is hidden)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isPlaying && audioPlayer) {
+                // Optionally pause when tab is hidden
+                // audioPlayer.pause();
+            }
+        });
+    </script>
+</body>
+</html>
