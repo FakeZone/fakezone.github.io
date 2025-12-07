@@ -111,6 +111,12 @@
             box-shadow: 0 5px 20px rgba(255,51,51,0.4);
         }
 
+        button[type="submit"]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .hidden {
             display: none;
         }
@@ -122,7 +128,13 @@
             text-align: center;
         }
 
-        /* Animated background particles */
+        .success {
+            color: #00ff00;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
         .particles {
             position: fixed;
             top: 0;
@@ -151,34 +163,35 @@
                 <input type="email" id="loginEmail" placeholder="Email" required>
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Password" required>
+                <input type="password" id="loginPassword" placeholder="Hasło" required>
             </div>
-            <button type="submit">LOGIN</button>
+            <button type="submit" id="loginBtn">LOGIN</button>
             <div id="loginError" class="error"></div>
         </form>
 
         <!-- Register Form -->
         <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
             <div class="form-group">
-                <input type="text" id="registerUsername" placeholder="Username" minlength="3" maxlength="20" required>
+                <input type="text" id="registerUsername" placeholder="Username (min. 3 znaki)" minlength="3" maxlength="20" required>
             </div>
             <div class="form-group">
                 <input type="email" id="registerEmail" placeholder="Email" required>
             </div>
             <div class="form-group">
                 <input type="password" id="registerPassword" 
-                       placeholder="Password (min 8 chars, 1 uppercase, 1 digit, 1 special)" 
+                       placeholder="Hasło (min 8 znaków, 1 duża, 1 cyfra, 1 znak)" 
                        pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$" 
-                       title="Password must contain at least 8 characters, one uppercase letter, one digit, and one special character"
+                       title="Min. 8 znaków, 1 duża litera, 1 cyfra, 1 znak specjalny (@$!%*?&#)"
                        required>
             </div>
-            <button type="submit">REGISTER</button>
+            <button type="submit" id="registerBtn">REGISTER</button>
             <div id="registerError" class="error"></div>
+            <div id="registerSuccess" class="success"></div>
         </form>
     </div>
 
     <script>
-        // Particle effect
+        // Particles
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -197,20 +210,46 @@
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             particles.forEach(p => {
                 ctx.fillStyle = p.color;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
-                
                 p.y -= p.speedY;
                 if (p.y < 0) p.y = canvas.height;
             });
-            
             requestAnimationFrame(animate);
         }
         animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Tab switching
+        window.showTab = function(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            // Clear errors
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerSuccess').textContent = '';
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        };
     </script>
 
     <script type="module">
@@ -231,10 +270,15 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Check if user is already logged in
-        onAuthStateChanged(auth, (user) => {
+        // Check if already logged in
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                window.location.href = 'dashboard.html';
+                // Check if user has profile document
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    window.location.href = '/dashboard.html';
+                }
+                // If no profile, stay on page to complete registration
             }
         });
 
@@ -243,69 +287,158 @@
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            const errorEl = document.getElementById('loginError');
+
+            btn.disabled = true;
+            btn.textContent = 'Logowanie...';
+            errorEl.textContent = '';
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = 'dashboard.html';
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                
+                // Check if user document exists
+                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+                
+                if (!userDoc.exists()) {
+                    // User exists in Auth but not in Firestore - create profile
+                    errorEl.style.color = '#ffaa00';
+                    errorEl.textContent = 'Tworzenie profilu...';
+                    
+                    const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '').substring(0, 20);
+                    
+                    // Check if username taken
+                    let finalUsername = username;
+                    let counter = 1;
+                    while (true) {
+                        const usernameDoc = await getDoc(doc(db, 'usernames', finalUsername));
+                        if (!usernameDoc.exists()) break;
+                        finalUsername = username + counter;
+                        counter++;
+                    }
+                    
+                    // Create user document
+                    await setDoc(doc(db, 'users', userCredential.user.uid), {
+                        username: finalUsername,
+                        displayName: finalUsername,
+                        bio: 'Welcome to my zone',
+                        avatar: '',
+                        links: [],
+                        createdAt: new Date().toISOString()
+                    });
+                    
+                    // Create username mapping
+                    await setDoc(doc(db, 'usernames', finalUsername), {
+                        uid: userCredential.user.uid
+                    });
+                }
+                
+                window.location.href = '/dashboard.html';
+                
             } catch (error) {
-                document.getElementById('loginError').textContent = 'Invalid credentials';
+                console.error('Login error:', error);
+                btn.disabled = false;
+                btn.textContent = 'LOGIN';
+                
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    errorEl.textContent = 'Nieprawidłowy email lub hasło';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorEl.textContent = 'Za dużo prób. Spróbuj później.';
+                } else {
+                    errorEl.textContent = 'Błąd logowania: ' + error.message;
+                }
             }
         };
 
         // Register
         window.handleRegister = async (e) => {
             e.preventDefault();
-            const username = document.getElementById('registerUsername').value.toLowerCase();
+            const username = document.getElementById('registerUsername').value.toLowerCase().trim();
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
+            const btn = document.getElementById('registerBtn');
+            const errorEl = document.getElementById('registerError');
+            const successEl = document.getElementById('registerSuccess');
+
+            btn.disabled = true;
+            btn.textContent = 'Rejestracja...';
+            errorEl.textContent = '';
+            successEl.textContent = '';
+
+            // Validate username
+            if (username.length < 3) {
+                errorEl.textContent = 'Username musi mieć min. 3 znaki';
+                btn.disabled = false;
+                btn.textContent = 'REGISTER';
+                return;
+            }
+
+            if (!/^[a-z0-9_]+$/.test(username)) {
+                errorEl.textContent = 'Username może zawierać tylko a-z, 0-9, _';
+                btn.disabled = false;
+                btn.textContent = 'REGISTER';
+                return;
+            }
 
             try {
                 // Check if username exists
                 const usernameDoc = await getDoc(doc(db, 'usernames', username));
                 if (usernameDoc.exists()) {
-                    document.getElementById('registerError').textContent = 'Username already taken';
+                    errorEl.textContent = 'Ta nazwa użytkownika jest już zajęta';
+                    btn.disabled = false;
+                    btn.textContent = 'REGISTER';
                     return;
                 }
 
-                // Create user
+                // Create user in Firebase Auth
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // Save username mapping
+                // Create username mapping
                 await setDoc(doc(db, 'usernames', username), {
                     uid: user.uid
                 });
 
-                // Create user profile
+                // Create user profile document
                 await setDoc(doc(db, 'users', user.uid), {
                     username: username,
-                    bio: 'welcome to my zone',
-                    avatar: 'https://via.placeholder.com/120',
-                    links: []
+                    displayName: username,
+                    bio: 'Welcome to my zone',
+                    avatar: '',
+                    links: [],
+                    discord: null,
+                    bgImage: '',
+                    bgAudio: '',
+                    audioVolume: 50,
+                    bioFont: 'Segoe UI',
+                    bioColor: '#888888',
+                    usernameColor: '#ffffff',
+                    usernameEffect: 'none',
+                    profileOpacity: 100,
+                    profileBlur: 0,
+                    createdAt: new Date().toISOString()
                 });
 
-                window.location.href = 'dashboard.html';
+                successEl.textContent = '✓ Konto utworzone! Przekierowanie...';
+                
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 1000);
+
             } catch (error) {
-                document.getElementById('registerError').textContent = error.message;
-            }
-        };
+                console.error('Register error:', error);
+                btn.disabled = false;
+                btn.textContent = 'REGISTER';
 
-        // Tab switching
-        window.showTab = (tab) => {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const tabs = document.querySelectorAll('.tab-btn');
-
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
+                if (error.code === 'auth/email-already-in-use') {
+                    errorEl.textContent = 'Ten email jest już używany';
+                } else if (error.code === 'auth/weak-password') {
+                    errorEl.textContent = 'Hasło jest za słabe';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorEl.textContent = 'Nieprawidłowy email';
+                } else {
+                    errorEl.textContent = 'Błąd rejestracji: ' + error.message;
+                }
             }
         };
     </script>
