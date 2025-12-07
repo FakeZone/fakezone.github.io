@@ -194,7 +194,7 @@
             display: block;
         }
 
-        /* Section Title (like "Assets Uploader") */
+        /* Section Title */
         .section-title {
             font-size: 14px;
             color: #666;
@@ -208,7 +208,7 @@
             margin-top: 0;
         }
 
-        /* Tile Grid - kafelki obok siebie */
+        /* Tile Grid */
         .tile-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -219,11 +219,6 @@
             grid-template-columns: repeat(2, 1fr);
         }
 
-        .tile-grid-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        /* Single Tile */
         .tile {
             background: #111;
             border: 1px solid #1a1a1a;
@@ -243,11 +238,6 @@
 
         .tile-content {
             padding: 20px;
-        }
-
-        /* Full Width Tile */
-        .tile-full {
-            grid-column: 1 / -1;
         }
 
         /* Form Elements */
@@ -300,17 +290,6 @@
         .form-group select option {
             background: #0a0a0a;
             color: #fff;
-        }
-
-        /* Input Row */
-        .input-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .input-row input {
-            flex: 1;
         }
 
         /* Color Picker */
@@ -469,40 +448,6 @@
 
         @keyframes typingCursor {
             50% { border-color: transparent; }
-        }
-
-        /* Preview Panel */
-        .preview-section {
-            margin-top: 30px;
-        }
-
-        .preview-box {
-            background: #111;
-            border: 1px solid #1a1a1a;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .preview-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #ff3333;
-            margin-bottom: 15px;
-            object-fit: cover;
-        }
-
-        .preview-name {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .preview-bio {
-            color: #888;
-            font-size: 14px;
-            max-width: 400px;
-            margin: 0 auto;
         }
 
         /* Info Cards */
@@ -687,19 +632,47 @@
             font-size: 12px;
         }
 
+        /* Preview */
+        .preview-box {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .preview-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #ff3333;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .preview-name {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .preview-bio {
+            color: #888;
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
         /* Status */
         .status-success {
             color: #00ff00;
             font-size: 13px;
-            margin-top: 10px;
-            text-align: center;
+            margin-top: 5px;
         }
 
         .status-error {
             color: #ff3333;
             font-size: 13px;
-            margin-top: 10px;
-            text-align: center;
+            margin-top: 5px;
         }
 
         /* Hidden */
@@ -707,7 +680,7 @@
             display: none !important;
         }
 
-        /* Save Button Full */
+        /* Save Section */
         .save-section {
             margin-top: 20px;
         }
@@ -767,7 +740,6 @@
                 <span class="menu-arrow">▼</span>
             </div>
             <div class="menu-dropdown" id="profile-dropdown">
-                <a href="#" class="menu-link" onclick="showPage('edit-profile', this)">Edytuj profil</a>
                 <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
                 <a href="#" class="menu-link" onclick="viewProfile()">Zobacz profil</a>
             </div>
@@ -826,6 +798,7 @@
             <div class="settings-section">
                 <h3>Informacje o koncie</h3>
                 
+                <!-- Username -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Nazwa użytkownika</div>
@@ -844,6 +817,26 @@
                     </div>
                 </div>
 
+                <!-- Display Name -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Nazwa wyświetlana</div>
+                        <div class="setting-value" id="settings-displayname-display">-</div>
+                        <div id="displayname-status"></div>
+                    </div>
+                    <div class="setting-action" id="displayname-view-mode">
+                        <button class="btn btn-small" onclick="startEditDisplayName()">Zmień</button>
+                    </div>
+                    <div class="setting-action hidden" id="displayname-edit-mode">
+                        <input type="text" class="edit-input" id="new-displayname">
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveDisplayName()">Zapisz</button>
+                            <button class="btn-cancel" onclick="cancelEditDisplayName()">Anuluj</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Email</div>
@@ -854,6 +847,7 @@
                     </div>
                 </div>
 
+                <!-- Password -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Hasło</div>
@@ -889,55 +883,6 @@
                         <button class="btn btn-small" style="border-color:#ff3333; color:#ff3333;">Usuń</button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- EDIT PROFILE PAGE -->
-        <div class="page-view" id="page-edit-profile">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Edytuj profil</h1>
-                    <p class="page-subtitle">Podstawowe informacje</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn" onclick="viewProfile()">Zobacz profil</button>
-                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
-                </div>
-            </div>
-
-            <div class="tile-grid tile-grid-2">
-                <div class="tile">
-                    <div class="tile-header">Nazwa wyświetlana</div>
-                    <div class="tile-content">
-                        <div class="form-group">
-                            <input type="text" id="display-name" placeholder="Twoja nazwa...">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tile">
-                    <div class="tile-header">Discord</div>
-                    <div class="tile-content">
-                        <div id="discord-section">
-                            <button class="discord-btn" onclick="connectDiscord()" id="discordBtn">
-                                <svg width="20" height="15" viewBox="0 0 71 55" fill="currentColor">
-                                    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978Z"/>
-                                </svg>
-                                Połącz Discord
-                            </button>
-                        </div>
-                        <div id="discord-connected" class="discord-connected" style="display:none;">
-                            <img class="discord-avatar" id="discord-avatar" src="">
-                            <span class="discord-name" id="discord-name">-</span>
-                            <button class="discord-disconnect" onclick="disconnectDiscord()">Odłącz</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="save-section">
-                <button class="btn btn-primary" onclick="saveProfile()" style="width:100%;">Zapisz zmiany</button>
-                <div id="saveStatus"></div>
             </div>
         </div>
 
@@ -1183,10 +1128,8 @@
 
                 // Settings
                 document.getElementById('settings-username-display').textContent = userProfile.username;
+                document.getElementById('settings-displayname-display').textContent = userProfile.displayName || userProfile.username;
                 document.getElementById('settings-email').textContent = maskedEmail;
-
-                // Edit Profile
-                document.getElementById('display-name').value = userProfile.displayName || userProfile.username;
 
                 // Customize
                 document.getElementById('avatar').value = userProfile.avatar || '';
@@ -1210,14 +1153,16 @@
                     });
                 }
 
+                // Discord
+                if (userProfile.discord) {
+                    showDiscordConnected();
+                }
+
                 // Update labels
                 updateVolumeLabel();
                 updateOpacityLabel();
                 updateBlurLabel();
                 updatePreview();
-
-                // Discord
-                if (userProfile.discord) showDiscordConnected();
             }
         }
 
@@ -1225,17 +1170,15 @@
         window.updatePreview = function() {
             const avatar = document.getElementById('avatar').value || userProfile?.discord?.avatar || 'https://via.placeholder.com/100';
             const bio = document.getElementById('bio').value || 'Twoje bio tutaj...';
-            const displayName = document.getElementById('display-name')?.value || userProfile?.displayName || userProfile?.username || 'username';
+            const displayName = userProfile?.displayName || userProfile?.username || 'username';
             const bioFont = document.getElementById('bio-font').value;
             const bioColor = document.getElementById('bio-color').value;
             const usernameColor = document.getElementById('username-color').value;
             const opacity = document.getElementById('profile-opacity').value;
             const blur = document.getElementById('profile-blur').value;
 
-            // Avatar
             document.getElementById('previewAvatar').src = avatar;
 
-            // Username
             const usernameEl = document.getElementById('previewUsername');
             usernameEl.textContent = '@' + displayName;
             usernameEl.className = 'preview-name';
@@ -1244,13 +1187,11 @@
                 usernameEl.classList.add('effect-' + selectedEffect);
             }
 
-            // Bio
             const bioEl = document.getElementById('previewBio');
             bioEl.textContent = bio;
             bioEl.style.color = bioColor;
             bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
 
-            // Container
             const container = document.getElementById('preview-container');
             container.style.opacity = opacity / 100;
             container.style.filter = `blur(${blur / 10}px)`;
@@ -1319,19 +1260,6 @@
             }
         };
 
-        // Save profile
-        window.saveProfile = async function() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    displayName: document.getElementById('display-name').value
-                });
-                document.getElementById('saveStatus').innerHTML = '<div class="status-success">✓ Zapisano!</div>';
-                setTimeout(() => document.getElementById('saveStatus').innerHTML = '', 3000);
-            } catch (error) {
-                document.getElementById('saveStatus').innerHTML = '<div class="status-error">Błąd</div>';
-            }
-        };
-
         // Username editing
         window.startEditUsername = function() {
             document.getElementById('username-view-mode').classList.add('hidden');
@@ -1342,6 +1270,7 @@
         window.cancelEditUsername = function() {
             document.getElementById('username-view-mode').classList.remove('hidden');
             document.getElementById('username-edit-mode').classList.add('hidden');
+            document.getElementById('username-status').innerHTML = '';
         };
 
         window.saveUsername = async function() {
@@ -1386,6 +1315,41 @@
             }
         };
 
+        // Display Name editing
+        window.startEditDisplayName = function() {
+            document.getElementById('displayname-view-mode').classList.add('hidden');
+            document.getElementById('displayname-edit-mode').classList.remove('hidden');
+            document.getElementById('new-displayname').value = userProfile.displayName || userProfile.username;
+        };
+
+        window.cancelEditDisplayName = function() {
+            document.getElementById('displayname-view-mode').classList.remove('hidden');
+            document.getElementById('displayname-edit-mode').classList.add('hidden');
+            document.getElementById('displayname-status').innerHTML = '';
+        };
+
+        window.saveDisplayName = async function() {
+            const newDisplayName = document.getElementById('new-displayname').value.trim();
+
+            if (!newDisplayName || newDisplayName.length < 1) {
+                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Nazwa nie może być pusta</span>';
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), { displayName: newDisplayName });
+
+                userProfile.displayName = newDisplayName;
+                document.getElementById('settings-displayname-display').textContent = newDisplayName;
+                updatePreview();
+
+                document.getElementById('displayname-status').innerHTML = '<span class="status-success">✓ Zmieniono!</span>';
+                setTimeout(cancelEditDisplayName, 1500);
+            } catch (e) {
+                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Błąd</span>';
+            }
+        };
+
         // Discord
         function showDiscordConnected() {
             const name = `${userProfile.discord.username}#${userProfile.discord.discriminator || '0'}`;
@@ -1393,10 +1357,6 @@
             document.getElementById('settings-discord').textContent = name;
             document.getElementById('settings-discord-btn').textContent = 'Odłącz';
             document.getElementById('settings-discord-btn').onclick = disconnectDiscord;
-            document.getElementById('discord-section').style.display = 'none';
-            document.getElementById('discord-connected').style.display = 'flex';
-            document.getElementById('discord-avatar').src = userProfile.discord.avatar;
-            document.getElementById('discord-name').textContent = name;
         }
 
         window.connectDiscord = function() {
@@ -1412,8 +1372,6 @@
                 document.getElementById('settings-discord').textContent = 'Niepołączony';
                 document.getElementById('settings-discord-btn').textContent = 'Połącz';
                 document.getElementById('settings-discord-btn').onclick = connectDiscord;
-                document.getElementById('discord-section').style.display = 'block';
-                document.getElementById('discord-connected').style.display = 'none';
                 userProfile.discord = null;
             } catch (e) {}
         };
