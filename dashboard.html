@@ -2074,14 +2074,6 @@ function playTestAudio(url, volume) {
                 usernameEl.classList.add('effect-' + selectedEffect);
             }
 
-            const uidEl = document.getElementById('previewUid');
-            const showUid = document.getElementById('toggle-show-uid').checked;
-            if (uidEl) {
-                uidEl.style.display = showUid ? 'block' : 'none';
-                if (userProfile?.uidNumber) {
-                    uidEl.textContent = formatUid(userProfile.uidNumber);
-                    }
-                }
             // ============ UID PREVIEW ============
             const uidEl = document.getElementById('previewUid');
             const showUid = document.getElementById('toggle-show-uid').checked;
@@ -2090,11 +2082,20 @@ function playTestAudio(url, volume) {
                 if (userProfile?.uidNumber) {
                     uidEl.textContent = formatUid(userProfile.uidNumber);
                 }
-            // Użyj koloru username dla UID
-            if (usernameColor) {
-                uidEl.style.color = usernameColor;
+                // Użyj koloru username dla UID
+                if (usernameColor) {
+                    uidEl.style.color = usernameColor;
                 }
             }
+            
+            const bioEl = document.getElementById('previewBio');
+            bioEl.textContent = bio;
+            bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
+            bioEl.style.color = bioColor;
+
+            previewContainer.style.opacity = opacity / 100;
+            previewContainer.style.filter = `blur(${blur / 10}px)`;
+        };
             
             const bioEl = document.getElementById('previewBio');
             bioEl.textContent = bio;
