@@ -1557,6 +1557,17 @@
 
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
+    
+    <!-- YouTube API Ready Handler (musi być PRZED modułem) -->
+    <script>
+        var youtubeApiReady = false;
+        function onYouTubeIframeAPIReady() {
+            youtubeApiReady = true;
+            console.log('YouTube API ready');
+        }
+    </script>
+
+    <!-- Main Application -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { 
@@ -1579,8 +1590,7 @@
             collection,
             query,
             where,
-            getDocs,
-            serverTimestamp
+            getDocs
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -1668,10 +1678,6 @@
             return true;
         };
 
-        window.onYouTubeIframeAPIReady = function() {
-            console.log('YouTube API ready');
-        };
-
         window.toggleTestAudio = function() {
             const url = document.getElementById('bg-audio').value;
             const volume = document.getElementById('audio-volume').value;
@@ -1699,6 +1705,8 @@
         function stopAllAudio() {
             if (audioPlayer) {
                 audioPlayer.pause();
+                audioPlayer.src = ''; 
+                audioPlayer.load();  
                 audioPlayer = null;
             }
             if (youtubePlayer) {
@@ -1707,43 +1715,46 @@
             }
         }
 
-        function playTestAudio(url, volume) {
-            stopAllAudio();
-            
-            const videoId = extractYouTubeId(url);
-            
-            if (videoId) {
-                youtubePlayer = new YT.Player('youtube-player', {
-                    height: '0',
-                    width: '0',
-                    videoId: videoId,
-                    playerVars: {
-                        autoplay: 1,
-                        loop: 1,
-                        playlist: videoId
-                    },
-                    events: {
-                        onReady: function(event) {
-                            event.target.setVolume(volume);
-                            event.target.playVideo();
-                        },
-                        onError: function(error) {
-                            alert('Error loading YouTube video. Check the URL.');
-                            toggleTestAudio();
-                        }
-                    }
-                });
-            } else {
-                audioPlayer = document.getElementById('test-audio');
-                audioPlayer.src = url;
-                audioPlayer.volume = volume / 100;
-                audioPlayer.loop = true;
-                audioPlayer.play().catch(e => {
-                    alert('Error playing audio. Check the URL or try a different format.');
-                    toggleTestAudio();
-                });
-            }
+function playTestAudio(url, volume) {
+    stopAllAudio();
+    const videoId = extractYouTubeId(url);
+
+    if (videoId) {
+        if (typeof YT === 'undefined' || !YT.Player) {
+            alert('YouTube API is still loading. Please try again.');
+            return;
         }
+        youtubePlayer = new YT.Player('youtube-player', {
+            height: '0',
+            width: '0',
+            videoId: videoId,
+            playerVars: {
+                autoplay: 1,
+                loop: 1,
+                playlist: videoId
+            },
+            events: {
+                onReady: function(event) {
+                    event.target.setVolume(volume);
+                    event.target.playVideo();
+                },
+                onError: function(error) {
+                    alert('Error loading YouTube video. Check the URL.');
+                    window.toggleTestAudio();
+                }
+            }
+        });
+    } else {
+        audioPlayer = document.getElementById('test-audio');
+        audioPlayer.src = url;
+        audioPlayer.volume = volume / 100;
+        audioPlayer.loop = true;
+        audioPlayer.play().catch(e => {
+            alert('Error playing audio. Check the URL or try a different format.');
+            window.toggleTestAudio();
+        });
+    }
+}
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
