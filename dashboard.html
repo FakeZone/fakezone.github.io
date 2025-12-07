@@ -911,94 +911,100 @@
                 </div>
             </div>
 
-            <div class="settings-section">
-                <h3>Account Information</h3>
-                
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Password</div>
-                        <div class="setting-value" id="password-display">••••••••</div>
-                        <div id="password-status"></div>
-                    </div>
-                    <div class="setting-action" id="password-view-mode">
-                        <button class="btn btn-small" onclick="startEditPassword()">Change</button>
-                    </div>
-                    <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
-                        <div style="position: relative;">
-                            <input type="password" class="edit-input" id="current-password" placeholder="Current password" style="width: 100%; padding-right: 40px;">
-                            <button type="button" class="password-toggle-btn" onclick="toggleCurrentPasswordVisibility()">
-                                <span id="current-password-icon">👁</span>
-                            </button>
-                        </div>
-                        <div style="position: relative;">
-                            <input type="password" class="edit-input" id="new-password" placeholder="New password" style="width: 100%; padding-right: 40px;">
-                            <button type="button" class="password-toggle-btn" onclick="toggleNewPasswordVisibility()">
-                                <span id="new-password-icon">👁</span>
-                            </button>
-                        </div>
-                        <div style="position: relative;">
-                            <input type="password" class="edit-input" id="confirm-password" placeholder="Confirm new password" style="width: 100%; padding-right: 40px;">
-                            <button type="button" class="password-toggle-btn" onclick="toggleConfirmPasswordVisibility()">
-                                <span id="confirm-password-icon">👁</span>
-                            </button>
-                        </div>
-                        <div class="edit-buttons">
-                            <button class="btn-save" onclick="savePassword()">Change Password</button>
-                            <button class="btn-cancel" onclick="cancelEditPassword()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+<div class="settings-section">
+    <h3>Account Information</h3>
+    
+    <!-- 1. Username (pierwszy) -->
+    <div class="setting-item">
+        <div class="setting-info">
+            <div class="setting-label">Username</div>
+            <div class="setting-value" id="settings-username-display">-</div>
+        </div>
+        <div class="setting-action">
+            <span style="color: #666; font-size: 12px;">Cannot be changed</span>
+        </div>
+    </div>
 
-                <!-- Dodajemy brakujący element username -->
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Username</div>
-                        <div class="setting-value" id="settings-username-display">-</div>
-                    </div>
-                    <div class="setting-action">
-                        <span style="color: #666; font-size: 12px;">Cannot be changed</span>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Display Name</div>
-                        <div class="setting-value" id="settings-displayname-display">-</div>
-                        <div id="displayname-status"></div>
-                    </div>
-                    <div class="setting-action" id="displayname-view-mode">
-                        <button class="btn btn-small" onclick="startEditDisplayName()">Change</button>
-                    </div>
-                    <div class="setting-action hidden" id="displayname-edit-mode">
-                        <input type="text" class="edit-input" id="new-displayname">
-                        <div class="edit-buttons">
-                            <button class="btn-save" onclick="saveDisplayName()">Save</button>
-                            <button class="btn-cancel" onclick="cancelEditDisplayName()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Email</div>
-                        <div class="setting-value" id="settings-email-display">-</div>
-                        <div id="email-status"></div>
-                    </div>
-                    <div class="setting-action" id="email-view-mode">
-                        <button class="btn btn-small" onclick="toggleEmailVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
-                            <span id="email-toggle-icon">👁</span>
-                        </button>
-                        <button class="btn btn-small" onclick="startEditEmail()">Change</button>
-                    </div>
-                    <div class="setting-action hidden" id="email-edit-mode">
-                        <input type="email" class="edit-input" id="new-email" placeholder="New email">
-                        <div class="edit-buttons">
-                            <button class="btn-save" onclick="saveEmail()">Send Verification</button>
-                            <button class="btn-cancel" onclick="cancelEditEmail()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+    <!-- 2. Display Username (drugi) -->
+    <div class="setting-item">
+        <div class="setting-info">
+            <div class="setting-label">Display Username</div>
+            <div class="setting-value" id="settings-displayname-display">-</div>
+            <div id="displayname-status"></div>
+        </div>
+        <div class="setting-action" id="displayname-view-mode">
+            <button class="btn btn-small" onclick="startEditDisplayName()">Change</button>
+        </div>
+        <div class="setting-action hidden" id="displayname-edit-mode">
+            <input type="text" class="edit-input" id="new-displayname">
+            <div class="edit-buttons">
+                <button class="btn-save" onclick="saveDisplayName()">Save</button>
+                <button class="btn-cancel" onclick="cancelEditDisplayName()">Cancel</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 3. Email (trzeci) -->
+    <div class="setting-item">
+        <div class="setting-info">
+            <div class="setting-label">Email</div>
+            <div class="setting-value" id="settings-email-display">-</div>
+            <div id="email-status"></div>
+        </div>
+        <div class="setting-action" id="email-view-mode">
+            <button class="btn btn-small" onclick="toggleEmailVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
+                <span id="email-toggle-icon">👁</span>
+            </button>
+            <button class="btn btn-small" onclick="startEditEmail()">Change</button>
+        </div>
+        <div class="setting-action hidden" id="email-edit-mode">
+            <input type="email" class="edit-input" id="new-email" placeholder="New email">
+            <div class="edit-buttons">
+                <button class="btn-save" onclick="saveEmail()">Send Verification</button>
+                <button class="btn-cancel" onclick="cancelEditEmail()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Password (ostatni) -->
+    <div class="setting-item">
+        <div class="setting-info">
+            <div class="setting-label">Password</div>
+            <div class="setting-value" id="password-display">••••••••</div>
+            <div id="password-status"></div>
+        </div>
+        <div class="setting-action" id="password-view-mode">
+            <button class="btn btn-small" onclick="togglePasswordVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
+                <span id="password-toggle-icon">👁</span>
+            </button>
+            <button class="btn btn-small" onclick="startEditPassword()">Change</button>
+        </div>
+        <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
+            <div style="position: relative;">
+                <input type="password" class="edit-input" id="current-password" placeholder="Current password" style="width: 100%; padding-right: 40px;">
+                <button type="button" class="password-toggle-btn" onclick="toggleCurrentPasswordVisibility()">
+                    <span id="current-password-icon">👁</span>
+                </button>
+            </div>
+            <div style="position: relative;">
+                <input type="password" class="edit-input" id="new-password" placeholder="New password" style="width: 100%; padding-right: 40px;">
+                <button type="button" class="password-toggle-btn" onclick="toggleNewPasswordVisibility()">
+                    <span id="new-password-icon">👁</span>
+                </button>
+            </div>
+            <div style="position: relative;">
+                <input type="password" class="edit-input" id="confirm-password" placeholder="Confirm new password" style="width: 100%; padding-right: 40px;">
+                <button type="button" class="password-toggle-btn" onclick="toggleConfirmPasswordVisibility()">
+                    <span id="confirm-password-icon">👁</span>
+                </button>
+            </div>
+            <div class="edit-buttons">
+                <button class="btn-save" onclick="savePassword()">Change Password</button>
+                <button class="btn-cancel" onclick="cancelEditPassword()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
             <div class="settings-section">
                 <h3>Connected Accounts</h3>
