@@ -1775,6 +1775,29 @@
             }
         };
 
+        let passwordVisible = false;
+
+        window.togglePasswordVisibility = function() {
+            const currentPasswordInput = document.getElementById('current-password');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const toggleIcon = document.getElementById('password-toggle-icon');
+            
+            if (passwordVisible) {
+                currentPasswordInput.type = 'password';
+                newPasswordInput.type = 'password';
+                confirmPasswordInput.type = 'password';
+                toggleIcon.textContent = '👁';
+                passwordVisible = false;
+            } else {
+                currentPasswordInput.type = 'text';
+                newPasswordInput.type = 'text';
+                confirmPasswordInput.type = 'text';
+                toggleIcon.textContent = '👁‍🗨';
+                passwordVisible = true;
+            }
+        };
+        
         window.startEditEmail = function() {
             document.getElementById('email-view-mode').classList.add('hidden');
             document.getElementById('email-edit-mode').classList.remove('hidden');
