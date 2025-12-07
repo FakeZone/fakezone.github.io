@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* Background Image */
         .bg-image {
             position: fixed;
             top: 0;
@@ -46,11 +45,11 @@
             z-index: -1;
         }
 
-        /* Profile Card */
         .profile-card {
             background: rgba(17, 17, 17, 0.95);
             border-radius: 20px;
             padding: 40px;
+            padding-bottom: 60px;
             max-width: 400px;
             width: 90%;
             text-align: center;
@@ -83,7 +82,6 @@
             line-height: 1.6;
         }
 
-        /* Social Links */
         .social-links {
             display: flex;
             justify-content: center;
@@ -109,7 +107,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Views Counter */
         .views-counter {
             position: absolute;
             bottom: 15px;
@@ -137,7 +134,6 @@
             color: #fff;
         }
 
-        /* Audio Controls */
         .audio-controls {
             position: fixed;
             bottom: 30px;
@@ -204,24 +200,15 @@
             border: none;
         }
 
-        /* Effects */
         .effect-glitch {
             animation: glitch 2s infinite;
         }
 
         @keyframes glitch {
-            0%, 100% {
-                text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
-            }
-            25% {
-                text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
-            }
-            50% {
-                text-shadow: 2px 0 #00ffff, -2px 0 #ff0000;
-            }
-            75% {
-                text-shadow: -2px 0 #00ffff, 2px 0 #ff0000;
-            }
+            0%, 100% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 0 #00ffff, -2px 0 #ff0000; }
+            75% { text-shadow: -2px 0 #00ffff, 2px 0 #ff0000; }
         }
 
         .effect-rainbow {
@@ -233,9 +220,7 @@
         }
 
         @keyframes rainbow {
-            to {
-                background-position: 200% center;
-            }
+            to { background-position: 200% center; }
         }
 
         .effect-glow {
@@ -247,12 +232,8 @@
         }
 
         @keyframes wave {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .effect-typing::after {
@@ -261,15 +242,10 @@
         }
 
         @keyframes blink {
-            0%, 50% {
-                opacity: 1;
-            }
-            51%, 100% {
-                opacity: 0;
-            }
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
-        /* Loading */
         .loading {
             text-align: center;
             color: #666;
@@ -284,7 +260,6 @@
             display: none !important;
         }
 
-        /* Click to play overlay */
         .click-to-play {
             position: fixed;
             top: 0;
@@ -327,29 +302,22 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Background -->
     <div class="bg-image" id="bgImage"></div>
     <div class="bg-overlay" id="bgOverlay"></div>
 
-    <!-- Click to play overlay -->
     <div class="click-to-play" id="clickToPlay">
         <div class="click-to-play-icon">🎵</div>
         <div class="click-to-play-text">Click anywhere to enter</div>
         <div class="click-to-play-sub">Music will start playing</div>
     </div>
 
-    <!-- Profile Card -->
     <div class="profile-card" id="profileCard">
         <div class="loading" id="loading">Loading profile...</div>
         <div class="error hidden" id="error">User not found</div>
@@ -359,7 +327,6 @@
             <p class="bio" id="bio">Bio loading...</p>
             <div class="social-links" id="socialLinks"></div>
             
-            <!-- Views Counter -->
             <div class="views-counter" id="viewsCounter">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -370,23 +337,20 @@
         </div>
     </div>
 
-    <!-- Audio Controls -->
     <div class="audio-controls" id="audioControls">
         <button class="audio-btn" id="playPauseBtn" title="Play/Pause">▶</button>
         <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
         <span id="volumeLabel">50%</span>
     </div>
 
-    <!-- Hidden Audio Elements -->
     <audio id="audioPlayer" loop preload="auto" crossorigin="anonymous"></audio>
     <div id="youtubePlayer" style="position:fixed; top:-9999px; left:-9999px; width:1px; height:1px; pointer-events:none;"></div>
 
-    <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -400,7 +364,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ============ GLOBAL STATE ============
         let youtubePlayer = null;
         let audioPlayer = null;
         let currentVolume = 50;
@@ -411,34 +374,41 @@
         let pendingAudioUrl = null;
         let pendingVolume = 50;
 
-        // ============ DEBUG HELPER ============
         function debug(msg) {
             console.log('🔍', msg);
         }
 
-        // ============ VIEWS COUNTER ============
+        // ============ VIEWS COUNTER - POPRAWIONE ============
         async function trackView(username, uid) {
             const storageKey = 'fakezone_viewed_' + username;
             const today = new Date().toDateString();
             const lastVisit = localStorage.getItem(storageKey);
             
-            // Sprawdź czy user już był dziś
             if (lastVisit === today) {
                 debug('Already counted today for ' + username);
                 return false;
             }
             
             try {
-                // Zapisz wizytę w localStorage
+                const userRef = doc(db, 'users', uid);
+                
+                // Najpierw sprawdź czy pole views istnieje
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data();
+                
+                if (userData.views === undefined) {
+                    // Pole nie istnieje - ustaw na 1
+                    await updateDoc(userRef, { views: 1 });
+                    debug('Created views field with value 1');
+                } else {
+                    // Pole istnieje - zwiększ o 1
+                    await updateDoc(userRef, { views: increment(1) });
+                    debug('Incremented views');
+                }
+                
+                // Zapisz w localStorage dopiero po sukcesie
                 localStorage.setItem(storageKey, today);
                 
-                // Zwiększ views w Firebase
-                const userRef = doc(db, 'users', uid);
-                await updateDoc(userRef, {
-                    views: increment(1)
-                });
-                
-                debug('View counted for ' + username);
                 return true;
             } catch (error) {
                 debug('Error tracking view: ' + error.message);
@@ -447,10 +417,18 @@
             }
         }
 
-        function displayViews(count) {
-            const viewsEl = document.getElementById('viewsCount');
-            if (viewsEl) {
-                animateNumber(viewsEl, 0, count || 0, 1000);
+        async function getAndDisplayViews(uid) {
+            try {
+                const userSnap = await getDoc(doc(db, 'users', uid));
+                const views = userSnap.data()?.views || 0;
+                debug('Displaying views: ' + views);
+                
+                const viewsEl = document.getElementById('viewsCount');
+                if (viewsEl) {
+                    animateNumber(viewsEl, 0, views, 1000);
+                }
+            } catch (error) {
+                debug('Error getting views: ' + error.message);
             }
         }
 
@@ -472,9 +450,7 @@
             requestAnimationFrame(update);
         }
 
-        // ============ GET USERNAME FROM URL ============
         function getUsernameFromURL() {
-            // 1. Sprawdź sessionStorage (z 404 redirect)
             const savedPath = sessionStorage.getItem('profilePath');
             if (savedPath) {
                 sessionStorage.removeItem('profilePath');
@@ -487,7 +463,6 @@
                 return username || null;
             }
             
-            // 2. Sprawdź query params (?user=xxx)
             const params = new URLSearchParams(window.location.search);
             const userParam = params.get('user');
             if (userParam) {
@@ -495,7 +470,6 @@
                 return userParam.toLowerCase();
             }
             
-            // 3. Sprawdź pathname
             const path = window.location.pathname;
             debug('Current path: ' + path);
             
@@ -511,7 +485,6 @@
             return username || null;
         }
 
-        // ============ EXTRACT YOUTUBE ID ============
         function extractYouTubeId(url) {
             if (!url) return null;
             const patterns = [
@@ -526,7 +499,6 @@
             return null;
         }
 
-        // ============ DETECT AUDIO TYPE ============
         function detectAudioType(url) {
             if (!url) return null;
             
@@ -540,7 +512,6 @@
             return 'direct';
         }
 
-        // ============ YOUTUBE API READY ============
         window.onYouTubeIframeAPIReady = function() {
             debug('YouTube API ready');
             
@@ -552,7 +523,6 @@
             }
         };
 
-        // ============ INITIALIZE YOUTUBE PLAYER ============
         function initYouTubePlayer(videoId, volume) {
             debug('Initializing YouTube player: ' + videoId);
             
@@ -563,9 +533,7 @@
             }
             
             if (youtubePlayer) {
-                try {
-                    youtubePlayer.destroy();
-                } catch(e) {}
+                try { youtubePlayer.destroy(); } catch(e) {}
             }
             
             youtubePlayer = new YT.Player('youtubePlayer', {
@@ -605,13 +573,11 @@
                     },
                     onError: function(error) {
                         debug('YouTube error: ' + error.data);
-                        console.error('YouTube error:', error);
                     }
                 }
             });
         }
 
-        // ============ INITIALIZE DIRECT AUDIO ============
         function initDirectAudio(url, volume) {
             debug('Initializing direct audio: ' + url);
             
@@ -631,9 +597,7 @@
                             isPlaying = true;
                             updatePlayPauseButton();
                         })
-                        .catch(e => {
-                            debug('Play failed: ' + e.message);
-                        });
+                        .catch(e => debug('Play failed: ' + e.message));
                 }
             });
             
@@ -647,15 +611,9 @@
                 updatePlayPauseButton();
             });
             
-            audioPlayer.addEventListener('error', (e) => {
-                debug('Audio error: ' + e.message);
-                console.error('Audio error:', e);
-            });
-            
             audioPlayer.load();
         }
 
-        // ============ SOUNDCLOUD EMBED ============
         function initSoundCloud(url, volume) {
             debug('Initializing SoundCloud: ' + url);
             
@@ -675,18 +633,14 @@
             updatePlayPauseButton();
         }
 
-        // ============ SHOW CLICK TO PLAY ============
         function showClickToPlay() {
-            const overlay = document.getElementById('clickToPlay');
-            overlay.classList.add('show');
+            document.getElementById('clickToPlay').classList.add('show');
         }
 
         function hideClickToPlay() {
-            const overlay = document.getElementById('clickToPlay');
-            overlay.classList.remove('show');
+            document.getElementById('clickToPlay').classList.remove('show');
         }
 
-        // ============ START MUSIC ============
         function startMusic() {
             debug('Starting music, type: ' + audioType);
             
@@ -695,9 +649,7 @@
                     youtubePlayer.playVideo();
                 } else {
                     const videoId = extractYouTubeId(pendingAudioUrl);
-                    if (videoId) {
-                        initYouTubePlayer(videoId, pendingVolume);
-                    }
+                    if (videoId) initYouTubePlayer(videoId, pendingVolume);
                 }
             } else if (audioType === 'soundcloud') {
                 initSoundCloud(pendingAudioUrl, pendingVolume);
@@ -711,7 +663,6 @@
             }
         }
 
-        // ============ TOGGLE PLAY/PAUSE ============
         function togglePlayPause() {
             if (!musicReady && !pendingAudioUrl) return;
             
@@ -734,13 +685,10 @@
             updatePlayPauseButton();
         }
 
-        // ============ UPDATE PLAY/PAUSE BUTTON ============
         function updatePlayPauseButton() {
-            const btn = document.getElementById('playPauseBtn');
-            btn.textContent = isPlaying ? '⏸' : '▶';
+            document.getElementById('playPauseBtn').textContent = isPlaying ? '⏸' : '▶';
         }
 
-        // ============ VOLUME CONTROL ============
         function updateVolume(value) {
             currentVolume = value;
             document.getElementById('volumeLabel').textContent = value + '%';
@@ -752,7 +700,6 @@
             }
         }
 
-        // ============ LOAD USER PROFILE ============
         async function loadProfile() {
             const username = getUsernameFromURL();
             debug('Loading profile for: ' + username);
@@ -765,7 +712,6 @@
             }
 
             try {
-                // Get username document to find UID
                 const usernameDoc = await getDoc(doc(db, 'usernames', username));
                 if (!usernameDoc.exists()) {
                     debug('Username not found in database');
@@ -778,7 +724,6 @@
                 const uid = usernameDoc.data().uid;
                 debug('Found UID: ' + uid);
                 
-                // Get user profile
                 const userDoc = await getDoc(doc(db, 'users', uid));
                 if (!userDoc.exists()) {
                     document.getElementById('loading').classList.add('hidden');
@@ -789,24 +734,23 @@
                 const userData = userDoc.data();
                 debug('User data loaded');
 
-                // ============ TRACK & DISPLAY VIEWS ============
+                // ============ VIEWS - POPRAWIONA KOLEJNOŚĆ ============
+                // 1. Najpierw śledź wizytę (zapisz do Firebase)
                 await trackView(username, uid);
                 
-                // Pobierz aktualną liczbę views (po inkrementacji)
-                const updatedUserDoc = await getDoc(doc(db, 'users', uid));
-                const updatedViews = updatedUserDoc.data()?.views || 0;
-                displayViews(updatedViews);
+                // 2. Poczekaj chwilę na sync Firebase
+                await new Promise(resolve => setTimeout(resolve, 300));
                 
-                // Update page title
+                // 3. Pobierz i wyświetl aktualną liczbę
+                await getAndDisplayViews(uid);
+                
                 document.title = `@${userData.displayName || userData.username} - FakeZone`;
                 
-                // Set background
                 if (userData.bgImage) {
                     document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
                     document.getElementById('bgOverlay').style.background = 'rgba(0, 0, 0, 0.6)';
                 }
                 
-                // Set avatar
                 let avatarUrl = 'https://via.placeholder.com/120';
                 if (userData.useDiscordAvatar && userData.discord?.avatar) {
                     avatarUrl = userData.discord.avatar;
@@ -817,7 +761,6 @@
                 }
                 document.getElementById('avatar').src = avatarUrl;
                 
-                // Set username with effect
                 const usernameEl = document.getElementById('username');
                 usernameEl.textContent = '@' + (userData.displayName || userData.username);
                 if (userData.usernameColor) {
@@ -827,7 +770,6 @@
                     usernameEl.className = 'username effect-' + userData.usernameEffect;
                 }
                 
-                // Set bio
                 const bioEl = document.getElementById('bio');
                 bioEl.textContent = userData.bio || 'Welcome to my zone';
                 if (userData.bioColor) {
@@ -837,13 +779,11 @@
                     bioEl.style.fontFamily = `'${userData.bioFont}', sans-serif`;
                 }
                 
-                // Set profile card effects
                 const profileCard = document.getElementById('profileCard');
                 if (userData.profileOpacity !== undefined) {
                     profileCard.style.background = `rgba(17, 17, 17, ${userData.profileOpacity / 100})`;
                 }
                 
-                // ============ AUDIO SETUP ============
                 if (userData.bgAudio) {
                     debug('Audio URL found: ' + userData.bgAudio);
                     
@@ -869,7 +809,6 @@
                     }
                 }
                 
-                // Show profile
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('profileContent').classList.remove('hidden');
                 
@@ -882,8 +821,6 @@
             }
         }
 
-        // ============ EVENT LISTENERS ============
-        
         document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
         
         document.getElementById('volumeSlider').addEventListener('input', (e) => {
@@ -916,7 +853,6 @@
             }
         });
 
-        // ============ START ============
         loadProfile();
     </script>
 </body>
