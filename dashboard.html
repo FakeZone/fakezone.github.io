@@ -1377,8 +1377,8 @@
     <div class="preview-box" id="preview-container">
         <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/100">
         <div id="previewUsername" class="preview-name">@username</div>
+    <div id="previewUid" class="preview-uid" style="font-size: 12px; color: #666; margin-bottom: 10px;">#0002</div>
         <div id="previewBio" class="preview-bio">Your bio here...</div>
-    </div>
 </div>
 
 <!-- Save -->
@@ -2074,10 +2074,14 @@ function playTestAudio(url, volume) {
                 usernameEl.classList.add('effect-' + selectedEffect);
             }
 
-            const bioEl = document.getElementById('previewBio');
-            bioEl.textContent = bio;
-            bioEl.style.color = bioColor;
-            bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
+            const uidEl = document.getElementById('previewUid');
+            const showUid = document.getElementById('toggle-show-uid').checked;
+            if (uidEl) {
+                uidEl.style.display = showUid ? 'block' : 'none';
+                if (userProfile?.uidNumber) {
+                    uidEl.textContent = formatUid(userProfile.uidNumber);
+                }
+            }
 
             previewContainer.style.opacity = opacity / 100;
             previewContainer.style.filter = `blur(${blur / 10}px)`;
