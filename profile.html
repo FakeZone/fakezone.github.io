@@ -350,7 +350,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -378,51 +378,41 @@
             console.log('🔍', msg);
         }
 
-        // ============ VIEWS COUNTER - POPRAWIONE ============
+        // ============ VIEWS COUNTER - KAŻDE WEJŚCIE = +1 ============
         async function trackView(username, uid) {
-            const storageKey = 'fakezone_viewed_' + username;
-            const today = new Date().toDateString();
-            const lastVisit = localStorage.getItem(storageKey);
-            
-            if (lastVisit === today) {
-                debug('Already counted today for ' + username);
-                return false;
-            }
-            
             try {
                 const userRef = doc(db, 'users', uid);
                 
-                // Najpierw sprawdź czy pole views istnieje
-                const userSnap = await getDoc(userRef);
-                const userData = userSnap.data();
+                // Zwiększ views o 1 przy każdym wejściu
+                await updateDoc(userRef, { 
+                    views: increment(1) 
+                });
                 
-                if (userData.views === undefined) {
-                    // Pole nie istnieje - ustaw na 1
-                    await updateDoc(userRef, { views: 1 });
-                    debug('Created views field with value 1');
-                } else {
-                    // Pole istnieje - zwiększ o 1
-                    await updateDoc(userRef, { views: increment(1) });
-                    debug('Incremented views');
-                }
-                
-                // Zapisz w localStorage dopiero po sukcesie
-                localStorage.setItem(storageKey, today);
-                
+                debug('View counted for ' + username);
                 return true;
             } catch (error) {
-                debug('Error tracking view: ' + error.message);
-                console.error('View tracking error:', error);
-                return false;
+                // Jeśli pole nie istnieje, spróbuj je utworzyć
+                try {
+                    const userRef = doc(db, 'users', uid);
+                    await updateDoc(userRef, { views: 1 });
+                    debug('Created views field with value 1');
+                    return true;
+                } catch (e) {
+                    debug('Error tracking view: ' + e.message);
+                    console.error('View tracking error:', e);
+                    return false;
+                }
             }
         }
 
         async function getAndDisplayViews(uid) {
             try {
+                // Pobierz aktualną liczbę views z Firebase
                 const userSnap = await getDoc(doc(db, 'users', uid));
                 const views = userSnap.data()?.views || 0;
-                debug('Displaying views: ' + views);
+                debug('Current views: ' + views);
                 
+                // Animacja licznika
                 const viewsEl = document.getElementById('viewsCount');
                 if (viewsEl) {
                     animateNumber(viewsEl, 0, views, 1000);
@@ -734,12 +724,12 @@
                 const userData = userDoc.data();
                 debug('User data loaded');
 
-                // ============ VIEWS - POPRAWIONA KOLEJNOŚĆ ============
-                // 1. Najpierw śledź wizytę (zapisz do Firebase)
+                // ============ VIEWS - PROSTE I SKUTECZNE ============
+                // 1. Zwiększ licznik o 1
                 await trackView(username, uid);
                 
                 // 2. Poczekaj chwilę na sync Firebase
-                await new Promise(resolve => setTimeout(resolve, 300));
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // 3. Pobierz i wyświetl aktualną liczbę
                 await getAndDisplayViews(uid);
