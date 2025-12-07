@@ -966,42 +966,38 @@
         </div>
     </div>
 
-    <!-- 4. Password (ostatni) -->
-    <div class="setting-item">
-        <div class="setting-info">
-            <div class="setting-label">Password</div>
-            <div class="setting-value" id="password-display">••••••••</div>
-            <div id="password-status"></div>
-        </div>
-        <div class="setting-action" id="password-view-mode">
-            <button class="btn btn-small" onclick="togglePasswordVisibility()" style="padding: 4px 8px; min-width: auto; margin-right: 5px;">
-                <span id="password-toggle-icon">👁</span>
+<!-- 4. Password (ostatni) -->
+<div class="setting-item">
+    <div class="setting-info">
+        <div class="setting-label">Password</div>
+        <div class="setting-value" id="password-display">••••••••</div>
+        <div id="password-status"></div>
+    </div>
+    <div class="setting-action" id="password-view-mode">
+        <button class="btn btn-small" onclick="startEditPassword()">Change</button>
+    </div>
+    <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
+        <div style="position: relative;">
+            <input type="password" class="edit-input" id="current-password" placeholder="Current password" style="width: 100%; padding-right: 40px;">
+            <button type="button" class="password-toggle-btn" onclick="toggleCurrentPasswordVisibility()">
+                <span id="current-password-icon">👁</span>
             </button>
-            <button class="btn btn-small" onclick="startEditPassword()">Change</button>
         </div>
-        <div class="setting-action hidden" id="password-edit-mode" style="flex-direction: column; align-items: stretch; gap: 10px;">
-            <div style="position: relative;">
-                <input type="password" class="edit-input" id="current-password" placeholder="Current password" style="width: 100%; padding-right: 40px;">
-                <button type="button" class="password-toggle-btn" onclick="toggleCurrentPasswordVisibility()">
-                    <span id="current-password-icon">👁</span>
-                </button>
-            </div>
-            <div style="position: relative;">
-                <input type="password" class="edit-input" id="new-password" placeholder="New password" style="width: 100%; padding-right: 40px;">
-                <button type="button" class="password-toggle-btn" onclick="toggleNewPasswordVisibility()">
-                    <span id="new-password-icon">👁</span>
-                </button>
-            </div>
-            <div style="position: relative;">
-                <input type="password" class="edit-input" id="confirm-password" placeholder="Confirm new password" style="width: 100%; padding-right: 40px;">
-                <button type="button" class="password-toggle-btn" onclick="toggleConfirmPasswordVisibility()">
-                    <span id="confirm-password-icon">👁</span>
-                </button>
-            </div>
-            <div class="edit-buttons">
-                <button class="btn-save" onclick="savePassword()">Change Password</button>
-                <button class="btn-cancel" onclick="cancelEditPassword()">Cancel</button>
-            </div>
+        <div style="position: relative;">
+            <input type="password" class="edit-input" id="new-password" placeholder="New password" style="width: 100%; padding-right: 40px;">
+            <button type="button" class="password-toggle-btn" onclick="toggleNewPasswordVisibility()">
+                <span id="new-password-icon">👁</span>
+            </button>
+        </div>
+        <div style="position: relative;">
+            <input type="password" class="edit-input" id="confirm-password" placeholder="Confirm new password" style="width: 100%; padding-right: 40px;">
+            <button type="button" class="password-toggle-btn" onclick="toggleConfirmPasswordVisibility()">
+                <span id="confirm-password-icon">👁</span>
+            </button>
+        </div>
+        <div class="edit-buttons">
+            <button class="btn-save" onclick="savePassword()">Change Password</button>
+            <button class="btn-cancel" onclick="cancelEditPassword()">Cancel</button>
         </div>
     </div>
 </div>
