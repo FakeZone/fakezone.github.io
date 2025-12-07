@@ -41,21 +41,21 @@
             padding: 10px 0;
         }
 
+        /* Menu */
         .menu-section {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .menu-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 15px;
+            padding: 14px 15px;
             background: #111;
             border: 1px solid #222;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
-            margin-bottom: 5px;
         }
 
         .menu-header:hover {
@@ -70,13 +70,23 @@
 
         .menu-title {
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-icon {
+            width: 18px;
+            height: 18px;
+            fill: #888;
         }
 
         .menu-arrow {
             transition: transform 0.3s;
             color: #666;
+            font-size: 12px;
         }
 
         .menu-header.active .menu-arrow {
@@ -84,60 +94,35 @@
             color: #ff3333;
         }
 
-        .menu-content {
+        .menu-dropdown {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
         }
 
-        .menu-content.active {
-            max-height: 500px;
+        .menu-dropdown.active {
+            max-height: 200px;
         }
 
-        .menu-item {
-            padding: 15px;
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .menu-item label {
+        .menu-link {
             display: block;
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .menu-item .value {
-            font-size: 14px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .menu-item .value.masked {
-            font-family: monospace;
-            letter-spacing: 2px;
-        }
-
-        .edit-btn {
-            padding: 4px 12px;
-            background: #1a1a1a;
-            border: 1px solid #333;
+            padding: 12px 15px 12px 45px;
             color: #888;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
             transition: all 0.3s;
+            border-left: 2px solid transparent;
+            margin-left: 15px;
         }
 
-        .edit-btn:hover {
-            border-color: #ff3333;
+        .menu-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .menu-link.active {
             color: #ff3333;
+            border-left-color: #ff3333;
             background: rgba(255,51,51,0.05);
         }
 
@@ -146,6 +131,7 @@
             margin-left: 250px;
             flex: 1;
             padding: 30px;
+            min-height: 100vh;
         }
 
         .page-header {
@@ -160,6 +146,12 @@
         .page-title {
             font-size: 24px;
             color: #fff;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .header-actions {
@@ -198,8 +190,105 @@
             color: #ff3333;
         }
 
-        /* Content Panels */
-        .content-grid {
+        /* Page Views */
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        /* Info Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .info-card-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .info-card-value {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .info-card-value a {
+            color: #ff3333;
+            text-decoration: none;
+        }
+
+        .info-card-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* Settings Form */
+        .settings-section {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .settings-section h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .setting-value {
+            font-size: 13px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .setting-action .btn {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* Profile Section */
+        .profile-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
@@ -257,18 +346,9 @@
             resize: vertical;
         }
 
-        .discord-connect {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: #0a0a0a;
-            border: 1px solid #222;
-            border-radius: 6px;
-        }
-
         .discord-btn {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 12px;
             background: #5865F2;
             border: none;
             border-radius: 6px;
@@ -276,13 +356,47 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            font-size: 14px;
             transition: all 0.3s;
         }
 
         .discord-btn:hover {
             background: #4752C4;
             transform: translateY(-2px);
+        }
+
+        .discord-connected {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 6px;
+        }
+
+        .discord-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #5865F2;
+        }
+
+        .discord-name {
+            flex: 1;
+            color: #fff;
+        }
+
+        .discord-disconnect {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
         }
 
         /* Preview */
@@ -299,6 +413,7 @@
             border-radius: 50%;
             border: 2px solid #ff3333;
             margin-bottom: 15px;
+            object-fit: cover;
         }
 
         .preview-name {
@@ -308,60 +423,22 @@
 
         .preview-bio {
             color: #888;
-            margin-bottom: 20px;
             font-size: 14px;
-        }
-
-        /* Profile URL */
-        .profile-url {
-            margin-top: 20px;
-            padding: 15px;
-            background: #0a0a0a;
-            border: 1px solid #1a1a1a;
-            border-radius: 6px;
-        }
-
-        .profile-url label {
-            display: block;
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .profile-url a {
-            color: #ff3333;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .profile-url a:hover {
-            text-decoration: underline;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-            .main-content {
-                margin-left: 200px;
-            }
-            .content-grid {
+        @media (max-width: 900px) {
+            .profile-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-                z-index: 999;
-            }
-            .sidebar.active {
-                transform: translateX(0);
+                width: 220px;
             }
             .main-content {
-                margin-left: 0;
+                margin-left: 220px;
             }
         }
     </style>
@@ -371,109 +448,211 @@
     <div class="sidebar">
         <div class="logo">FakeZone</div>
         
-        <!-- Account Section -->
+        <!-- Account Menu -->
         <div class="menu-section">
-            <div class="menu-header" onclick="toggleMenu('account')">
-                <span class="menu-title">Account</span>
+            <div class="menu-header active" onclick="toggleMenu('account')">
+                <span class="menu-title">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Account
+                </span>
                 <span class="menu-arrow">▼</span>
             </div>
-            <div class="menu-content" id="account-menu">
-                <div class="menu-item">
-                    <label>Username</label>
-                    <div class="value">
-                        <span id="sidebar-username">-</span>
-                    </div>
-                </div>
-                <div class="menu-item">
-                    <label>Email</label>
-                    <div class="value masked">
-                        <span id="sidebar-email">-</span>
-                        <button class="edit-btn" onclick="alert('Email change coming soon')">Edit</button>
-                    </div>
-                </div>
+            <div class="menu-dropdown active" id="account-dropdown">
+                <a href="#" class="menu-link active" onclick="showPage('overview', this)">Przegląd</a>
+                <a href="#" class="menu-link" onclick="showPage('settings', this)">Ustawienia</a>
             </div>
         </div>
 
-        <!-- Profile Section -->
+        <!-- Profile Menu -->
         <div class="menu-section">
-            <div class="menu-header active" onclick="toggleMenu('profile')">
-                <span class="menu-title">Profile</span>
+            <div class="menu-header" onclick="toggleMenu('profile')">
+                <span class="menu-title">
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Profile
+                </span>
                 <span class="menu-arrow">▼</span>
             </div>
-            <div class="menu-content active" id="profile-menu">
-                <div class="menu-item">
-                    <label>Profile URL</label>
-                    <div class="value">
-                        <a href="#" id="sidebar-profile-url" style="color:#ff3333; text-decoration:none; font-size:12px;">Loading...</a>
-                    </div>
-                </div>
+            <div class="menu-dropdown" id="profile-dropdown">
+                <a href="#" class="menu-link" onclick="showPage('edit-profile', this)">Edytuj profil</a>
+                <a href="#" class="menu-link" onclick="viewProfile()">Zobacz profil</a>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Dashboard</h1>
-            <div class="header-actions">
-                <button class="btn" onclick="viewProfile()">View Profile</button>
-                <button class="btn logout-btn" onclick="logout()">Logout</button>
+        <!-- Overview Page -->
+        <div class="page-view active" id="page-overview">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Przegląd</h1>
+                    <p class="page-subtitle">Witaj w panelu FakeZone</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-card-label">Nazwa użytkownika</div>
+                    <div class="info-card-value" id="overview-username">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Email</div>
+                    <div class="info-card-value" id="overview-email">-</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Twój profil</div>
+                    <div class="info-card-value">
+                        <a href="#" id="overview-profile-url" target="_blank">-</a>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label">Discord</div>
+                    <div class="info-card-value" id="overview-discord">Niepołączony</div>
+                </div>
             </div>
         </div>
 
-        <div class="content-grid">
-            <!-- Edit Profile Panel -->
-            <div class="panel">
-                <h3>Edit Profile</h3>
+        <!-- Settings Page -->
+        <div class="page-view" id="page-settings">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Ustawienia</h1>
+                    <p class="page-subtitle">Zarządzaj swoim kontem</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Informacje o koncie</h3>
                 
-                <div class="form-group">
-                    <label>Display Name</label>
-                    <input type="text" id="username" readonly style="opacity: 0.5;">
-                </div>
-
-                <div class="form-group">
-                    <label>Avatar URL</label>
-                    <input type="url" id="avatar" placeholder="https://example.com/image.jpg">
-                </div>
-
-                <div class="form-group">
-                    <label>Bio</label>
-                    <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Discord Connection</label>
-                    <div class="discord-connect">
-                        <button class="discord-btn" onclick="connectDiscord()" id="discordBtn">
-                            <svg width="20" height="15" viewBox="0 0 71 55" fill="currentColor">
-                                <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/>
-                            </svg>
-                            Connect Discord
-                        </button>
-                        <div id="discordInfo" style="display:none;">
-                            <span id="discordName">-</span>
-                        </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Nazwa użytkownika</div>
+                        <div class="setting-value" id="settings-username">-</div>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="saveProfile()" style="width:100%; margin-top:20px;">
-                    Save Changes
-                </button>
-                <div id="saveStatus"></div>
-            </div>
-
-            <!-- Preview Panel -->
-            <div class="panel">
-                <h3>Preview</h3>
-                <div class="preview-box">
-                    <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/80">
-                    <div id="previewUsername" class="preview-name">@username</div>
-                    <div id="previewBio" class="preview-bio">Your bio here...</div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Adres email</div>
+                        <div class="setting-value" id="settings-email">-</div>
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn" onclick="alert('Wkrótce dostępne')">Zmień</button>
+                    </div>
                 </div>
 
-                <div class="profile-url">
-                    <label>Your Profile URL</label>
-                    <a href="#" id="profileUrl" target="_blank">Loading...</a>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Hasło</div>
+                        <div class="setting-value">••••••••</div>
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn" onclick="alert('Wkrótce dostępne')">Zmień</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Połączone konta</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Discord</div>
+                        <div class="setting-value" id="settings-discord">Niepołączony</div>
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn" id="settings-discord-btn" onclick="connectDiscord()">Połącz</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section" style="border-color: #ff3333;">
+                <h3 style="color: #ff3333;">Strefa niebezpieczna</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">Usuń konto</div>
+                        <div class="setting-value">Trwale usuń swoje konto i wszystkie dane</div>
+                    </div>
+                    <div class="setting-action">
+                        <button class="btn" style="border-color:#ff3333; color:#ff3333;" onclick="alert('Wkrótce dostępne')">Usuń</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Page -->
+        <div class="page-view" id="page-edit-profile">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Edytuj profil</h1>
+                    <p class="page-subtitle">Dostosuj swój publiczny profil</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="viewProfile()">Zobacz profil</button>
+                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                </div>
+            </div>
+
+            <div class="profile-grid">
+                <div class="panel">
+                    <h3>Informacje</h3>
+                    
+                    <div class="form-group">
+                        <label>Nazwa wyświetlana</label>
+                        <input type="text" id="username" readonly style="opacity: 0.5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Avatar URL</label>
+                        <input type="url" id="avatar" placeholder="https://example.com/image.jpg" oninput="updatePreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="bio" placeholder="Napisz coś o sobie..." oninput="updatePreview()"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Discord</label>
+                        <div id="discord-section">
+                            <button class="discord-btn" onclick="connectDiscord()" id="discordBtn">
+                                <svg width="20" height="15" viewBox="0 0 71 55" fill="currentColor">
+                                    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978Z"/>
+                                </svg>
+                                Połącz Discord
+                            </button>
+                        </div>
+                        <div id="discord-connected" class="discord-connected" style="display:none;">
+                            <img class="discord-avatar" id="discord-avatar" src="">
+                            <span class="discord-name" id="discord-name">-</span>
+                            <button class="discord-disconnect" onclick="disconnectDiscord()">Odłącz</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveProfile()" style="width:100%; margin-top:20px;">
+                        Zapisz zmiany
+                    </button>
+                    <div id="saveStatus"></div>
+                </div>
+
+                <div class="panel">
+                    <h3>Podgląd</h3>
+                    <div class="preview-box">
+                        <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/80">
+                        <div id="previewUsername" class="preview-name">@username</div>
+                        <div id="previewBio" class="preview-bio">Twoje bio tutaj...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -500,14 +679,39 @@
         let currentUser = null;
         let userProfile = null;
 
-        // Toggle menu
+        // Toggle dropdown menu
         window.toggleMenu = function(menuId) {
-            const menu = document.getElementById(menuId + '-menu');
-            const header = menu.previousElementSibling;
+            const dropdown = document.getElementById(menuId + '-dropdown');
+            const header = dropdown.previousElementSibling;
             
-            menu.classList.toggle('active');
+            dropdown.classList.toggle('active');
             header.classList.toggle('active');
         };
+
+        // Show page
+        window.showPage = function(pageId, linkElement) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            // Update active link
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            if (linkElement) {
+                linkElement.classList.add('active');
+            }
+        };
+
+        // Mask email - show first 5 chars, rest as *
+        function maskEmail(email) {
+            if (email.length <= 5) return email;
+            return email.substring(0, 5) + '*'.repeat(email.length - 5);
+        }
 
         // Check auth
         onAuthStateChanged(auth, async (user) => {
@@ -517,12 +721,6 @@
             }
             
             currentUser = user;
-            
-            // Mask email
-            const email = user.email;
-            const maskedEmail = email.substring(0, 5) + '*'.repeat(email.length - 5);
-            document.getElementById('sidebar-email').textContent = maskedEmail;
-            
             await loadProfile();
         });
 
@@ -534,13 +732,20 @@
             if (docSnap.exists()) {
                 userProfile = docSnap.data();
                 
-                // Update sidebar
-                document.getElementById('sidebar-username').textContent = userProfile.username;
                 const profileUrl = `${window.location.origin}/${userProfile.username}`;
-                document.getElementById('sidebar-profile-url').href = profileUrl;
-                document.getElementById('sidebar-profile-url').textContent = `/${userProfile.username}`;
+                const maskedEmail = maskEmail(currentUser.email);
                 
-                // Update form
+                // Update Overview page
+                document.getElementById('overview-username').textContent = userProfile.username;
+                document.getElementById('overview-email').textContent = maskedEmail;
+                document.getElementById('overview-profile-url').href = profileUrl;
+                document.getElementById('overview-profile-url').textContent = profileUrl;
+                
+                // Update Settings page
+                document.getElementById('settings-username').textContent = userProfile.username;
+                document.getElementById('settings-email').textContent = maskedEmail;
+                
+                // Update Edit Profile page
                 document.getElementById('username').value = userProfile.username;
                 document.getElementById('avatar').value = userProfile.avatar || '';
                 document.getElementById('bio').value = userProfile.bio || '';
@@ -548,16 +753,36 @@
                 // Update preview
                 updatePreview();
                 
-                // Update profile URL
-                document.getElementById('profileUrl').href = profileUrl;
-                document.getElementById('profileUrl').textContent = profileUrl;
+                // Update Discord status
+                if (userProfile.discord) {
+                    showDiscordConnected();
+                }
             }
+        }
+
+        // Show Discord connected state
+        function showDiscordConnected() {
+            const discordName = `${userProfile.discord.username}#${userProfile.discord.discriminator || '0'}`;
+            
+            // Overview
+            document.getElementById('overview-discord').textContent = discordName;
+            
+            // Settings
+            document.getElementById('settings-discord').textContent = discordName;
+            document.getElementById('settings-discord-btn').textContent = 'Odłącz';
+            document.getElementById('settings-discord-btn').onclick = disconnectDiscord;
+            
+            // Edit Profile
+            document.getElementById('discord-section').style.display = 'none';
+            document.getElementById('discord-connected').style.display = 'flex';
+            document.getElementById('discord-avatar').src = userProfile.discord.avatar;
+            document.getElementById('discord-name').textContent = discordName;
         }
 
         // Update preview
         window.updatePreview = function() {
             const avatar = document.getElementById('avatar').value || 'https://via.placeholder.com/80';
-            const bio = document.getElementById('bio').value || 'Your bio here...';
+            const bio = document.getElementById('bio').value || 'Twoje bio tutaj...';
             const username = document.getElementById('username').value;
             
             document.getElementById('previewAvatar').src = avatar;
@@ -576,18 +801,20 @@
                     bio: bio
                 });
                 
-                document.getElementById('saveStatus').innerHTML = '<div style="color:#00ff00; margin-top:10px;">✓ Saved!</div>';
+                document.getElementById('saveStatus').innerHTML = '<div style="color:#00ff00; margin-top:10px; text-align:center;">✓ Zapisano!</div>';
                 setTimeout(() => {
                     document.getElementById('saveStatus').innerHTML = '';
                 }, 3000);
             } catch (error) {
-                document.getElementById('saveStatus').innerHTML = '<div style="color:#ff3333; margin-top:10px;">Error saving</div>';
+                document.getElementById('saveStatus').innerHTML = '<div style="color:#ff3333; margin-top:10px; text-align:center;">Błąd zapisu</div>';
             }
         };
 
         // View profile
         window.viewProfile = function() {
-            window.open(`/${userProfile.username}`, '_blank');
+            if (userProfile) {
+                window.open(`/${userProfile.username}`, '_blank');
+            }
         };
 
         // Discord connect
@@ -601,15 +828,32 @@
             window.location.href = authUrl;
         };
 
+        // Discord disconnect
+        window.disconnectDiscord = async function() {
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    discord: null
+                });
+                
+                // Reset UI
+                document.getElementById('overview-discord').textContent = 'Niepołączony';
+                document.getElementById('settings-discord').textContent = 'Niepołączony';
+                document.getElementById('settings-discord-btn').textContent = 'Połącz';
+                document.getElementById('settings-discord-btn').onclick = connectDiscord;
+                document.getElementById('discord-section').style.display = 'block';
+                document.getElementById('discord-connected').style.display = 'none';
+                
+                userProfile.discord = null;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
         // Logout
         window.logout = async function() {
             await signOut(auth);
             window.location.href = '/';
         };
-
-        // Initialize listeners
-        document.getElementById('avatar').addEventListener('input', updatePreview);
-        document.getElementById('bio').addEventListener('input', updatePreview);
     </script>
 </body>
 </html>
