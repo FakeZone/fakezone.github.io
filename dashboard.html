@@ -801,8 +801,19 @@
             text-align: center;
         }
 
+        .tile-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 1400px) {
+            .tile-grid-4 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 1200px) {
-            .tile-grid {
+            .tile-grid,
+            .tile-grid-4 {
                 grid-template-columns: repeat(2, 1fr);
             }
             .info-grid {
@@ -811,7 +822,8 @@
         }
 
         @media (max-width: 900px) {
-            .tile-grid {
+            .tile-grid,
+            .tile-grid-4 {
                 grid-template-columns: 1fr;
             }
             .effect-grid {
@@ -830,13 +842,13 @@
                 grid-template-columns: 1fr;
             }
         }
+
         .sidebar-footer {
             position: absolute;
             bottom: 20px;
             left: 20px;
             right: 20px;
         }
-
         .view-profile-btn {
             width: 100%;
             padding: 12px 20px;
@@ -1156,125 +1168,140 @@
                 </div>
             </div>
 
-            <!-- General Customization -->
-            <div class="section-title">General Customization</div>
-            <div class="tile-grid tile-grid-2">
-                <div class="tile">
-                    <div class="tile-header">Bio</div>
-                    <div class="tile-content">
-                        <div class="form-group">
-                            <label>Content</label>
-                            <textarea id="bio" placeholder="Write something about yourself..." oninput="updatePreview()"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Font</label>
-                            <select id="bio-font" onchange="updatePreview()">
-                                <option value="Segoe UI">Segoe UI</option>
-                                <option value="Roboto">Roboto</option>
-                                <option value="Poppins">Poppins</option>
-                                <option value="Montserrat">Montserrat</option>
-                                <option value="Open Sans">Open Sans</option>
-                                <option value="Lato">Lato</option>
-                                <option value="Oswald">Oswald</option>
-                                <option value="Playfair Display">Playfair Display</option>
-                                <option value="Ubuntu">Ubuntu</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Color</label>
-                            <div class="color-picker-wrapper">
-                                <input type="color" class="color-picker" id="bio-color" value="#888888" oninput="updateBioColorHex(); updatePreview();">
-                                <input type="text" class="edit-input color-hex" id="bio-color-hex" value="#888888" oninput="updateBioColorPicker(); updatePreview();">
-                            </div>
-                        </div>
-                    </div>
+<!-- General Customization -->
+<div class="section-title">General Customization</div>
+<div class="tile-grid tile-grid-4">
+    <div class="tile">
+        <div class="tile-header">Bio</div>
+        <div class="tile-content">
+            <div class="form-group">
+                <label>Content</label>
+                <textarea id="bio" placeholder="Write something about yourself..." oninput="updatePreview()"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Font</label>
+                <select id="bio-font" onchange="updatePreview()">
+                    <option value="Segoe UI">Segoe UI</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Poppins">Poppins</option>
+                    <option value="Montserrat">Montserrat</option>
+                    <option value="Open Sans">Open Sans</option>
+                    <option value="Lato">Lato</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                    <option value="Ubuntu">Ubuntu</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" class="color-picker" id="bio-color" value="#888888" oninput="updateBioColorHex(); updatePreview();">
+                    <input type="text" class="edit-input color-hex" id="bio-color-hex" value="#888888" oninput="updateBioColorPicker(); updatePreview();">
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="tile">
-                    <div class="tile-header">Username</div>
-                    <div class="tile-content">
-                        <div class="form-group">
-                            <label>Effect</label>
-                            <div class="effect-grid">
-                                <div class="effect-option active" data-effect="none" onclick="selectEffect('none')">
-                                    <div class="effect-preview effect-none">Aa</div>
-                                    <div class="effect-name">None</div>
-                                </div>
-                                <div class="effect-option" data-effect="glitch" onclick="selectEffect('glitch')">
-                                    <div class="effect-preview effect-glitch">Aa</div>
-                                    <div class="effect-name">Glitch</div>
-                                </div>
-                                <div class="effect-option" data-effect="rainbow" onclick="selectEffect('rainbow')">
-                                    <div class="effect-preview effect-rainbow">Aa</div>
-                                    <div class="effect-name">Rainbow</div>
-                                </div>
-                                <div class="effect-option" data-effect="glow" onclick="selectEffect('glow')">
-                                    <div class="effect-preview effect-glow">Aa</div>
-                                    <div class="effect-name">Glow</div>
-                                </div>
-                                <div class="effect-option" data-effect="wave" onclick="selectEffect('wave')">
-                                    <div class="effect-preview effect-wave">Aa</div>
-                                    <div class="effect-name">Wave</div>
-                                </div>
-                                <div class="effect-option" data-effect="typing" onclick="selectEffect('typing')">
-                                    <div class="effect-preview effect-typing">Aa</div>
-                                    <div class="effect-name">Typing</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Color</label>
-                            <div class="color-picker-wrapper">
-                                <input type="color" class="color-picker" id="username-color" value="#ffffff" oninput="updateUsernameColorHex(); updatePreview();">
-                                <input type="text" class="edit-input color-hex" id="username-color-hex" value="#ffffff" oninput="updateUsernameColorPicker(); updatePreview();">
-                            </div>
-                        </div>
+    <div class="tile">
+        <div class="tile-header">Username</div>
+        <div class="tile-content">
+            <div class="form-group">
+                <label>Effect</label>
+                <div class="effect-grid">
+                    <div class="effect-option active" data-effect="none" onclick="selectEffect('none')">
+                        <div class="effect-preview effect-none">Aa</div>
+                        <div class="effect-name">None</div>
                     </div>
-                </div>
-
-                <div class="tile">
-                    <div class="tile-header">Profile Box Color</div>
-                    <div class="tile-content">
-                        <div class="form-group">
-                            <label>Box Background Color</label>
-                            <div class="color-picker-wrapper">
-                                <input type="color" class="color-picker" id="bg-overlay-color" value="#000000" oninput="updateBgOverlayColorHex(); updatePreview();">
-                                <input type="text" class="edit-input color-hex" id="bg-overlay-color-hex" value="#000000" oninput="updateBgOverlayColorPicker(); updatePreview();">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Box Opacity</label>
-                            <div class="range-wrapper">
-                                <input type="range" class="range-slider" id="bg-overlay-opacity" min="0" max="100" value="60" oninput="updateBgOverlayOpacityLabel(); updatePreview();">
-                                <span class="range-value" id="bg-overlay-opacity-label">60%</span>
-                            </div>
-                        </div>
-                        <p style="font-size:11px; color:#666; margin-top:10px;">Changes the background color and transparency of the profile box</p>
+                    <div class="effect-option" data-effect="glitch" onclick="selectEffect('glitch')">
+                        <div class="effect-preview effect-glitch">Aa</div>
+                        <div class="effect-name">Glitch</div>
                     </div>
-                </div>
-
-                <div class="tile">
-                    <div class="tile-header">Icons Color</div>
-                    <div class="tile-content">
-                        <div class="form-group">
-                            <label>Social Icons Color</label>
-                            <div class="color-picker-wrapper">
-                                <input type="color" class="color-picker" id="icons-color" value="#ffffff" oninput="updateIconsColorHex();">
-                                <input type="text" class="edit-input color-hex" id="icons-color-hex" value="#ffffff" oninput="updateIconsColorPicker();">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Icons Style</label>
-                            <select id="icons-style">
-                                <option value="default">Default (Platform Colors)</option>
-                                <option value="custom">Custom Color</option>
-                                <option value="monochrome">Monochrome</option>
-                            </select>
-                        </div>
-                        <p style="font-size:11px; color:#666; margin-top:10px;">Custom color will override platform-specific colors on hover</p>
+                    <div class="effect-option" data-effect="rainbow" onclick="selectEffect('rainbow')">
+                        <div class="effect-preview effect-rainbow">Aa</div>
+                        <div class="effect-name">Rainbow</div>
+                    </div>
+                    <div class="effect-option" data-effect="glow" onclick="selectEffect('glow')">
+                        <div class="effect-preview effect-glow">Aa</div>
+                        <div class="effect-name">Glow</div>
+                    </div>
+                    <div class="effect-option" data-effect="wave" onclick="selectEffect('wave')">
+                        <div class="effect-preview effect-wave">Aa</div>
+                        <div class="effect-name">Wave</div>
+                    </div>
+                    <div class="effect-option" data-effect="typing" onclick="selectEffect('typing')">
+                        <div class="effect-preview effect-typing">Aa</div>
+                        <div class="effect-name">Typing</div>
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <label>Color</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" class="color-picker" id="username-color" value="#ffffff" oninput="updateUsernameColorHex(); updatePreview();">
+                    <input type="text" class="edit-input color-hex" id="username-color-hex" value="#ffffff" oninput="updateUsernameColorPicker(); updatePreview();">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tile">
+        <div class="tile-header">Profile Box Color</div>
+        <div class="tile-content">
+            <div class="form-group">
+                <label>Box Background Color</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" class="color-picker" id="bg-overlay-color" value="#000000" oninput="updateBgOverlayColorHex(); updatePreview();">
+                    <input type="text" class="edit-input color-hex" id="bg-overlay-color-hex" value="#000000" oninput="updateBgOverlayColorPicker(); updatePreview();">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Box Opacity</label>
+                <div class="range-wrapper">
+                    <input type="range" class="range-slider" id="bg-overlay-opacity" min="0" max="100" value="60" oninput="updateBgOverlayOpacityLabel(); updatePreview();">
+                    <span class="range-value" id="bg-overlay-opacity-label">60%</span>
+                </div>
+            </div>
+            <p style="font-size:11px; color:#666; margin-top:10px;">Changes the background color and transparency of the profile box</p>
+        </div>
+    </div>
+
+    <div class="tile">
+        <div class="tile-header">Icons Color</div>
+        <div class="tile-content">
+            <div class="form-group">
+                <label>Social Icons Color</label>
+                <div class="color-picker-wrapper">
+                    <input type="color" class="color-picker" id="icons-color" value="#ffffff" oninput="updateIconsColorHex();">
+                    <input type="text" class="edit-input color-hex" id="icons-color-hex" value="#ffffff" oninput="updateIconsColorPicker();">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Icons Style</label>
+                <select id="icons-style">
+                    <option value="default">Default (Platform Colors)</option>
+                    <option value="custom">Custom Color</option>
+                    <option value="monochrome">Monochrome</option>
+                </select>
+            </div>
+            <p style="font-size:11px; color:#666; margin-top:10px;">Custom color will override platform-specific colors on hover</p>
+        </div>
+    </div>
+
+    <!-- ✅ NOWA KAFELKA: Show UID -->
+    <div class="tile">
+        <div class="tile-header">Show UID</div>
+        <div class="tile-content">
+            <div class="toggle-item">
+                <span class="toggle-label">Display UID on profile</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-show-uid" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <p style="font-size:11px; color:#666; margin-top:10px;">Shows your unique ID (#0002) on your profile page</p>
+        </div>
+    </div>
+</div>
 
             <!-- Profile Effects -->
             <div class="section-title">Profile Effects</div>
@@ -1839,6 +1866,7 @@ function playTestAudio(url, volume) {
                 document.getElementById('toggle-discord-avatar').checked = userProfile.useDiscordAvatar || false;
                 document.getElementById('toggle-volume-control').checked = userProfile.showVolumeControl || false;
                 document.getElementById('toggle-avatar-decoration').checked = userProfile.showAvatarDecoration || false;
+                document.getElementById('toggle-show-uid').checked = userProfile.showUid ?? true;
 
                 // Load social links
                 document.getElementById('link-discord').value = userProfile.links?.discord || '';
@@ -2174,7 +2202,8 @@ function playTestAudio(url, volume) {
                     iconsStyle: document.getElementById('icons-style').value,
                     useDiscordAvatar: document.getElementById('toggle-discord-avatar').checked,
                     showVolumeControl: document.getElementById('toggle-volume-control').checked,
-                    showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked
+                    showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked,
+                    showUid: document.getElementById('toggle-show-uid').checked
                 });
                 
                 document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Saved! Your profile has been updated.</div>';
