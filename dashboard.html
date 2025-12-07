@@ -1037,7 +1037,7 @@
 
             <!-- General Customization -->
             <div class="section-title">General Customization</div>
-            <div class="tile-grid tile-grid-2">
+            <div class="tile-grid">
                 <div class="tile">
                     <div class="tile-header">Bio</div>
                     <div class="tile-content">
@@ -1108,6 +1108,48 @@
                                 <input type="text" class="edit-input color-hex" id="username-color-hex" value="#ffffff" oninput="updateUsernameColorPicker(); updatePreview();">
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">Background Color</div>
+                    <div class="tile-content">
+                        <div class="form-group">
+                            <label>Overlay Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="color-picker" id="bg-overlay-color" value="#000000" oninput="updateBgOverlayColorHex(); updatePreview();">
+                                <input type="text" class="edit-input color-hex" id="bg-overlay-color-hex" value="#000000" oninput="updateBgOverlayColorPicker(); updatePreview();">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Overlay Opacity</label>
+                            <div class="range-wrapper">
+                                <input type="range" class="range-slider" id="bg-overlay-opacity" min="0" max="100" value="60" oninput="updateBgOverlayOpacityLabel(); updatePreview();">
+                                <span class="range-value" id="bg-overlay-opacity-label">60%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">Icons Color</div>
+                    <div class="tile-content">
+                        <div class="form-group">
+                            <label>Social Icons Color</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" class="color-picker" id="icons-color" value="#ffffff" oninput="updateIconsColorHex();">
+                                <input type="text" class="edit-input color-hex" id="icons-color-hex" value="#ffffff" oninput="updateIconsColorPicker();">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Icons Style</label>
+                            <select id="icons-style">
+                                <option value="default">Default (Platform Colors)</option>
+                                <option value="custom">Custom Color</option>
+                                <option value="monochrome">Monochrome</option>
+                            </select>
+                        </div>
+                        <p style="font-size:11px; color:#666; margin-top:10px;">Custom color will override platform-specific colors on hover</p>
                     </div>
                 </div>
             </div>
@@ -1221,7 +1263,7 @@
                             <label>Username or Invite Link</label>
                             <div class="link-input-wrapper">
                                 <svg viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
-                                <input type="text" id="link-discord" placeholder="discord id or discord.gg/invite">
+                                <input type="text" id="link-discord" placeholder="username#0000 or discord.gg/invite">
                             </div>
                         </div>
                     </div>
@@ -1448,6 +1490,15 @@
             return match ? match[1] : null;
         }
 
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : {r: 0, g: 0, b: 0};
+        }
+
         window.validateAudioURL = function(url) {
             if (!url) return true;
             
@@ -1589,6 +1640,14 @@
                 document.getElementById('profile-opacity').value = userProfile.profileOpacity ?? 100;
                 document.getElementById('profile-blur').value = userProfile.profileBlur || 0;
 
+                // NEW: Background and Icons colors
+                document.getElementById('bg-overlay-color').value = userProfile.bgOverlayColor || '#000000';
+                document.getElementById('bg-overlay-color-hex').value = userProfile.bgOverlayColor || '#000000';
+                document.getElementById('bg-overlay-opacity').value = userProfile.bgOverlayOpacity ?? 60;
+                document.getElementById('icons-color').value = userProfile.iconsColor || '#ffffff';
+                document.getElementById('icons-color-hex').value = userProfile.iconsColor || '#ffffff';
+                document.getElementById('icons-style').value = userProfile.iconsStyle || 'default';
+
                 document.getElementById('toggle-discord-avatar').checked = userProfile.useDiscordAvatar || false;
                 document.getElementById('toggle-volume-control').checked = userProfile.showVolumeControl || false;
                 document.getElementById('toggle-avatar-decoration').checked = userProfile.showAvatarDecoration || false;
@@ -1621,6 +1680,7 @@
                 updateVolumeLabel();
                 updateOpacityLabel();
                 updateBlurLabel();
+                updateBgOverlayOpacityLabel();
                 updatePreview();
             }
         }
@@ -1638,6 +1698,12 @@
                 previewBg.style.backgroundImage = `url('${bgImage}')`;
                 previewBgOverlay.style.display = 'block';
                 previewContainer.classList.add('has-bg');
+                
+                // Apply background overlay color
+                const bgOverlayColor = document.getElementById('bg-overlay-color').value;
+                const bgOverlayOpacity = document.getElementById('bg-overlay-opacity').value;
+                const rgb = hexToRgb(bgOverlayColor);
+                previewBgOverlay.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${bgOverlayOpacity / 100})`;
             } else {
                 previewBg.style.backgroundImage = '';
                 previewBgOverlay.style.display = 'none';
@@ -1707,6 +1773,31 @@
             }
         };
 
+        // NEW: Background overlay color functions
+        window.updateBgOverlayColorHex = function() {
+            document.getElementById('bg-overlay-color-hex').value = document.getElementById('bg-overlay-color').value;
+        };
+        window.updateBgOverlayColorPicker = function() {
+            const hex = document.getElementById('bg-overlay-color-hex').value;
+            if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                document.getElementById('bg-overlay-color').value = hex;
+            }
+        };
+        window.updateBgOverlayOpacityLabel = function() {
+            document.getElementById('bg-overlay-opacity-label').textContent = document.getElementById('bg-overlay-opacity').value + '%';
+        };
+
+        // NEW: Icons color functions
+        window.updateIconsColorHex = function() {
+            document.getElementById('icons-color-hex').value = document.getElementById('icons-color').value;
+        };
+        window.updateIconsColorPicker = function() {
+            const hex = document.getElementById('icons-color-hex').value;
+            if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                document.getElementById('icons-color').value = hex;
+            }
+        };
+
         window.updateVolumeLabel = function() {
             document.getElementById('audio-volume-label').textContent = document.getElementById('audio-volume').value + '%';
             
@@ -1769,6 +1860,10 @@
                     usernameEffect: selectedEffect,
                     profileOpacity: parseInt(document.getElementById('profile-opacity').value),
                     profileBlur: parseInt(document.getElementById('profile-blur').value),
+                    bgOverlayColor: document.getElementById('bg-overlay-color').value,
+                    bgOverlayOpacity: parseInt(document.getElementById('bg-overlay-opacity').value),
+                    iconsColor: document.getElementById('icons-color').value,
+                    iconsStyle: document.getElementById('icons-style').value,
                     useDiscordAvatar: document.getElementById('toggle-discord-avatar').checked,
                     showVolumeControl: document.getElementById('toggle-volume-control').checked,
                     showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked
