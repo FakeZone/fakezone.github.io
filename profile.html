@@ -82,7 +82,6 @@
             line-height: 1.6;
         }
 
-        /* Social Links */
         .social-links {
             display: flex;
             justify-content: center;
@@ -121,18 +120,30 @@
             transition: all 0.3s;
         }
 
-        /* Platform-specific colors */
-        .social-link.discord:hover { background: #5865F2; border-color: #5865F2; }
-        .social-link.instagram:hover { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-color: #bc1888; }
-        .social-link.twitter:hover { background: #000; border-color: #fff; }
-        .social-link.tiktok:hover { background: #000; border-color: #00f2ea; }
-        .social-link.youtube:hover { background: #FF0000; border-color: #FF0000; }
-        .social-link.twitch:hover { background: #9146FF; border-color: #9146FF; }
-        .social-link.spotify:hover { background: #1DB954; border-color: #1DB954; }
-        .social-link.steam:hover { background: #171a21; border-color: #1b2838; }
-        .social-link.github:hover { background: #333; border-color: #fff; }
-        .social-link.paypal:hover { background: #0070ba; border-color: #0070ba; }
-        .social-link.custom:hover { background: #ff3333; border-color: #ff3333; }
+        /* Icons Style: Default - Platform Colors */
+        .icons-style-default .social-link.discord:hover { background: #5865F2; border-color: #5865F2; }
+        .icons-style-default .social-link.instagram:hover { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-color: #bc1888; }
+        .icons-style-default .social-link.twitter:hover { background: #000; border-color: #fff; }
+        .icons-style-default .social-link.tiktok:hover { background: #000; border-color: #00f2ea; }
+        .icons-style-default .social-link.youtube:hover { background: #FF0000; border-color: #FF0000; }
+        .icons-style-default .social-link.twitch:hover { background: #9146FF; border-color: #9146FF; }
+        .icons-style-default .social-link.spotify:hover { background: #1DB954; border-color: #1DB954; }
+        .icons-style-default .social-link.steam:hover { background: #171a21; border-color: #1b2838; }
+        .icons-style-default .social-link.github:hover { background: #333; border-color: #fff; }
+        .icons-style-default .social-link.paypal:hover { background: #0070ba; border-color: #0070ba; }
+        .icons-style-default .social-link.custom:hover { background: #ff3333; border-color: #ff3333; }
+
+        /* Icons Style: Custom Color */
+        .icons-style-custom .social-link:hover {
+            background: var(--custom-icon-color);
+            border-color: var(--custom-icon-color);
+        }
+
+        /* Icons Style: Monochrome */
+        .icons-style-monochrome .social-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
 
         .views-counter {
             position: absolute;
@@ -353,7 +364,6 @@
             <h1 class="username" id="username">@username</h1>
             <p class="bio" id="bio">Bio loading...</p>
             
-            <!-- Social Links -->
             <div class="social-links" id="socialLinks"></div>
             
             <div class="views-counter" id="viewsCounter">
@@ -376,8 +386,7 @@
     <div id="youtubePlayer" style="position:fixed; top:-9999px; left:-9999px; width:1px; height:1px; pointer-events:none;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-
-    <script type="module">
+        <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
@@ -405,6 +414,16 @@
 
         function debug(msg) {
             console.log('🔍', msg);
+        }
+
+        // ============ HEX TO RGB ============
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : {r: 0, g: 0, b: 0};
         }
 
         // ============ SOCIAL LINKS ICONS ============
@@ -438,15 +457,14 @@
             let url = value;
             let title = platform.charAt(0).toUpperCase() + platform.slice(1);
             
-            // Format URLs for each platform
             switch(platform) {
                 case 'discord':
                     if (value.startsWith('http')) {
-                        url = value; // Already a full invite link
+                        url = value;
                     } else if (value.includes('discord.gg/')) {
                         url = 'https://' + value;
                     } else {
-                        url = 'https://discord.com/users/' + value; // Username or ID
+                        url = 'https://discord.com/users/' + value;
                     }
                     break;
                 case 'instagram':
@@ -495,12 +513,26 @@
             `;
         }
 
-        function displaySocialLinks(links) {
+        function displaySocialLinks(links, iconsStyle, iconsColor) {
             if (!links) return;
             
             const container = document.getElementById('socialLinks');
-            let html = '';
             
+            // Apply icons style class to container
+            container.className = 'social-links icons-style-' + (iconsStyle || 'default');
+            
+            // Set custom color CSS variable
+            if (iconsStyle === 'custom' && iconsColor) {
+                document.documentElement.style.setProperty('--custom-icon-color', iconsColor);
+            }
+            
+            // Set monochrome color
+            if (iconsStyle === 'monochrome' && iconsColor) {
+                const svgs = container.querySelectorAll('svg');
+                svgs.forEach(svg => svg.style.fill = iconsColor);
+            }
+            
+            let html = '';
             const platforms = ['discord', 'instagram', 'twitter', 'tiktok', 'youtube', 'twitch', 'spotify', 'steam', 'github', 'paypal', 'custom'];
             
             platforms.forEach(platform => {
@@ -510,6 +542,14 @@
             });
             
             container.innerHTML = html;
+            
+            // Apply icon colors after rendering
+            if (iconsStyle === 'monochrome' && iconsColor) {
+                setTimeout(() => {
+                    const svgs = container.querySelectorAll('svg');
+                    svgs.forEach(svg => svg.style.fill = iconsColor);
+                }, 0);
+            }
         }
 
         // ============ VIEWS COUNTER ============
@@ -858,9 +898,16 @@
                 
                 document.title = `@${userData.displayName || userData.username} - FakeZone`;
                 
+                // ============ BACKGROUND & OVERLAY ============
                 if (userData.bgImage) {
                     document.getElementById('bgImage').style.backgroundImage = `url('${userData.bgImage}')`;
-                    document.getElementById('bgOverlay').style.background = 'rgba(0, 0, 0, 0.6)';
+                    
+                    // Apply custom overlay color and opacity
+                    const overlayColor = userData.bgOverlayColor || '#000000';
+                    const overlayOpacity = userData.bgOverlayOpacity ?? 60;
+                    const rgb = hexToRgb(overlayColor);
+                    
+                    document.getElementById('bgOverlay').style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${overlayOpacity / 100})`;
                 }
                 
                 let avatarUrl = 'https://via.placeholder.com/120';
@@ -891,8 +938,12 @@
                     bioEl.style.fontFamily = `'${userData.bioFont}', sans-serif`;
                 }
                 
-                // Display social links
-                displaySocialLinks(userData.links);
+                // ============ SOCIAL LINKS ============
+                displaySocialLinks(
+                    userData.links, 
+                    userData.iconsStyle || 'default', 
+                    userData.iconsColor || '#ffffff'
+                );
                 
                 const profileCard = document.getElementById('profileCard');
                 if (userData.profileOpacity !== undefined) {
