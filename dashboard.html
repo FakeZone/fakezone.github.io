@@ -292,6 +292,74 @@
             color: #fff;
         }
 
+        /* Toggle Switch */
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .toggle-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toggle-item:first-child {
+            padding-top: 0;
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #222;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #666;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: rgba(255,51,51,0.3);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background-color: #ff3333;
+        }
+
         /* Color Picker */
         .color-picker-wrapper {
             display: flex;
@@ -573,60 +641,6 @@
             background: transparent;
             border: 1px solid #666;
             color: #666;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* Discord */
-        .discord-btn {
-            width: 100%;
-            padding: 12px;
-            background: #5865F2;
-            border: none;
-            border-radius: 6px;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .discord-btn:hover {
-            background: #4752C4;
-        }
-
-        .discord-connected {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #0a0a0a;
-            border: 1px solid #222;
-            border-radius: 6px;
-        }
-
-        .discord-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #5865F2;
-        }
-
-        .discord-name {
-            flex: 1;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .discord-disconnect {
-            padding: 6px 12px;
-            background: transparent;
-            border: 1px solid #ff3333;
-            color: #ff3333;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
@@ -1042,6 +1056,49 @@
                 </div>
             </div>
 
+            <!-- Other Customization -->
+            <div class="section-title">Other Customization</div>
+            <div class="tile-grid">
+                <div class="tile">
+                    <div class="tile-header">Discord Avatar</div>
+                    <div class="tile-content">
+                        <div class="toggle-item">
+                            <span class="toggle-label">Użyj avatara z Discord</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-discord-avatar" onchange="updatePreview()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">Volume Control</div>
+                    <div class="tile-content">
+                        <div class="toggle-item">
+                            <span class="toggle-label">Pokaż kontrolę głośności</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-volume-control" onchange="updatePreview()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tile">
+                    <div class="tile-header">Avatar Decoration</div>
+                    <div class="tile-content">
+                        <div class="toggle-item">
+                            <span class="toggle-label">Pokaż dekorację z Discord</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-avatar-decoration" onchange="updatePreview()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Preview -->
             <div class="section-title">Preview</div>
             <div class="preview-box" id="preview-container">
@@ -1145,6 +1202,11 @@
                 document.getElementById('profile-opacity').value = userProfile.profileOpacity ?? 100;
                 document.getElementById('profile-blur').value = userProfile.profileBlur || 0;
 
+                // Toggles
+                document.getElementById('toggle-discord-avatar').checked = userProfile.useDiscordAvatar || false;
+                document.getElementById('toggle-volume-control').checked = userProfile.showVolumeControl || false;
+                document.getElementById('toggle-avatar-decoration').checked = userProfile.showAvatarDecoration || false;
+
                 // Effect
                 if (userProfile.usernameEffect) {
                     selectedEffect = userProfile.usernameEffect;
@@ -1168,7 +1230,18 @@
 
         // Update preview
         window.updatePreview = function() {
-            const avatar = document.getElementById('avatar').value || userProfile?.discord?.avatar || 'https://via.placeholder.com/100';
+            const useDiscordAvatar = document.getElementById('toggle-discord-avatar').checked;
+            const customAvatar = document.getElementById('avatar').value;
+            
+            let avatar = 'https://via.placeholder.com/100';
+            if (useDiscordAvatar && userProfile?.discord?.avatar) {
+                avatar = userProfile.discord.avatar;
+            } else if (customAvatar) {
+                avatar = customAvatar;
+            } else if (userProfile?.discord?.avatar) {
+                avatar = userProfile.discord.avatar;
+            }
+
             const bio = document.getElementById('bio').value || 'Twoje bio tutaj...';
             const displayName = userProfile?.displayName || userProfile?.username || 'username';
             const bioFont = document.getElementById('bio-font').value;
@@ -1251,7 +1324,10 @@
                     usernameColor: document.getElementById('username-color').value,
                     usernameEffect: selectedEffect,
                     profileOpacity: parseInt(document.getElementById('profile-opacity').value),
-                    profileBlur: parseInt(document.getElementById('profile-blur').value)
+                    profileBlur: parseInt(document.getElementById('profile-blur').value),
+                    useDiscordAvatar: document.getElementById('toggle-discord-avatar').checked,
+                    showVolumeControl: document.getElementById('toggle-volume-control').checked,
+                    showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked
                 });
                 document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Zapisano!</div>';
                 setTimeout(() => document.getElementById('customizeSaveStatus').innerHTML = '', 3000);
