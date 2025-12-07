@@ -185,6 +185,11 @@
             box-shadow: 0 5px 20px rgba(255,51,51,0.4);
         }
 
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
         .logout-btn {
             border-color: #ff3333;
             color: #ff3333;
@@ -282,9 +287,55 @@
             font-family: monospace;
         }
 
-        .setting-action .btn {
-            padding: 8px 16px;
+        .setting-action {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Edit Mode */
+        .edit-input {
+            padding: 8px 12px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #fff;
             font-size: 13px;
+            width: 200px;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: #ff3333;
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-save {
+            padding: 6px 12px;
+            background: #ff3333;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-cancel {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #666;
+            color: #666;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         /* Profile Section */
@@ -426,6 +477,19 @@
             font-size: 14px;
         }
 
+        /* Status Messages */
+        .status-success {
+            color: #00ff00;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .status-error {
+            color: #ff3333;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .profile-grid {
@@ -439,6 +503,11 @@
             }
             .main-content {
                 margin-left: 220px;
+            }
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -478,6 +547,7 @@
             </div>
             <div class="menu-dropdown" id="profile-dropdown">
                 <a href="#" class="menu-link" onclick="showPage('edit-profile', this)">Edytuj profil</a>
+                <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
                 <a href="#" class="menu-link" onclick="viewProfile()">Zobacz profil</a>
             </div>
         </div>
@@ -534,30 +604,44 @@
             <div class="settings-section">
                 <h3>Informacje o koncie</h3>
                 
+                <!-- Username Setting -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Nazwa użytkownika</div>
-                        <div class="setting-value" id="settings-username">-</div>
+                        <div class="setting-value" id="settings-username-display">-</div>
+                        <div id="username-status"></div>
+                    </div>
+                    <div class="setting-action" id="username-view-mode">
+                        <button class="btn btn-small" onclick="startEditUsername()">Zmień</button>
+                    </div>
+                    <div class="setting-action hidden" id="username-edit-mode">
+                        <input type="text" class="edit-input" id="new-username" placeholder="Nowa nazwa...">
+                        <div class="edit-buttons">
+                            <button class="btn-save" onclick="saveUsername()">Zapisz</button>
+                            <button class="btn-cancel" onclick="cancelEditUsername()">Anuluj</button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Email Setting -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Adres email</div>
                         <div class="setting-value" id="settings-email">-</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn" onclick="alert('Wkrótce dostępne')">Zmień</button>
+                        <button class="btn btn-small" onclick="alert('Wkrótce dostępne')">Zmień</button>
                     </div>
                 </div>
 
+                <!-- Password Setting -->
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Hasło</div>
                         <div class="setting-value">••••••••</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn" onclick="alert('Wkrótce dostępne')">Zmień</button>
+                        <button class="btn btn-small" onclick="alert('Wkrótce dostępne')">Zmień</button>
                     </div>
                 </div>
             </div>
@@ -571,7 +655,7 @@
                         <div class="setting-value" id="settings-discord">Niepołączony</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn" id="settings-discord-btn" onclick="connectDiscord()">Połącz</button>
+                        <button class="btn btn-small" id="settings-discord-btn" onclick="connectDiscord()">Połącz</button>
                     </div>
                 </div>
             </div>
@@ -585,7 +669,7 @@
                         <div class="setting-value">Trwale usuń swoje konto i wszystkie dane</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn" style="border-color:#ff3333; color:#ff3333;" onclick="alert('Wkrótce dostępne')">Usuń</button>
+                        <button class="btn btn-small" style="border-color:#ff3333; color:#ff3333;" onclick="alert('Wkrótce dostępne')">Usuń</button>
                     </div>
                 </div>
             </div>
@@ -610,7 +694,7 @@
                     
                     <div class="form-group">
                         <label>Nazwa wyświetlana</label>
-                        <input type="text" id="username" readonly style="opacity: 0.5;">
+                        <input type="text" id="display-name" placeholder="Twoja nazwa...">
                     </div>
 
                     <div class="form-group">
@@ -656,12 +740,41 @@
                 </div>
             </div>
         </div>
+
+        <!-- Customize Page -->
+        <div class="page-view" id="page-customize">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Customize</h1>
+                    <p class="page-subtitle">Dostosuj wygląd swojego profilu</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" onclick="viewProfile()">Zobacz profil</button>
+                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>🎨 Wkrótce dostępne!</h3>
+                <p style="color: #888; padding: 20px 0;">
+                    Tutaj będziesz mógł dostosować:
+                </p>
+                <ul style="color: #666; padding-left: 20px; line-height: 2;">
+                    <li>Kolory tła i akcentów</li>
+                    <li>Efekty (glitch, neon, particles)</li>
+                    <li>Czcionki</li>
+                    <li>Układ strony</li>
+                    <li>Animacje</li>
+                    <li>Muzyka w tle</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, updateDoc, deleteDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -742,11 +855,11 @@
                 document.getElementById('overview-profile-url').textContent = profileUrl;
                 
                 // Update Settings page
-                document.getElementById('settings-username').textContent = userProfile.username;
+                document.getElementById('settings-username-display').textContent = userProfile.username;
                 document.getElementById('settings-email').textContent = maskedEmail;
                 
                 // Update Edit Profile page
-                document.getElementById('username').value = userProfile.username;
+                document.getElementById('display-name').value = userProfile.displayName || userProfile.username;
                 document.getElementById('avatar').value = userProfile.avatar || '';
                 document.getElementById('bio').value = userProfile.bio || '';
                 
@@ -759,6 +872,89 @@
                 }
             }
         }
+
+        // ===== USERNAME EDITING =====
+        window.startEditUsername = function() {
+            document.getElementById('username-view-mode').classList.add('hidden');
+            document.getElementById('username-edit-mode').classList.remove('hidden');
+            document.getElementById('new-username').value = userProfile.username;
+            document.getElementById('new-username').focus();
+            document.getElementById('username-status').innerHTML = '';
+        };
+
+        window.cancelEditUsername = function() {
+            document.getElementById('username-view-mode').classList.remove('hidden');
+            document.getElementById('username-edit-mode').classList.add('hidden');
+            document.getElementById('username-status').innerHTML = '';
+        };
+
+        window.saveUsername = async function() {
+            const newUsername = document.getElementById('new-username').value.toLowerCase().trim();
+            const oldUsername = userProfile.username;
+            
+            // Validation
+            if (!newUsername) {
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Nazwa nie może być pusta</span>';
+                return;
+            }
+            
+            if (newUsername.length < 3) {
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Nazwa musi mieć min. 3 znaki</span>';
+                return;
+            }
+            
+            if (!/^[a-z0-9_]+$/.test(newUsername)) {
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Tylko małe litery, cyfry i _</span>';
+                return;
+            }
+            
+            if (newUsername === oldUsername) {
+                cancelEditUsername();
+                return;
+            }
+            
+            try {
+                // Check if new username is taken
+                const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
+                if (usernameDoc.exists()) {
+                    document.getElementById('username-status').innerHTML = '<span class="status-error">Ta nazwa jest już zajęta</span>';
+                    return;
+                }
+                
+                // Delete old username mapping
+                await deleteDoc(doc(db, 'usernames', oldUsername));
+                
+                // Create new username mapping
+                await setDoc(doc(db, 'usernames', newUsername), {
+                    uid: currentUser.uid
+                });
+                
+                // Update user profile
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    username: newUsername
+                });
+                
+                // Update local data
+                userProfile.username = newUsername;
+                
+                // Update UI
+                document.getElementById('settings-username-display').textContent = newUsername;
+                document.getElementById('overview-username').textContent = newUsername;
+                const profileUrl = `${window.location.origin}/${newUsername}`;
+                document.getElementById('overview-profile-url').href = profileUrl;
+                document.getElementById('overview-profile-url').textContent = profileUrl;
+                
+                document.getElementById('username-status').innerHTML = '<span class="status-success">✓ Zmieniono!</span>';
+                
+                setTimeout(() => {
+                    cancelEditUsername();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Błąd: ' + error.message + '</span>';
+            }
+        };
 
         // Show Discord connected state
         function showDiscordConnected() {
@@ -783,10 +979,10 @@
         window.updatePreview = function() {
             const avatar = document.getElementById('avatar').value || 'https://via.placeholder.com/80';
             const bio = document.getElementById('bio').value || 'Twoje bio tutaj...';
-            const username = document.getElementById('username').value;
+            const displayName = document.getElementById('display-name').value || userProfile.username;
             
             document.getElementById('previewAvatar').src = avatar;
-            document.getElementById('previewUsername').textContent = '@' + username;
+            document.getElementById('previewUsername').textContent = '@' + displayName;
             document.getElementById('previewBio').textContent = bio;
         };
 
@@ -794,11 +990,13 @@
         window.saveProfile = async function() {
             const avatar = document.getElementById('avatar').value;
             const bio = document.getElementById('bio').value;
+            const displayName = document.getElementById('display-name').value;
             
             try {
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     avatar: avatar,
-                    bio: bio
+                    bio: bio,
+                    displayName: displayName
                 });
                 
                 document.getElementById('saveStatus').innerHTML = '<div style="color:#00ff00; margin-top:10px; text-align:center;">✓ Zapisano!</div>';
@@ -854,6 +1052,11 @@
             await signOut(auth);
             window.location.href = '/';
         };
+
+        // Initialize listeners
+        document.getElementById('avatar').addEventListener('input', updatePreview);
+        document.getElementById('bio').addEventListener('input', updatePreview);
+        document.getElementById('display-name').addEventListener('input', updatePreview);
     </script>
 </body>
 </html>
