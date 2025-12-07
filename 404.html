@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FakeZone</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <title>404 - FakeZone</title>
     <style>
         * {
             margin: 0;
@@ -14,549 +13,127 @@
 
         body {
             min-height: 100vh;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #000000, #1a1a1a);
-            font-family: 'Segoe UI', sans-serif;
-            color: #fff;
-            overflow: hidden;
-        }
-
-        .bg-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -2;
-        }
-
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: -1;
-        }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            flex-direction: column;
         }
 
         .container {
             text-align: center;
-            z-index: 1;
-            padding: 20px;
-            animation: fadeIn 0.6s ease;
+            padding: 40px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .profile-card {
-            transition: all 0.3s;
-        }
-
-        .avatar-wrapper {
-            position: relative;
-            display: inline-block;
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #ff3333;
+            line-height: 1;
             margin-bottom: 20px;
         }
 
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid #ff3333;
-            object-fit: cover;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 30px rgba(255,51,51,0.3);
-        }
-
-        .avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(255,51,51,0.5);
-        }
-
-        .avatar-decoration {
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            width: 140px;
-            height: 140px;
-            pointer-events: none;
-        }
-
-        .username {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .bio {
-            margin-bottom: 25px;
-            font-size: 16px;
-            max-width: 400px;
-            line-height: 1.6;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .discord-info {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 25px;
-            padding: 10px 20px;
-            background: rgba(88, 101, 242, 0.15);
-            border: 1px solid rgba(88, 101, 242, 0.3);
-            border-radius: 50px;
-            transition: all 0.3s;
-        }
-
-        .discord-info:hover {
-            background: rgba(88, 101, 242, 0.25);
-        }
-
-        .discord-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-        }
-
-        .discord-name {
-            color: #5865F2;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-width: 350px;
-            margin: 0 auto;
-        }
-
-        .link-btn {
-            padding: 14px 30px;
-            background: rgba(20,20,20,0.8);
-            border: 1px solid #333;
-            border-radius: 8px;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,51,51,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .link-btn:hover::before {
-            left: 100%;
-        }
-
-        .link-btn:hover {
-            border-color: #ff3333;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255,51,51,0.3);
-        }
-
-        .audio-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 100;
-            display: none;
-        }
-
-        .audio-control.visible {
-            display: block;
-        }
-
-        .audio-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(20,20,20,0.9);
-            border: 2px solid #ff3333;
-            color: #ff3333;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .audio-btn:hover {
-            background: rgba(255,51,51,0.2);
-            transform: scale(1.1);
-        }
-
-        .audio-btn.playing {
-            animation: audioPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes audioPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,51,0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(255,51,51,0); }
-        }
-
-        .effect-glitch {
-            animation: glitch 0.5s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 100% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
-            25% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
-            50% { text-shadow: 2px 2px #ff0000, -2px -2px #00ffff; }
-            75% { text-shadow: -2px 2px #ff0000, 2px -2px #00ffff; }
-        }
-
-        .effect-rainbow {
-            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 200% 100%;
-            animation: rainbowMove 2s linear infinite;
-        }
-
-        @keyframes rainbowMove {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        .effect-glow {
-            animation: glowPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
-            50% { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
-        }
-
-        .effect-wave {
-            display: inline-block;
-            animation: wave 2s ease-in-out infinite;
-        }
-
-        @keyframes wave {
-            0%, 100% { transform: translateY(0); }
-            25% { transform: translateY(-8px); }
-            75% { transform: translateY(8px); }
-        }
-
-        .effect-typing {
-            border-right: 3px solid currentColor;
-            animation: typingCursor 0.8s step-end infinite;
-        }
-
-        @keyframes typingCursor {
-            0%, 100% { border-color: currentColor; }
-            50% { border-color: transparent; }
-        }
-
-        .error-container {
-            text-align: center;
-        }
-
-        .error {
-            color: #ff3333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .error-sub {
+        .error-text {
+            font-size: 24px;
             color: #888;
-            font-size: 16px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
-        .home-link {
+        .home-btn {
             display: inline-block;
             padding: 12px 30px;
-            background: rgba(255,51,51,0.1);
-            border: 1px solid #ff3333;
-            color: #ff3333;
+            background: #ff3333;
+            color: #fff;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-weight: 600;
             transition: all 0.3s;
         }
 
-        .home-link:hover {
-            background: rgba(255,51,51,0.2);
+        .home-btn:hover {
+            background: #ff5555;
             transform: translateY(-2px);
         }
 
-        .loading {
-            text-align: center;
+        .loader {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .loader.show {
+            display: block;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #222;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
             border-top-color: #ff3333;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .loading-text {
+        .loader-text {
             color: #888;
-            font-size: 16px;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="bg-image" id="bgImage"></div>
-    <div class="bg-overlay" id="bgOverlay"></div>
-    <canvas class="particles" id="particles"></canvas>
-    
-    <div class="container" id="profileContainer">
-        <div class="loading">
+    <div class="container">
+        <div class="error-code">404</div>
+        <div class="error-text">Page not found</div>
+        <a href="/" class="home-btn">Go Home</a>
+        
+        <div class="loader" id="loader">
             <div class="spinner"></div>
-            <div class="loading-text">Loading profile...</div>
+            <p class="loader-text">Loading profile...</p>
         </div>
     </div>
 
-    <div class="audio-control" id="audioControl">
-        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">🔇</button>
-    </div>
-
-    <audio id="bgAudio" loop></audio>
-
     <script>
-        // Particles
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const particles = [];
-        for (let i = 0; i < 80; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2 + 0.5,
-                speedY: Math.random() * 0.5 + 0.2,
-                color: Math.random() > 0.85 ? '#ff3333' : '#333'
-            });
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-                p.y -= p.speedY;
-                if (p.y < 0) {
-                    p.y = canvas.height;
-                    p.x = Math.random() * canvas.width;
-                }
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // Audio
-        let isPlaying = false;
-        const audio = document.getElementById('bgAudio');
-        const audioBtn = document.getElementById('audioBtn');
-
-        window.toggleAudio = function() {
-            if (isPlaying) {
-                audio.pause();
-                audioBtn.textContent = '🔇';
-                audioBtn.classList.remove('playing');
-            } else {
-                audio.play().catch(e => console.log('Audio play failed:', e));
-                audioBtn.textContent = '🔊';
-                audioBtn.classList.add('playing');
-            }
-            isPlaying = !isPlaying;
-        };
-    </script>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
-            authDomain: "fakezone-f3c4a.firebaseapp.com",
-            projectId: "fakezone-f3c4a",
-            storageBucket: "fakezone-f3c4a.firebasestorage.app",
-            messagingSenderId: "795138686378",
-            appId: "1:795138686378:web:5e93855a9bf8682f197fd3"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        async function loadProfile() {
-            const container = document.getElementById('profileContainer');
-            const path = window.location.pathname.substring(1).toLowerCase().replace(/\/$/, '');
-
-            const systemPages = ['index.html', 'dashboard.html', '404.html', 'discord-callback.html', 'discord-callback', ''];
-            if (systemPages.includes(path)) {
-                window.location.href = '/';
-                return;
-            }
-
-            try {
-                const usernameDoc = await getDoc(doc(db, 'usernames', path));
-                
-                if (!usernameDoc.exists()) {
-                    showError(container, 'Not Found', `User @${path} does not exist`);
-                    return;
-                }
-
-                const uid = usernameDoc.data().uid;
-                const userDoc = await getDoc(doc(db, 'users', uid));
-                
-                if (!userDoc.exists()) {
-                    showError(container, 'Profile Error', 'Could not load profile');
-                    return;
-                }
-
-                const profile = userDoc.data();
-                renderProfile(container, profile);
-
-            } catch (error) {
-                console.error('Error:', error);
-                showError(container, 'Error', error.message);
-            }
-        }
-
-        function showError(container, title, message) {
-            container.innerHTML = `
-                <div class="error-container">
-                    <div class="error">${title}</div>
-                    <div class="error-sub">${message}</div>
-                    <a href="/" class="home-link">Home</a>
-                </div>
-            `;
-        }
-
-        function renderProfile(container, profile) {
-            const displayName = profile.displayName || profile.username;
-            const bio = profile.bio || 'Welcome to my zone';
-            const bioFont = profile.bioFont || 'Segoe UI';
-            const bioColor = profile.bioColor || '#888888';
-            const usernameColor = profile.usernameColor || '#ffffff';
-            const usernameEffect = profile.usernameEffect || 'none';
-            const opacity = (profile.profileOpacity ?? 100) / 100;
-            const blur = (profile.profileBlur || 0) / 10;
+        (function() {
+            var path = window.location.pathname;
             
-            const useDiscordAvatar = profile.useDiscordAvatar || false;
-            const showVolumeControl = profile.showVolumeControl || false;
-            const showAvatarDecoration = profile.showAvatarDecoration || false;
-
-            let avatarUrl = 'https://via.placeholder.com/120';
-            if (useDiscordAvatar && profile.discord?.avatar) {
-                avatarUrl = profile.discord.avatar;
-            } else if (profile.avatar) {
-                avatarUrl = profile.avatar;
-            } else if (profile.discord?.avatar) {
-                avatarUrl = profile.discord.avatar;
-            }
-
-            if (profile.bgImage) {
-                document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
-            }
-
-            if (profile.bgAudio) {
-                const audio = document.getElementById('bgAudio');
-                audio.src = profile.bgAudio;
-                audio.volume = (profile.audioVolume || 50) / 100;
+            // Lista znanych plików - NIE przekierowuj
+            var knownFiles = [
+                '/',
+                '/index.html',
+                '/profile.html', 
+                '/dashboard.html',
+                '/discord-callback.html',
+                '/404.html'
+            ];
+            
+            // Sprawdź czy to znany plik
+            var isKnownFile = knownFiles.some(function(file) {
+                return path === file || path.endsWith(file);
+            });
+            
+            // Jeśli to NIE jest znany plik = to jest username
+            if (!isKnownFile && path && path !== '/') {
+                // Pokaż loader
+                document.getElementById('loader').classList.add('show');
+                document.querySelector('.error-code').style.display = 'none';
+                document.querySelector('.error-text').style.display = 'none';
+                document.querySelector('.home-btn').style.display = 'none';
                 
-                if (showVolumeControl) {
-                    document.getElementById('audioControl').classList.add('visible');
-                }
+                // Zapisz ścieżkę (username) w sessionStorage
+                sessionStorage.setItem('profilePath', path);
+                
+                // Przekieruj do profile.html po krótkiej chwili
+                setTimeout(function() {
+                    window.location.replace('/profile.html');
+                }, 500);
             }
-
-            let decorationHTML = '';
-            if (showAvatarDecoration && profile.discord?.avatar_decoration_data?.asset) {
-                const decorationUrl = `https://cdn.discordapp.com/avatar-decoration-presets/${profile.discord.avatar_decoration_data.asset}.png`;
-                decorationHTML = `<img src="${decorationUrl}" class="avatar-decoration" alt="">`;
-            }
-
-            let discordHTML = '';
-            if (profile.discord) {
-                discordHTML = `
-                    <div class="discord-info">
-                        <img class="discord-avatar" src="${profile.discord.avatar}" alt="">
-                        <span class="discord-name">${profile.discord.username}#${profile.discord.discriminator || '0'}</span>
-                    </div>
-                `;
-            }
-
-            let linksHTML = '';
-            if (profile.links && profile.links.length > 0) {
-                linksHTML = '<div class="links">';
-                profile.links.forEach(link => {
-                    linksHTML += `<a href="${link.url}" target="_blank" rel="noopener" class="link-btn">${link.title}</a>`;
-                });
-                linksHTML += '</div>';
-            }
-
-            const effectClass = usernameEffect !== 'none' ? `effect-${usernameEffect}` : '';
-
-            container.innerHTML = `
-                <div class="profile-card" style="opacity: ${opacity}; filter: blur(${blur}px);">
-                    <div class="avatar-wrapper">
-                        <img src="${avatarUrl}" alt="Avatar" class="avatar">
-                        ${decorationHTML}
-                    </div>
-                    <div class="username ${effectClass}" style="color: ${usernameColor};">@${displayName}</div>
-                    <div class="bio" style="color: ${bioColor}; font-family: '${bioFont}', sans-serif;">${bio}</div>
-                    ${discordHTML}
-                    ${linksHTML}
-                </div>
-            `;
-
-            document.title = `@${displayName} - FakeZone`;
-        }
-
-        loadProfile();
+        })();
     </script>
 </body>
 </html>
