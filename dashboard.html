@@ -2032,19 +2032,30 @@ function playTestAudio(url, volume) {
             const previewBgOverlay = document.getElementById('preview-bg-overlay');
             const previewContainer = document.getElementById('preview-container');
             
+            // ============ TŁO (BANNER) ============
             if (bgImage) {
                 previewBg.style.backgroundImage = `url('${bgImage}')`;
                 previewBgOverlay.style.display = 'block';
+                previewBgOverlay.style.background = 'rgba(0, 0, 0, 0.6)'; // Stałe ciemnienie banneru
                 previewContainer.classList.add('has-bg');
-                
-                const bgOverlayColor = document.getElementById('bg-overlay-color').value;
-                const bgOverlayOpacity = document.getElementById('bg-overlay-opacity').value;
-                const rgb = hexToRgb(bgOverlayColor);
-                previewBgOverlay.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${bgOverlayOpacity / 100})`;
             } else {
                 previewBg.style.backgroundImage = '';
                 previewBgOverlay.style.display = 'none';
                 previewContainer.classList.remove('has-bg');
+            }
+            
+            // ============ KOLOR BOKSU PROFILU ============
+            const boxColor = document.getElementById('bg-overlay-color').value;
+            const boxOpacity = document.getElementById('bg-overlay-opacity').value;
+            const rgb = hexToRgb(boxColor);
+            
+            // Ustaw kolor boksu (nie tła!)
+            if (bgImage) {
+                // Gdy jest banner, boks ma być przezroczysty z wybranym kolorem
+                previewContainer.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${boxOpacity / 100})`;
+            } else {
+                // Gdy nie ma banneru, boks ma normalny kolor
+                previewContainer.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${boxOpacity / 100})`;
             }
             
             let avatar = 'https://via.placeholder.com/100';
@@ -2082,7 +2093,6 @@ function playTestAudio(url, volume) {
                 if (userProfile?.uidNumber) {
                     uidEl.textContent = formatUid(userProfile.uidNumber);
                 }
-                // Użyj koloru username dla UID
                 if (usernameColor) {
                     uidEl.style.color = usernameColor;
                 }
@@ -2093,6 +2103,7 @@ function playTestAudio(url, volume) {
             bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
             bioEl.style.color = bioColor;
 
+            // Profile Opacity i Blur nadal działają
             previewContainer.style.opacity = opacity / 100;
             previewContainer.style.filter = `blur(${blur / 10}px)`;
         };
