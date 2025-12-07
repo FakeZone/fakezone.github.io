@@ -1830,24 +1830,6 @@
             }
         };
 
-        let passwordVisible = false;
-
-        // Dodaj TĘ FUNKCJĘ po powyższej linii
-        window.togglePasswordVisibility = function() {
-            const passwordDisplay = document.getElementById('password-display');
-            const toggleIcon = document.getElementById('password-toggle-icon');
-    
-            if (passwordVisible) {
-            passwordDisplay.textContent = '••••••••';
-            toggleIcon.textContent = '👁';
-            passwordVisible = false;
-        } else {
-            passwordDisplay.textContent = 'Password cannot be displayed';
-            toggleIcon.textContent = '👁‍🗨';
-            passwordVisible = true;
-        }
-    };
-
         window.startEditEmail = function() {
             document.getElementById('email-view-mode').classList.add('hidden');
             document.getElementById('email-edit-mode').classList.remove('hidden');
