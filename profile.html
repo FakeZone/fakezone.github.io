@@ -82,6 +82,32 @@
             line-height: 1.6;
         }
 
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         /* Audio Controls */
         .audio-controls {
             position: fixed;
@@ -97,11 +123,13 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s;
         }
 
         .audio-controls.show {
             opacity: 1;
+            pointer-events: auto;
         }
 
         .audio-btn {
@@ -111,6 +139,7 @@
             font-size: 20px;
             cursor: pointer;
             transition: color 0.3s;
+            padding: 5px;
         }
 
         .audio-btn:hover {
@@ -222,6 +251,10 @@
             color: #ff3333;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
         /* Click to play overlay */
         .click-to-play {
             position: fixed;
@@ -229,8 +262,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -245,43 +279,63 @@
             pointer-events: auto;
         }
 
-        .click-to-play-text {
-            font-size: 24px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pulse {
+        .click-to-play-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
             animation: pulse 2s infinite;
         }
 
+        .click-to-play-text {
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .click-to-play-sub {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+        }
+
         @keyframes pulse {
-            0% {
+            0%, 100% {
                 transform: scale(1);
             }
             50% {
                 transform: scale(1.1);
             }
-            100% {
-                transform: scale(1);
-            }
+        }
+
+        /* Debug info (usuń w produkcji) */
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 10px;
+            font-size: 12px;
+            font-family: monospace;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none; /* Zmień na 'block' żeby zobaczyć debug */
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Debug info -->
+    <div class="debug-info" id="debugInfo"></div>
+
     <!-- Background -->
     <div class="bg-image" id="bgImage"></div>
     <div class="bg-overlay" id="bgOverlay"></div>
 
     <!-- Click to play overlay -->
     <div class="click-to-play" id="clickToPlay">
-        <div class="click-to-play-text">
-            <span class="pulse">🎵</span>
-            <span>Click anywhere to play music</span>
-        </div>
+        <div class="click-to-play-icon">🎵</div>
+        <div class="click-to-play-text">Click anywhere to enter</div>
+        <div class="click-to-play-sub">Music will start playing</div>
     </div>
 
     <!-- Profile Card -->
@@ -292,19 +346,20 @@
             <img class="avatar" id="avatar" src="https://via.placeholder.com/120" alt="Avatar">
             <h1 class="username" id="username">@username</h1>
             <p class="bio" id="bio">Bio loading...</p>
+            <div class="social-links" id="socialLinks"></div>
         </div>
     </div>
 
     <!-- Audio Controls -->
     <div class="audio-controls" id="audioControls">
-        <button class="audio-btn" id="playPauseBtn">⏸</button>
+        <button class="audio-btn" id="playPauseBtn" title="Play/Pause">▶</button>
         <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
         <span id="volumeLabel">50%</span>
     </div>
 
     <!-- Hidden Audio Elements -->
-    <audio id="audioPlayer" loop style="display:none;"></audio>
-    <div id="youtubePlayer" style="position:fixed; top:-200px; left:-200px; width:1px; height:1px;"></div>
+    <audio id="audioPlayer" loop preload="auto" crossorigin="anonymous"></audio>
+    <div id="youtubePlayer" style="position:fixed; top:-9999px; left:-9999px; width:1px; height:1px; pointer-events:none;"></div>
 
     <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -325,21 +380,69 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // ============ GLOBAL STATE ============
         let youtubePlayer = null;
         let audioPlayer = null;
         let currentVolume = 50;
         let isPlaying = false;
         let audioType = null;
         let musicReady = false;
+        let hasUserInteracted = false;
+        let pendingAudioUrl = null;
+        let pendingVolume = 50;
 
-        // Get username from URL
+        // ============ DEBUG HELPER ============
+        function debug(msg) {
+            console.log('🔍', msg);
+            const debugEl = document.getElementById('debugInfo');
+            if (debugEl) {
+                debugEl.innerHTML += msg + '<br>';
+            }
+        }
+
+        // ============ GET USERNAME FROM URL ============
         function getUsernameFromURL() {
+            // 1. Sprawdź sessionStorage (z 404 redirect)
+            const savedPath = sessionStorage.getItem('profilePath');
+            if (savedPath) {
+                sessionStorage.removeItem('profilePath');
+                const username = savedPath.replace(/^\/+/, '').split('/')[0].toLowerCase();
+                debug('Username from sessionStorage: ' + username);
+                
+                // Zaktualizuj URL w pasku przeglądarki
+                if (username) {
+                    window.history.replaceState({}, '', '/' + username);
+                }
+                return username || null;
+            }
+            
+            // 2. Sprawdź query params (?user=xxx)
+            const params = new URLSearchParams(window.location.search);
+            const userParam = params.get('user');
+            if (userParam) {
+                debug('Username from query param: ' + userParam);
+                return userParam.toLowerCase();
+            }
+            
+            // 3. Sprawdź pathname
             const path = window.location.pathname;
-            const username = path.substring(1).toLowerCase();
+            debug('Current path: ' + path);
+            
+            // Ignoruj jeśli to profile.html
+            if (path.includes('profile.html') || path === '/' || path === '') {
+                debug('No username in path');
+                return null;
+            }
+            
+            // Pobierz username z path
+            const pathParts = path.split('/').filter(p => p && !p.includes('.html'));
+            const username = pathParts[pathParts.length - 1]?.toLowerCase();
+            debug('Username from path: ' + username);
+            
             return username || null;
         }
 
-        // Extract YouTube ID
+        // ============ EXTRACT YOUTUBE ID ============
         function extractYouTubeId(url) {
             if (!url) return null;
             const patterns = [
@@ -354,36 +457,47 @@
             return null;
         }
 
-        // Detect audio type
+        // ============ DETECT AUDIO TYPE ============
         function detectAudioType(url) {
             if (!url) return null;
             
-            // YouTube
             if (extractYouTubeId(url)) return 'youtube';
-            
-            // SoundCloud
             if (url.includes('soundcloud.com')) return 'soundcloud';
-            
-            // Spotify (needs special handling)
             if (url.includes('spotify.com')) return 'spotify';
             
-            // Direct audio files
             const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.webm', '.opus', '.flac', '.aac'];
             if (audioExtensions.some(ext => url.toLowerCase().includes(ext))) return 'direct';
             
-            // Try any URL as direct audio
             return 'direct';
         }
 
-        // YouTube API Ready
+        // ============ YOUTUBE API READY ============
         window.onYouTubeIframeAPIReady = function() {
-            console.log('YouTube API ready');
+            debug('YouTube API ready');
+            
+            // Jeśli mamy pending YouTube audio, zainicjalizuj teraz
+            if (pendingAudioUrl && audioType === 'youtube' && hasUserInteracted) {
+                const videoId = extractYouTubeId(pendingAudioUrl);
+                if (videoId) {
+                    initYouTubePlayer(videoId, pendingVolume);
+                }
+            }
         };
 
-        // Initialize YouTube Player
+        // ============ INITIALIZE YOUTUBE PLAYER ============
         function initYouTubePlayer(videoId, volume) {
+            debug('Initializing YouTube player: ' + videoId);
+            
+            if (typeof YT === 'undefined' || !YT.Player) {
+                debug('YT not ready, waiting...');
+                setTimeout(() => initYouTubePlayer(videoId, volume), 500);
+                return;
+            }
+            
             if (youtubePlayer) {
-                youtubePlayer.destroy();
+                try {
+                    youtubePlayer.destroy();
+                } catch(e) {}
             }
             
             youtubePlayer = new YT.Player('youtubePlayer', {
@@ -400,54 +514,59 @@
                     playsinline: 1,
                     rel: 0,
                     showinfo: 0,
-                    playlist: videoId
+                    playlist: videoId,
+                    origin: window.location.origin
                 },
                 events: {
                     onReady: function(event) {
+                        debug('YouTube player ready');
                         event.target.setVolume(volume);
                         event.target.playVideo();
                         isPlaying = true;
                         musicReady = true;
                         updatePlayPauseButton();
                     },
+                    onStateChange: function(event) {
+                        if (event.data === YT.PlayerState.PLAYING) {
+                            isPlaying = true;
+                            updatePlayPauseButton();
+                        } else if (event.data === YT.PlayerState.PAUSED) {
+                            isPlaying = false;
+                            updatePlayPauseButton();
+                        }
+                    },
                     onError: function(error) {
+                        debug('YouTube error: ' + error.data);
                         console.error('YouTube error:', error);
-                        // Try fallback with iframe
-                        initYouTubeIframe(videoId, volume);
                     }
                 }
             });
         }
 
-        // Fallback YouTube iframe
-        function initYouTubeIframe(videoId, volume) {
-            const container = document.getElementById('youtubePlayer');
-            container.innerHTML = `
-                <iframe 
-                    width="1" 
-                    height="1" 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&enablejsapi=1" 
-                    frameborder="0" 
-                    allow="autoplay; encrypted-media" 
-                    allowfullscreen>
-                </iframe>
-            `;
-            isPlaying = true;
-            musicReady = true;
-        }
-
-        // Initialize Direct Audio
+        // ============ INITIALIZE DIRECT AUDIO ============
         function initDirectAudio(url, volume) {
+            debug('Initializing direct audio: ' + url);
+            
             audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.src = url;
             audioPlayer.volume = volume / 100;
+            audioPlayer.loop = true;
             
-            audioPlayer.addEventListener('canplay', () => {
+            audioPlayer.addEventListener('canplaythrough', () => {
+                debug('Audio can play through');
                 musicReady = true;
-                audioPlayer.play().catch(e => {
-                    console.log('Autoplay prevented, waiting for user interaction');
-                    showClickToPlay();
-                });
+                
+                if (hasUserInteracted) {
+                    audioPlayer.play()
+                        .then(() => {
+                            debug('Audio playing');
+                            isPlaying = true;
+                            updatePlayPauseButton();
+                        })
+                        .catch(e => {
+                            debug('Play failed: ' + e.message);
+                        });
+                }
             });
             
             audioPlayer.addEventListener('play', () => {
@@ -461,30 +580,17 @@
             });
             
             audioPlayer.addEventListener('error', (e) => {
+                debug('Audio error: ' + e.message);
                 console.error('Audio error:', e);
-                // Try as stream
-                tryAsStream(url, volume);
             });
             
             audioPlayer.load();
         }
 
-        // Try as stream (for radio stations, etc.)
-        function tryAsStream(url, volume) {
-            const audio = new Audio(url);
-            audio.volume = volume / 100;
-            audio.play().catch(e => {
-                console.log('Stream autoplay prevented');
-                showClickToPlay();
-            });
-            audioPlayer = audio;
-            isPlaying = true;
-            musicReady = true;
-        }
-
-        // SoundCloud embed
+        // ============ SOUNDCLOUD EMBED ============
         function initSoundCloud(url, volume) {
-            // Extract track ID or use oEmbed API
+            debug('Initializing SoundCloud: ' + url);
+            
             const container = document.getElementById('youtubePlayer');
             container.innerHTML = `
                 <iframe 
@@ -498,58 +604,75 @@
             `;
             isPlaying = true;
             musicReady = true;
+            updatePlayPauseButton();
         }
 
-        // Show click to play overlay
+        // ============ SHOW CLICK TO PLAY ============
         function showClickToPlay() {
             const overlay = document.getElementById('clickToPlay');
             overlay.classList.add('show');
-            
-            overlay.addEventListener('click', () => {
-                overlay.classList.remove('show');
-                startMusic();
-            }, { once: true });
         }
 
-        // Start music playback
+        function hideClickToPlay() {
+            const overlay = document.getElementById('clickToPlay');
+            overlay.classList.remove('show');
+        }
+
+        // ============ START MUSIC ============
         function startMusic() {
-            if (audioType === 'youtube' && youtubePlayer && youtubePlayer.playVideo) {
-                youtubePlayer.playVideo();
+            debug('Starting music, type: ' + audioType);
+            
+            if (audioType === 'youtube') {
+                if (youtubePlayer && youtubePlayer.playVideo) {
+                    youtubePlayer.playVideo();
+                } else {
+                    const videoId = extractYouTubeId(pendingAudioUrl);
+                    if (videoId) {
+                        initYouTubePlayer(videoId, pendingVolume);
+                    }
+                }
+            } else if (audioType === 'soundcloud') {
+                initSoundCloud(pendingAudioUrl, pendingVolume);
             } else if (audioPlayer) {
-                audioPlayer.play();
+                audioPlayer.play()
+                    .then(() => {
+                        isPlaying = true;
+                        updatePlayPauseButton();
+                    })
+                    .catch(e => debug('Play error: ' + e.message));
             }
-            isPlaying = true;
-            updatePlayPauseButton();
         }
 
-        // Play/Pause toggle
+        // ============ TOGGLE PLAY/PAUSE ============
         function togglePlayPause() {
-            if (!musicReady) return;
+            if (!musicReady && !pendingAudioUrl) return;
             
-            if (audioType === 'youtube' && youtubePlayer) {
-                if (isPlaying) {
+            if (audioType === 'youtube' && youtubePlayer && youtubePlayer.getPlayerState) {
+                const state = youtubePlayer.getPlayerState();
+                if (state === YT.PlayerState.PLAYING) {
                     youtubePlayer.pauseVideo();
+                    isPlaying = false;
                 } else {
                     youtubePlayer.playVideo();
+                    isPlaying = true;
                 }
-                isPlaying = !isPlaying;
             } else if (audioPlayer) {
-                if (isPlaying) {
-                    audioPlayer.pause();
-                } else {
+                if (audioPlayer.paused) {
                     audioPlayer.play();
+                } else {
+                    audioPlayer.pause();
                 }
             }
             updatePlayPauseButton();
         }
 
-        // Update play/pause button
+        // ============ UPDATE PLAY/PAUSE BUTTON ============
         function updatePlayPauseButton() {
             const btn = document.getElementById('playPauseBtn');
             btn.textContent = isPlaying ? '⏸' : '▶';
         }
 
-        // Volume control
+        // ============ VOLUME CONTROL ============
         function updateVolume(value) {
             currentVolume = value;
             document.getElementById('volumeLabel').textContent = value + '%';
@@ -561,13 +684,15 @@
             }
         }
 
-        // Load user profile
+        // ============ LOAD USER PROFILE ============
         async function loadProfile() {
             const username = getUsernameFromURL();
+            debug('Loading profile for: ' + username);
             
             if (!username) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error').textContent = 'No username specified';
                 return;
             }
 
@@ -575,12 +700,15 @@
                 // Get username document to find UID
                 const usernameDoc = await getDoc(doc(db, 'usernames', username));
                 if (!usernameDoc.exists()) {
+                    debug('Username not found in database');
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('error').classList.remove('hidden');
+                    document.getElementById('error').textContent = 'User not found: @' + username;
                     return;
                 }
 
                 const uid = usernameDoc.data().uid;
+                debug('Found UID: ' + uid);
                 
                 // Get user profile
                 const userDoc = await getDoc(doc(db, 'users', uid));
@@ -591,6 +719,7 @@
                 }
 
                 const userData = userDoc.data();
+                debug('User data loaded');
                 
                 // Update page title
                 document.title = `@${userData.displayName || userData.username} - FakeZone`;
@@ -635,47 +764,34 @@
                 // Set profile card effects
                 const profileCard = document.getElementById('profileCard');
                 if (userData.profileOpacity !== undefined) {
-                    profileCard.style.opacity = userData.profileOpacity / 100;
-                }
-                if (userData.profileBlur) {
-                    profileCard.style.filter = `blur(${userData.profileBlur / 10}px)`;
+                    profileCard.style.background = `rgba(17, 17, 17, ${userData.profileOpacity / 100})`;
                 }
                 
-                // Initialize audio
+                // ============ AUDIO SETUP ============
                 if (userData.bgAudio) {
+                    debug('Audio URL found: ' + userData.bgAudio);
+                    
                     const volume = userData.audioVolume || 50;
                     currentVolume = volume;
+                    pendingVolume = volume;
+                    pendingAudioUrl = userData.bgAudio;
+                    
                     document.getElementById('volumeSlider').value = volume;
                     document.getElementById('volumeLabel').textContent = volume + '%';
                     
                     audioType = detectAudioType(userData.bgAudio);
-                    console.log('Audio type detected:', audioType);
+                    debug('Audio type: ' + audioType);
                     
-                    switch(audioType) {
-                        case 'youtube':
-                            const videoId = extractYouTubeId(userData.bgAudio);
-                            if (videoId) {
-                                initYouTubePlayer(videoId, volume);
-                            }
-                            break;
-                        
-                        case 'soundcloud':
-                            initSoundCloud(userData.bgAudio, volume);
-                            break;
-                        
-                        case 'spotify':
-                            // Spotify needs special handling (Web API)
-                            console.log('Spotify not supported yet');
-                            break;
-                        
-                        case 'direct':
-                        default:
-                            initDirectAudio(userData.bgAudio, volume);
-                            break;
+                    // Pre-initialize audio (but don't play yet)
+                    if (audioType === 'direct') {
+                        initDirectAudio(userData.bgAudio, volume);
                     }
                     
-                    // Show volume controls if enabled
-                    if (userData.showVolumeControl && userData.bgAudio) {
+                    // Show click overlay for audio
+                    showClickToPlay();
+                    
+                    // Show volume controls
+                    if (userData.showVolumeControl !== false) {
                         document.getElementById('audioControls').classList.add('show');
                     }
                 }
@@ -686,27 +802,55 @@
                 
             } catch (error) {
                 console.error('Error loading profile:', error);
+                debug('Error: ' + error.message);
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error').textContent = 'Error loading profile';
             }
         }
 
-        // Event listeners
+        // ============ EVENT LISTENERS ============
+        
+        // Play/Pause button
         document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+        
+        // Volume slider
         document.getElementById('volumeSlider').addEventListener('input', (e) => {
-            updateVolume(e.target.value);
+            updateVolume(parseInt(e.target.value));
         });
 
-        // Start loading
-        loadProfile();
+        // Click to play overlay
+        document.getElementById('clickToPlay').addEventListener('click', () => {
+            debug('User clicked overlay');
+            hasUserInteracted = true;
+            hideClickToPlay();
+            startMusic();
+        });
 
-        // Handle visibility change (pause when tab is hidden)
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && isPlaying && audioPlayer) {
-                // Optionally pause when tab is hidden
-                // audioPlayer.pause();
+        // Any click on body (backup)
+        document.body.addEventListener('click', (e) => {
+            if (!hasUserInteracted && pendingAudioUrl) {
+                // Ignore if clicking controls
+                if (e.target.closest('.audio-controls')) return;
+                if (e.target.closest('.click-to-play')) return;
+                
+                debug('User clicked body');
+                hasUserInteracted = true;
+                hideClickToPlay();
+                startMusic();
+            }
+        }, { once: true });
+
+        // Keyboard shortcut (space to play/pause)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && musicReady) {
+                e.preventDefault();
+                togglePlayPause();
             }
         });
+
+        // ============ START ============
+        loadProfile();
     </script>
 </body>
 </html>
