@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +19,6 @@
             display: flex;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 250px;
             background: #000;
@@ -116,7 +115,6 @@
             background: rgba(255,51,51,0.05);
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 250px;
             flex: 1;
@@ -185,7 +183,6 @@
             color: #ff3333;
         }
 
-        /* Page Views */
         .page-view {
             display: none;
         }
@@ -194,7 +191,6 @@
             display: block;
         }
 
-        /* Section Title */
         .section-title {
             font-size: 14px;
             color: #666;
@@ -208,7 +204,6 @@
             margin-top: 0;
         }
 
-        /* Tile Grid */
         .tile-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -240,7 +235,6 @@
             padding: 20px;
         }
 
-        /* Form Elements */
         .form-group {
             margin-bottom: 15px;
         }
@@ -292,7 +286,6 @@
             color: #fff;
         }
 
-        /* Toggle Switch */
         .toggle-item {
             display: flex;
             align-items: center;
@@ -360,7 +353,6 @@
             background-color: #ff3333;
         }
 
-        /* Color Picker */
         .color-picker-wrapper {
             display: flex;
             gap: 10px;
@@ -391,7 +383,6 @@
             font-family: monospace;
         }
 
-        /* Range Slider */
         .range-wrapper {
             display: flex;
             align-items: center;
@@ -426,7 +417,6 @@
             border-radius: 4px;
         }
 
-        /* Effect Grid */
         .effect-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -467,7 +457,6 @@
             justify-content: center;
         }
 
-        /* Effect Animations */
         .effect-none { color: #fff; }
         
         .effect-glitch {
@@ -518,7 +507,6 @@
             50% { border-color: transparent; }
         }
 
-        /* Info Cards */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -552,7 +540,6 @@
             text-decoration: none;
         }
 
-        /* Settings Section */
         .settings-section {
             background: #111;
             border: 1px solid #1a1a1a;
@@ -605,7 +592,6 @@
             align-items: center;
         }
 
-        /* Edit Mode */
         .edit-input {
             padding: 8px 12px;
             background: #0a0a0a;
@@ -646,13 +632,47 @@
             font-size: 12px;
         }
 
-        /* Preview */
+        /* Preview Box with Background */
+        .preview-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .preview-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
         .preview-box {
             background: #111;
             border: 1px solid #1a1a1a;
             border-radius: 10px;
             padding: 40px;
             text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .preview-box.has-bg {
+            background: transparent;
+            border: none;
         }
 
         .preview-avatar {
@@ -676,7 +696,6 @@
             margin: 0 auto;
         }
 
-        /* Status */
         .status-success {
             color: #00ff00;
             font-size: 13px;
@@ -689,17 +708,14 @@
             margin-top: 5px;
         }
 
-        /* Hidden */
         .hidden {
             display: none !important;
         }
 
-        /* Save Section */
         .save-section {
             margin-top: 20px;
         }
 
-        /* Responsive */
         @media (max-width: 1200px) {
             .tile-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -743,8 +759,8 @@
                 <span class="menu-arrow">▼</span>
             </div>
             <div class="menu-dropdown active" id="account-dropdown">
-                <a href="#" class="menu-link active" onclick="showPage('overview', this)">Przegląd</a>
-                <a href="#" class="menu-link" onclick="showPage('settings', this)">Ustawienia</a>
+                <a href="#" class="menu-link active" onclick="showPage('overview', this)">Overview</a>
+                <a href="#" class="menu-link" onclick="showPage('settings', this)">Settings</a>
             </div>
         </div>
 
@@ -755,7 +771,7 @@
             </div>
             <div class="menu-dropdown" id="profile-dropdown">
                 <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
-                <a href="#" class="menu-link" onclick="viewProfile()">Zobacz profil</a>
+                <a href="#" class="menu-link" onclick="viewProfile()">View Profile</a>
             </div>
         </div>
     </div>
@@ -767,11 +783,11 @@
         <div class="page-view active" id="page-overview">
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Przegląd</h1>
-                    <p class="page-subtitle">Witaj w panelu FakeZone</p>
+                    <h1 class="page-title">Overview</h1>
+                    <p class="page-subtitle">Welcome to FakeZone dashboard</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
 
@@ -785,14 +801,14 @@
                     <div class="info-card-value" id="overview-email">-</div>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-label">Profil</div>
+                    <div class="info-card-label">Profile</div>
                     <div class="info-card-value">
                         <a href="#" id="overview-profile-url" target="_blank">-</a>
                     </div>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-label">Discord</div>
-                    <div class="info-card-value" id="overview-discord">Niepołączony</div>
+                    <div class="info-card-label">UID</div>
+                    <div class="info-card-value" id="overview-uid">-</div>
                 </div>
             </div>
         </div>
@@ -801,32 +817,32 @@
         <div class="page-view" id="page-settings">
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Ustawienia</h1>
-                    <p class="page-subtitle">Zarządzaj swoim kontem</p>
+                    <h1 class="page-title">Settings</h1>
+                    <p class="page-subtitle">Manage your account</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
 
             <div class="settings-section">
-                <h3>Informacje o koncie</h3>
+                <h3>Account Information</h3>
                 
                 <!-- Username -->
                 <div class="setting-item">
                     <div class="setting-info">
-                        <div class="setting-label">Nazwa użytkownika</div>
+                        <div class="setting-label">Username</div>
                         <div class="setting-value" id="settings-username-display">-</div>
                         <div id="username-status"></div>
                     </div>
                     <div class="setting-action" id="username-view-mode">
-                        <button class="btn btn-small" onclick="startEditUsername()">Zmień</button>
+                        <button class="btn btn-small" onclick="startEditUsername()">Change</button>
                     </div>
                     <div class="setting-action hidden" id="username-edit-mode">
                         <input type="text" class="edit-input" id="new-username">
                         <div class="edit-buttons">
-                            <button class="btn-save" onclick="saveUsername()">Zapisz</button>
-                            <button class="btn-cancel" onclick="cancelEditUsername()">Anuluj</button>
+                            <button class="btn-save" onclick="saveUsername()">Save</button>
+                            <button class="btn-cancel" onclick="cancelEditUsername()">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -834,18 +850,18 @@
                 <!-- Display Name -->
                 <div class="setting-item">
                     <div class="setting-info">
-                        <div class="setting-label">Nazwa wyświetlana</div>
+                        <div class="setting-label">Display Name</div>
                         <div class="setting-value" id="settings-displayname-display">-</div>
                         <div id="displayname-status"></div>
                     </div>
                     <div class="setting-action" id="displayname-view-mode">
-                        <button class="btn btn-small" onclick="startEditDisplayName()">Zmień</button>
+                        <button class="btn btn-small" onclick="startEditDisplayName()">Change</button>
                     </div>
                     <div class="setting-action hidden" id="displayname-edit-mode">
                         <input type="text" class="edit-input" id="new-displayname">
                         <div class="edit-buttons">
-                            <button class="btn-save" onclick="saveDisplayName()">Zapisz</button>
-                            <button class="btn-cancel" onclick="cancelEditDisplayName()">Anuluj</button>
+                            <button class="btn-save" onclick="saveDisplayName()">Save</button>
+                            <button class="btn-cancel" onclick="cancelEditDisplayName()">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -857,44 +873,44 @@
                         <div class="setting-value" id="settings-email">-</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn btn-small" onclick="alert('Wkrótce')">Zmień</button>
+                        <button class="btn btn-small" onclick="alert('Coming soon')">Change</button>
                     </div>
                 </div>
 
                 <!-- Password -->
                 <div class="setting-item">
                     <div class="setting-info">
-                        <div class="setting-label">Hasło</div>
+                        <div class="setting-label">Password</div>
                         <div class="setting-value">••••••••</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn btn-small" onclick="alert('Wkrótce')">Zmień</button>
+                        <button class="btn btn-small" onclick="alert('Coming soon')">Change</button>
                     </div>
                 </div>
             </div>
 
             <div class="settings-section">
-                <h3>Połączone konta</h3>
+                <h3>Connected Accounts</h3>
                 <div class="setting-item">
                     <div class="setting-info">
                         <div class="setting-label">Discord</div>
-                        <div class="setting-value" id="settings-discord">Niepołączony</div>
+                        <div class="setting-value" id="settings-discord">Not connected</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn btn-small" id="settings-discord-btn" onclick="connectDiscord()">Połącz</button>
+                        <button class="btn btn-small" id="settings-discord-btn" onclick="connectDiscord()">Connect</button>
                     </div>
                 </div>
             </div>
 
             <div class="settings-section" style="border-color: #ff3333;">
-                <h3 style="color: #ff3333;">Strefa niebezpieczna</h3>
+                <h3 style="color: #ff3333;">Danger Zone</h3>
                 <div class="setting-item">
                     <div class="setting-info">
-                        <div class="setting-label">Usuń konto</div>
-                        <div class="setting-value">Trwale usuń konto i dane</div>
+                        <div class="setting-label">Delete Account</div>
+                        <div class="setting-value">Permanently delete your account and data</div>
                     </div>
                     <div class="setting-action">
-                        <button class="btn btn-small" style="border-color:#ff3333; color:#ff3333;">Usuń</button>
+                        <button class="btn btn-small" style="border-color:#ff3333; color:#ff3333;">Delete</button>
                     </div>
                 </div>
             </div>
@@ -905,11 +921,11 @@
             <div class="page-header">
                 <div>
                     <h1 class="page-title">Customize</h1>
-                    <p class="page-subtitle">Dostosuj wygląd profilu</p>
+                    <p class="page-subtitle">Customize your profile appearance</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn" onclick="viewProfile()">Zobacz profil</button>
-                    <button class="btn logout-btn" onclick="logout()">Wyloguj</button>
+                    <button class="btn" onclick="viewProfile()">View Profile</button>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
 
@@ -920,7 +936,7 @@
                     <div class="tile-header">Background</div>
                     <div class="tile-content">
                         <div class="form-group">
-                            <label>URL obrazka tła</label>
+                            <label>Background Image URL</label>
                             <input type="url" id="bg-image" placeholder="https://example.com/bg.jpg" oninput="updatePreview()">
                         </div>
                     </div>
@@ -930,11 +946,11 @@
                     <div class="tile-header">Audio</div>
                     <div class="tile-content">
                         <div class="form-group">
-                            <label>URL muzyki</label>
+                            <label>Music URL</label>
                             <input type="url" id="bg-audio" placeholder="https://example.com/music.mp3">
                         </div>
                         <div class="form-group">
-                            <label>Głośność</label>
+                            <label>Volume</label>
                             <div class="range-wrapper">
                                 <input type="range" class="range-slider" id="audio-volume" min="0" max="100" value="50" oninput="updateVolumeLabel()">
                                 <span class="range-value" id="audio-volume-label">50%</span>
@@ -947,10 +963,10 @@
                     <div class="tile-header">Profile Avatar</div>
                     <div class="tile-content">
                         <div class="form-group">
-                            <label>URL avatara</label>
+                            <label>Avatar URL</label>
                             <input type="url" id="avatar" placeholder="https://example.com/avatar.png" oninput="updatePreview()">
                         </div>
-                        <p style="font-size:11px; color:#666; margin-top:10px;">Puste = avatar z Discord</p>
+                        <p style="font-size:11px; color:#666; margin-top:10px;">Empty = Discord avatar</p>
                     </div>
                 </div>
             </div>
@@ -962,11 +978,11 @@
                     <div class="tile-header">Bio</div>
                     <div class="tile-content">
                         <div class="form-group">
-                            <label>Treść</label>
-                            <textarea id="bio" placeholder="Napisz coś o sobie..." oninput="updatePreview()"></textarea>
+                            <label>Content</label>
+                            <textarea id="bio" placeholder="Write something about yourself..." oninput="updatePreview()"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Czcionka</label>
+                            <label>Font</label>
                             <select id="bio-font" onchange="updatePreview()">
                                 <option value="Segoe UI">Segoe UI</option>
                                 <option value="Roboto">Roboto</option>
@@ -980,7 +996,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Kolor</label>
+                            <label>Color</label>
                             <div class="color-picker-wrapper">
                                 <input type="color" class="color-picker" id="bio-color" value="#888888" oninput="updateBioColorHex(); updatePreview();">
                                 <input type="text" class="edit-input color-hex" id="bio-color-hex" value="#888888" oninput="updateBioColorPicker(); updatePreview();">
@@ -993,11 +1009,11 @@
                     <div class="tile-header">Username</div>
                     <div class="tile-content">
                         <div class="form-group">
-                            <label>Efekt</label>
+                            <label>Effect</label>
                             <div class="effect-grid">
                                 <div class="effect-option active" data-effect="none" onclick="selectEffect('none')">
                                     <div class="effect-preview effect-none">Aa</div>
-                                    <div class="effect-name">Brak</div>
+                                    <div class="effect-name">None</div>
                                 </div>
                                 <div class="effect-option" data-effect="glitch" onclick="selectEffect('glitch')">
                                     <div class="effect-preview effect-glitch">Aa</div>
@@ -1022,7 +1038,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Kolor</label>
+                            <label>Color</label>
                             <div class="color-picker-wrapper">
                                 <input type="color" class="color-picker" id="username-color" value="#ffffff" oninput="updateUsernameColorHex(); updatePreview();">
                                 <input type="text" class="edit-input color-hex" id="username-color-hex" value="#ffffff" oninput="updateUsernameColorPicker(); updatePreview();">
@@ -1063,7 +1079,7 @@
                     <div class="tile-header">Discord Avatar</div>
                     <div class="tile-content">
                         <div class="toggle-item">
-                            <span class="toggle-label">Użyj avatara z Discord</span>
+                            <span class="toggle-label">Use Discord avatar</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="toggle-discord-avatar" onchange="updatePreview()">
                                 <span class="toggle-slider"></span>
@@ -1076,7 +1092,7 @@
                     <div class="tile-header">Volume Control</div>
                     <div class="tile-content">
                         <div class="toggle-item">
-                            <span class="toggle-label">Pokaż kontrolę głośności</span>
+                            <span class="toggle-label">Show volume control</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="toggle-volume-control" onchange="updatePreview()">
                                 <span class="toggle-slider"></span>
@@ -1089,7 +1105,7 @@
                     <div class="tile-header">Avatar Decoration</div>
                     <div class="tile-content">
                         <div class="toggle-item">
-                            <span class="toggle-label">Pokaż dekorację z Discord</span>
+                            <span class="toggle-label">Show Discord decoration</span>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="toggle-avatar-decoration" onchange="updatePreview()">
                                 <span class="toggle-slider"></span>
@@ -1101,15 +1117,19 @@
 
             <!-- Preview -->
             <div class="section-title">Preview</div>
-            <div class="preview-box" id="preview-container">
-                <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/100">
-                <div id="previewUsername" class="preview-name">@username</div>
-                <div id="previewBio" class="preview-bio">Twoje bio tutaj...</div>
+            <div class="preview-wrapper">
+                <div class="preview-bg" id="preview-bg"></div>
+                <div class="preview-bg-overlay" id="preview-bg-overlay" style="display:none;"></div>
+                <div class="preview-box" id="preview-container">
+                    <img id="previewAvatar" class="preview-avatar" src="https://via.placeholder.com/100">
+                    <div id="previewUsername" class="preview-name">@username</div>
+                    <div id="previewBio" class="preview-bio">Your bio here...</div>
+                </div>
             </div>
 
             <!-- Save -->
             <div class="save-section">
-                <button class="btn btn-primary" onclick="saveCustomization()" style="width:100%;">Zapisz zmiany</button>
+                <button class="btn btn-primary" onclick="saveCustomization()" style="width:100%;">Save Changes</button>
                 <div id="customizeSaveStatus"></div>
             </div>
         </div>
@@ -1136,6 +1156,11 @@
         let currentUser = null;
         let userProfile = null;
         let selectedEffect = 'none';
+
+        // Format UID
+        function formatUid(num) {
+            return '#' + String(num).padStart(4, '0');
+        }
 
         // Toggle menu
         window.toggleMenu = function(menuId) {
@@ -1182,6 +1207,7 @@
                 document.getElementById('overview-email').textContent = maskedEmail;
                 document.getElementById('overview-profile-url').href = profileUrl;
                 document.getElementById('overview-profile-url').textContent = profileUrl;
+                document.getElementById('overview-uid').textContent = formatUid(userProfile.uidNumber || 1);
 
                 // Settings
                 document.getElementById('settings-username-display').textContent = userProfile.username;
@@ -1232,7 +1258,24 @@
         window.updatePreview = function() {
             const useDiscordAvatar = document.getElementById('toggle-discord-avatar').checked;
             const customAvatar = document.getElementById('avatar').value;
+            const bgImage = document.getElementById('bg-image').value;
             
+            // Background
+            const previewBg = document.getElementById('preview-bg');
+            const previewBgOverlay = document.getElementById('preview-bg-overlay');
+            const previewContainer = document.getElementById('preview-container');
+            
+            if (bgImage) {
+                previewBg.style.backgroundImage = `url('${bgImage}')`;
+                previewBgOverlay.style.display = 'block';
+                previewContainer.classList.add('has-bg');
+            } else {
+                previewBg.style.backgroundImage = '';
+                previewBgOverlay.style.display = 'none';
+                previewContainer.classList.remove('has-bg');
+            }
+            
+            // Avatar
             let avatar = 'https://via.placeholder.com/100';
             if (useDiscordAvatar && userProfile?.discord?.avatar) {
                 avatar = userProfile.discord.avatar;
@@ -1242,7 +1285,7 @@
                 avatar = userProfile.discord.avatar;
             }
 
-            const bio = document.getElementById('bio').value || 'Twoje bio tutaj...';
+            const bio = document.getElementById('bio').value || 'Your bio here...';
             const displayName = userProfile?.displayName || userProfile?.username || 'username';
             const bioFont = document.getElementById('bio-font').value;
             const bioColor = document.getElementById('bio-color').value;
@@ -1265,9 +1308,8 @@
             bioEl.style.color = bioColor;
             bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
 
-            const container = document.getElementById('preview-container');
-            container.style.opacity = opacity / 100;
-            container.style.filter = `blur(${blur / 10}px)`;
+            previewContainer.style.opacity = opacity / 100;
+            previewContainer.style.filter = `blur(${blur / 10}px)`;
         };
 
         // Effect selection
@@ -1329,10 +1371,10 @@
                     showVolumeControl: document.getElementById('toggle-volume-control').checked,
                     showAvatarDecoration: document.getElementById('toggle-avatar-decoration').checked
                 });
-                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Zapisano!</div>';
+                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-success">✓ Saved!</div>';
                 setTimeout(() => document.getElementById('customizeSaveStatus').innerHTML = '', 3000);
             } catch (error) {
-                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-error">Błąd zapisu</div>';
+                document.getElementById('customizeSaveStatus').innerHTML = '<div class="status-error">Error saving</div>';
             }
         };
 
@@ -1354,11 +1396,11 @@
             const oldUsername = userProfile.username;
 
             if (!newUsername || newUsername.length < 3) {
-                document.getElementById('username-status').innerHTML = '<span class="status-error">Min. 3 znaki</span>';
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Min. 3 characters</span>';
                 return;
             }
             if (!/^[a-z0-9_]+$/.test(newUsername)) {
-                document.getElementById('username-status').innerHTML = '<span class="status-error">Tylko a-z, 0-9, _</span>';
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Only a-z, 0-9, _</span>';
                 return;
             }
             if (newUsername === oldUsername) {
@@ -1369,7 +1411,7 @@
             try {
                 const exists = await getDoc(doc(db, 'usernames', newUsername));
                 if (exists.exists()) {
-                    document.getElementById('username-status').innerHTML = '<span class="status-error">Zajęte</span>';
+                    document.getElementById('username-status').innerHTML = '<span class="status-error">Already taken</span>';
                     return;
                 }
 
@@ -1384,10 +1426,10 @@
                 document.getElementById('overview-profile-url').href = url;
                 document.getElementById('overview-profile-url').textContent = url;
 
-                document.getElementById('username-status').innerHTML = '<span class="status-success">✓ Zmieniono!</span>';
+                document.getElementById('username-status').innerHTML = '<span class="status-success">✓ Changed!</span>';
                 setTimeout(cancelEditUsername, 1500);
             } catch (e) {
-                document.getElementById('username-status').innerHTML = '<span class="status-error">Błąd</span>';
+                document.getElementById('username-status').innerHTML = '<span class="status-error">Error</span>';
             }
         };
 
@@ -1408,7 +1450,7 @@
             const newDisplayName = document.getElementById('new-displayname').value.trim();
 
             if (!newDisplayName || newDisplayName.length < 1) {
-                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Nazwa nie może być pusta</span>';
+                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Cannot be empty</span>';
                 return;
             }
 
@@ -1419,19 +1461,18 @@
                 document.getElementById('settings-displayname-display').textContent = newDisplayName;
                 updatePreview();
 
-                document.getElementById('displayname-status').innerHTML = '<span class="status-success">✓ Zmieniono!</span>';
+                document.getElementById('displayname-status').innerHTML = '<span class="status-success">✓ Changed!</span>';
                 setTimeout(cancelEditDisplayName, 1500);
             } catch (e) {
-                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Błąd</span>';
+                document.getElementById('displayname-status').innerHTML = '<span class="status-error">Error</span>';
             }
         };
 
         // Discord
         function showDiscordConnected() {
             const name = `${userProfile.discord.username}#${userProfile.discord.discriminator || '0'}`;
-            document.getElementById('overview-discord').textContent = name;
             document.getElementById('settings-discord').textContent = name;
-            document.getElementById('settings-discord-btn').textContent = 'Odłącz';
+            document.getElementById('settings-discord-btn').textContent = 'Disconnect';
             document.getElementById('settings-discord-btn').onclick = disconnectDiscord;
         }
 
@@ -1444,9 +1485,8 @@
         window.disconnectDiscord = async function() {
             try {
                 await updateDoc(doc(db, 'users', currentUser.uid), { discord: null });
-                document.getElementById('overview-discord').textContent = 'Niepołączony';
-                document.getElementById('settings-discord').textContent = 'Niepołączony';
-                document.getElementById('settings-discord-btn').textContent = 'Połącz';
+                document.getElementById('settings-discord').textContent = 'Not connected';
+                document.getElementById('settings-discord-btn').textContent = 'Connect';
                 document.getElementById('settings-discord-btn').onclick = connectDiscord;
                 userProfile.discord = null;
             } catch (e) {}
