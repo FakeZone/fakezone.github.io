@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FakeZone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -22,15 +23,43 @@
             overflow: hidden;
         }
 
+        /* Background Image */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: -1;
+        }
+
         .container {
             text-align: center;
             z-index: 1;
             animation: fadeIn 0.5s ease;
+            padding: 20px;
         }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-card {
+            transition: all 0.3s;
         }
 
         .avatar {
@@ -49,53 +78,54 @@
             box-shadow: 0 0 50px rgba(255,51,51,0.5);
         }
 
-        h1 {
-            color: #fff;
+        .username {
             font-size: 32px;
             margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255,51,51,0.5);
+            font-weight: bold;
         }
 
         .bio {
-            color: #888;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 16px;
             max-width: 400px;
+            line-height: 1.5;
         }
 
+        /* Discord Info */
         .discord-info {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding: 10px 20px;
-            background: rgba(88, 101, 242, 0.1);
+            background: rgba(88, 101, 242, 0.15);
             border: 1px solid rgba(88, 101, 242, 0.3);
-            border-radius: 8px;
+            border-radius: 50px;
         }
 
         .discord-avatar {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
         }
 
         .discord-name {
             color: #5865F2;
             font-size: 14px;
+            font-weight: 500;
         }
 
+        /* Links */
         .links {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-width: 400px;
+            max-width: 350px;
             margin: 0 auto;
         }
 
         .link-btn {
-            padding: 14px 40px;
+            padding: 14px 30px;
             background: rgba(20,20,20,0.8);
             border: 1px solid #333;
             border-radius: 8px;
@@ -128,6 +158,7 @@
             box-shadow: 0 10px 30px rgba(255,51,51,0.3);
         }
 
+        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -135,32 +166,34 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: 0;
         }
 
+        /* Error State */
         .error-container {
             text-align: center;
         }
 
         .error {
             color: #ff3333;
-            font-size: 24px;
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
         .error-sub {
             color: #888;
-            margin-top: 10px;
             font-size: 16px;
+            margin-bottom: 20px;
         }
 
         .home-link {
-            margin-top: 20px;
             display: inline-block;
-            padding: 10px 20px;
+            padding: 12px 25px;
             background: rgba(255,51,51,0.1);
             border: 1px solid #ff3333;
             color: #ff3333;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             transition: all 0.3s;
         }
 
@@ -169,79 +202,157 @@
             transform: translateY(-2px);
         }
 
-        /* Glitch effect */
-        .glitch {
-            position: relative;
-            color: #fff;
-            font-size: 32px;
-            font-weight: bold;
+        /* Username Effects */
+        .effect-none {
+            /* default */
         }
 
-        .glitch:hover {
-            text-shadow: 
-                0.05em 0 0 rgba(255,0,0,0.75),
-                -0.05em -0.025em 0 rgba(0,255,0,0.75),
-                0.025em 0.05em 0 rgba(0,0,255,0.75);
-            animation: glitch 500ms infinite;
+        .effect-glitch {
+            animation: glitch 0.5s infinite;
         }
 
         @keyframes glitch {
-            0% {
-                text-shadow: 
-                    0.05em 0 0 rgba(255,0,0,0.75),
-                    -0.05em -0.025em 0 rgba(0,255,0,0.75),
-                    0.025em 0.05em 0 rgba(0,0,255,0.75);
+            0%, 100% {
+                text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
             }
-            14% {
-                text-shadow: 
-                    0.05em 0 0 rgba(255,0,0,0.75),
-                    -0.05em -0.025em 0 rgba(0,255,0,0.75),
-                    0.025em 0.05em 0 rgba(0,0,255,0.75);
-            }
-            15% {
-                text-shadow: 
-                    -0.05em -0.025em 0 rgba(255,0,0,0.75),
-                    0.025em 0.025em 0 rgba(0,255,0,0.75),
-                    -0.05em -0.05em 0 rgba(0,0,255,0.75);
-            }
-            49% {
-                text-shadow: 
-                    -0.05em -0.025em 0 rgba(255,0,0,0.75),
-                    0.025em 0.025em 0 rgba(0,255,0,0.75),
-                    -0.05em -0.05em 0 rgba(0,0,255,0.75);
+            25% {
+                text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
             }
             50% {
-                text-shadow: 
-                    0.025em 0.05em 0 rgba(255,0,0,0.75),
-                    0.05em 0 0 rgba(0,255,0,0.75),
-                    0 -0.05em 0 rgba(0,0,255,0.75);
+                text-shadow: 2px 2px #ff0000, -2px -2px #00ffff;
             }
-            99% {
-                text-shadow: 
-                    0.025em 0.05em 0 rgba(255,0,0,0.75),
-                    0.05em 0 0 rgba(0,255,0,0.75),
-                    0 -0.05em 0 rgba(0,0,255,0.75);
+            75% {
+                text-shadow: -2px 2px #ff0000, 2px -2px #00ffff;
             }
-            100% {
-                text-shadow: 
-                    -0.025em 0 0 rgba(255,0,0,0.75),
-                    -0.025em -0.025em 0 rgba(0,255,0,0.75),
-                    -0.025em -0.05em 0 rgba(0,0,255,0.75);
+        }
+
+        .effect-rainbow {
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: rainbowMove 2s linear infinite;
+        }
+
+        @keyframes rainbowMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .effect-glow {
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
             }
+            50% {
+                text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
+            }
+        }
+
+        .effect-wave {
+            display: inline-block;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-5px); }
+            75% { transform: translateY(5px); }
+        }
+
+        .effect-typing {
+            border-right: 3px solid;
+            animation: typing-cursor 0.7s step-end infinite;
+        }
+
+        @keyframes typing-cursor {
+            0%, 100% { border-color: currentColor; }
+            50% { border-color: transparent; }
+        }
+
+        /* Audio Player */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .audio-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(20,20,20,0.9);
+            border: 2px solid #ff3333;
+            color: #ff3333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .audio-btn:hover {
+            background: rgba(255,51,51,0.2);
+            transform: scale(1.1);
+        }
+
+        .audio-btn.playing {
+            animation: audioPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes audioPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,51,51,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(255,51,51,0); }
+        }
+
+        /* Loading */
+        .loading {
+            color: #888;
+            font-size: 18px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top-color: #ff3333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <div class="bg-image" id="bgImage"></div>
+    <div class="bg-overlay" id="bgOverlay"></div>
     <canvas class="particles" id="particles"></canvas>
     
     <div class="container" id="profileContainer">
-        <div class="error-container">
-            <div class="error">Ładowanie...</div>
+        <div class="loading">
+            <div class="spinner"></div>
+            Ładowanie profilu...
         </div>
     </div>
 
+    <div class="audio-control" id="audioControl" style="display:none;">
+        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">
+            🔇
+        </button>
+    </div>
+
+    <audio id="bgAudio" loop></audio>
+
     <script>
-        // Particle effect
+        // Particles
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -258,27 +369,42 @@
             });
         }
 
-        function animate() {
+        function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             particles.forEach(p => {
                 ctx.fillStyle = p.color;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
-                
                 p.y -= p.speedY;
                 if (p.y < 0) p.y = canvas.height;
             });
-            
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateParticles);
         }
-        animate();
+        animateParticles();
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
+
+        // Audio
+        let isPlaying = false;
+        const audio = document.getElementById('bgAudio');
+        const audioBtn = document.getElementById('audioBtn');
+
+        window.toggleAudio = function() {
+            if (isPlaying) {
+                audio.pause();
+                audioBtn.textContent = '🔇';
+                audioBtn.classList.remove('playing');
+            } else {
+                audio.play();
+                audioBtn.textContent = '🔊';
+                audioBtn.classList.add('playing');
+            }
+            isPlaying = !isPlaying;
+        };
     </script>
 
     <script type="module">
@@ -299,26 +425,23 @@
 
         async function loadProfile() {
             const container = document.getElementById('profileContainer');
-            
-            // Get username from URL path
-            const path = window.location.pathname.substring(1);
-            const username = path.toLowerCase().replace(/\/$/, ''); // Remove trailing slash
+            const path = window.location.pathname.substring(1).toLowerCase().replace(/\/$/, '');
 
-            // Skip if it's a system page
-            if (!username || username === 'index.html' || username === 'dashboard.html' || username === '404.html' || username === 'discord-callback.html' || username === 'discord-callback') {
+            // Skip system pages
+            if (!path || path === 'index.html' || path === 'dashboard.html' || path === '404.html' || path === 'discord-callback.html' || path === 'discord-callback') {
                 window.location.href = '/';
                 return;
             }
 
             try {
-                // Get user ID from username
-                const usernameDoc = await getDoc(doc(db, 'usernames', username));
+                // Get username doc
+                const usernameDoc = await getDoc(doc(db, 'usernames', path));
                 
                 if (!usernameDoc.exists()) {
                     container.innerHTML = `
                         <div class="error-container">
-                            <div class="error">Nie znaleziono użytkownika</div>
-                            <div class="error-sub">@${username} nie istnieje</div>
+                            <div class="error">Nie znaleziono</div>
+                            <div class="error-sub">Użytkownik @${path} nie istnieje</div>
                             <a href="/" class="home-link">Strona główna</a>
                         </div>
                     `;
@@ -326,8 +449,6 @@
                 }
 
                 const uid = usernameDoc.data().uid;
-                
-                // Get user profile
                 const userDoc = await getDoc(doc(db, 'users', uid));
                 
                 if (!userDoc.exists()) {
@@ -342,34 +463,50 @@
 
                 const profile = userDoc.data();
                 
-                // Use displayName if exists, otherwise use username
-                const displayName = profile.displayName || profile.username;
+                // Apply customizations
+                applyCustomizations(profile);
                 
-                // Build Discord HTML if connected
+                // Build profile HTML
+                const displayName = profile.displayName || profile.username;
+                const avatar = profile.avatar || profile.discord?.avatar || 'https://via.placeholder.com/120';
+                const bio = profile.bio || 'Welcome to my zone';
+                const bioFont = profile.bioFont || 'Segoe UI';
+                const bioColor = profile.bioColor || '#888888';
+                const usernameColor = profile.usernameColor || '#ffffff';
+                const usernameEffect = profile.usernameEffect || 'none';
+                const opacity = (profile.profileOpacity ?? 100) / 100;
+                const blur = (profile.profileBlur || 0) / 10;
+
+                // Discord HTML
                 let discordHTML = '';
                 if (profile.discord) {
                     discordHTML = `
                         <div class="discord-info">
-                            <img class="discord-avatar" src="${profile.discord.avatar}" alt="Discord">
+                            <img class="discord-avatar" src="${profile.discord.avatar}" alt="">
                             <span class="discord-name">${profile.discord.username}#${profile.discord.discriminator || '0'}</span>
                         </div>
                     `;
                 }
-                
-                // Build links HTML
+
+                // Links HTML
                 let linksHTML = '';
                 if (profile.links && profile.links.length > 0) {
+                    linksHTML = '<div class="links">';
                     profile.links.forEach(link => {
                         linksHTML += `<a href="${link.url}" target="_blank" class="link-btn">${link.title}</a>`;
                     });
+                    linksHTML += '</div>';
                 }
 
+                // Username effect class
+                const effectClass = usernameEffect !== 'none' ? `effect-${usernameEffect}` : '';
+
                 container.innerHTML = `
-                    <img src="${profile.avatar || 'https://via.placeholder.com/120'}" alt="Avatar" class="avatar">
-                    <h1 class="glitch">@${displayName}</h1>
-                    <p class="bio">${profile.bio || 'Welcome to my zone'}</p>
-                    ${discordHTML}
-                    <div class="links">
+                    <div class="profile-card" style="opacity: ${opacity}; filter: blur(${blur}px);">
+                        <img src="${avatar}" alt="Avatar" class="avatar">
+                        <div class="username ${effectClass}" style="color: ${usernameColor};">@${displayName}</div>
+                        <div class="bio" style="color: ${bioColor}; font-family: '${bioFont}', sans-serif;">${bio}</div>
+                        ${discordHTML}
                         ${linksHTML}
                     </div>
                 `;
@@ -378,10 +515,10 @@
                 document.title = `@${displayName} - FakeZone`;
 
             } catch (error) {
-                console.error('Error loading profile:', error);
+                console.error('Error:', error);
                 container.innerHTML = `
                     <div class="error-container">
-                        <div class="error">Błąd ładowania profilu</div>
+                        <div class="error">Błąd ładowania</div>
                         <div class="error-sub">${error.message}</div>
                         <a href="/" class="home-link">Strona główna</a>
                     </div>
@@ -389,7 +526,22 @@
             }
         }
 
-        // Load profile on page load
+        function applyCustomizations(profile) {
+            // Background Image
+            if (profile.bgImage) {
+                document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
+                document.getElementById('bgOverlay').style.display = 'block';
+            }
+
+            // Background Audio
+            if (profile.bgAudio) {
+                const audio = document.getElementById('bgAudio');
+                audio.src = profile.bgAudio;
+                audio.volume = (profile.audioVolume || 50) / 100;
+                document.getElementById('audioControl').style.display = 'block';
+            }
+        }
+
         loadProfile();
     </script>
 </body>
