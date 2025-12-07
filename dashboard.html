@@ -1047,18 +1047,20 @@
     </div>
 </div>
 
-            <div class="settings-section">
-                <h3>Connected Accounts</h3>
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Discord</div>
-                        <div class="setting-value" id="settings-discord">Not connected</div>
-                    </div>
-                    <div class="setting-action">
-                        <button class="btn btn-small" id="settings-discord-btn" onclick="connectDiscord()">Connect</button>
-                    </div>
-                </div>
-            </div>
+</div> <!-- ✅ DODAJ TĘ LINIĘ - zamyka settings-section "Account Information" -->
+
+<div class="settings-section">
+    <h3>Connected Accounts</h3>
+    <div class="setting-item">
+        <div class="setting-info">
+            <div class="setting-label">Discord</div>
+            <div class="setting-value" id="settings-discord">Not connected</div>
+        </div>
+        <div class="setting-action">
+            <button class="btn btn-small" id="settings-discord-btn" onclick="connectDiscord()">Connect</button>
+        </div>
+    </div>
+</div>
 
             <div class="settings-section" style="border-color: #ff3333;">
                 <h3 style="color: #ff3333;">Danger Zone</h3>
@@ -1089,8 +1091,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div> 
+            </div>  <!-- zamyka settings-section Danger Zone -->
+        </div>  <!-- zamyka page-settings -->
 
         <!-- CUSTOMIZE PAGE -->
         <div class="page-view" id="page-customize">
