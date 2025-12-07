@@ -57,6 +57,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .avatar {
@@ -106,6 +107,34 @@
         .social-link:hover {
             transform: translateY(-3px);
             background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Views Counter */
+        .views-counter {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #888;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .views-counter svg {
+            width: 16px;
+            height: 16px;
+            fill: #888;
+        }
+
+        .views-count {
+            font-weight: 600;
+            color: #fff;
         }
 
         /* Audio Controls */
@@ -305,28 +334,10 @@
                 transform: scale(1.1);
             }
         }
-
-        /* Debug info (usuń w produkcji) */
-        .debug-info {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #0f0;
-            padding: 10px;
-            font-size: 12px;
-            font-family: monospace;
-            border-radius: 5px;
-            z-index: 9999;
-            display: none; /* Zmień na 'block' żeby zobaczyć debug */
-        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Debug info -->
-    <div class="debug-info" id="debugInfo"></div>
-
     <!-- Background -->
     <div class="bg-image" id="bgImage"></div>
     <div class="bg-overlay" id="bgOverlay"></div>
@@ -347,6 +358,15 @@
             <h1 class="username" id="username">@username</h1>
             <p class="bio" id="bio">Bio loading...</p>
             <div class="social-links" id="socialLinks"></div>
+            
+            <!-- Views Counter -->
+            <div class="views-counter" id="viewsCounter">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+                <span class="views-count" id="viewsCount">0</span>
+                <span>views</span>
+            </div>
         </div>
     </div>
 
@@ -366,7 +386,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -394,10 +414,62 @@
         // ============ DEBUG HELPER ============
         function debug(msg) {
             console.log('🔍', msg);
-            const debugEl = document.getElementById('debugInfo');
-            if (debugEl) {
-                debugEl.innerHTML += msg + '<br>';
+        }
+
+        // ============ VIEWS COUNTER ============
+        async function trackView(username, uid) {
+            const storageKey = 'fakezone_viewed_' + username;
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem(storageKey);
+            
+            // Sprawdź czy user już był dziś
+            if (lastVisit === today) {
+                debug('Already counted today for ' + username);
+                return false;
             }
+            
+            try {
+                // Zapisz wizytę w localStorage
+                localStorage.setItem(storageKey, today);
+                
+                // Zwiększ views w Firebase
+                const userRef = doc(db, 'users', uid);
+                await updateDoc(userRef, {
+                    views: increment(1)
+                });
+                
+                debug('View counted for ' + username);
+                return true;
+            } catch (error) {
+                debug('Error tracking view: ' + error.message);
+                console.error('View tracking error:', error);
+                return false;
+            }
+        }
+
+        function displayViews(count) {
+            const viewsEl = document.getElementById('viewsCount');
+            if (viewsEl) {
+                animateNumber(viewsEl, 0, count || 0, 1000);
+            }
+        }
+
+        function animateNumber(element, start, end, duration) {
+            const range = end - start;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const value = Math.floor(start + (range * progress));
+                element.textContent = value.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
         }
 
         // ============ GET USERNAME FROM URL ============
@@ -409,7 +481,6 @@
                 const username = savedPath.replace(/^\/+/, '').split('/')[0].toLowerCase();
                 debug('Username from sessionStorage: ' + username);
                 
-                // Zaktualizuj URL w pasku przeglądarki
                 if (username) {
                     window.history.replaceState({}, '', '/' + username);
                 }
@@ -428,13 +499,11 @@
             const path = window.location.pathname;
             debug('Current path: ' + path);
             
-            // Ignoruj jeśli to profile.html
             if (path.includes('profile.html') || path === '/' || path === '') {
                 debug('No username in path');
                 return null;
             }
             
-            // Pobierz username z path
             const pathParts = path.split('/').filter(p => p && !p.includes('.html'));
             const username = pathParts[pathParts.length - 1]?.toLowerCase();
             debug('Username from path: ' + username);
@@ -475,7 +544,6 @@
         window.onYouTubeIframeAPIReady = function() {
             debug('YouTube API ready');
             
-            // Jeśli mamy pending YouTube audio, zainicjalizuj teraz
             if (pendingAudioUrl && audioType === 'youtube' && hasUserInteracted) {
                 const videoId = extractYouTubeId(pendingAudioUrl);
                 if (videoId) {
@@ -720,6 +788,14 @@
 
                 const userData = userDoc.data();
                 debug('User data loaded');
+
+                // ============ TRACK & DISPLAY VIEWS ============
+                await trackView(username, uid);
+                
+                // Pobierz aktualną liczbę views (po inkrementacji)
+                const updatedUserDoc = await getDoc(doc(db, 'users', uid));
+                const updatedViews = updatedUserDoc.data()?.views || 0;
+                displayViews(updatedViews);
                 
                 // Update page title
                 document.title = `@${userData.displayName || userData.username} - FakeZone`;
@@ -782,15 +858,12 @@
                     audioType = detectAudioType(userData.bgAudio);
                     debug('Audio type: ' + audioType);
                     
-                    // Pre-initialize audio (but don't play yet)
                     if (audioType === 'direct') {
                         initDirectAudio(userData.bgAudio, volume);
                     }
                     
-                    // Show click overlay for audio
                     showClickToPlay();
                     
-                    // Show volume controls
                     if (userData.showVolumeControl !== false) {
                         document.getElementById('audioControls').classList.add('show');
                     }
@@ -811,15 +884,12 @@
 
         // ============ EVENT LISTENERS ============
         
-        // Play/Pause button
         document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
         
-        // Volume slider
         document.getElementById('volumeSlider').addEventListener('input', (e) => {
             updateVolume(parseInt(e.target.value));
         });
 
-        // Click to play overlay
         document.getElementById('clickToPlay').addEventListener('click', () => {
             debug('User clicked overlay');
             hasUserInteracted = true;
@@ -827,10 +897,8 @@
             startMusic();
         });
 
-        // Any click on body (backup)
         document.body.addEventListener('click', (e) => {
             if (!hasUserInteracted && pendingAudioUrl) {
-                // Ignore if clicking controls
                 if (e.target.closest('.audio-controls')) return;
                 if (e.target.closest('.click-to-play')) return;
                 
@@ -841,7 +909,6 @@
             }
         }, { once: true });
 
-        // Keyboard shortcut (space to play/pause)
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' && musicReady) {
                 e.preventDefault();
