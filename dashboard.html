@@ -1401,10 +1401,17 @@
         <div id="previewUsername" class="preview-name">@username</div>
         <div id="previewUid" class="preview-uid" style="font-size: 12px; color: #666; margin-bottom: 10px;">#0002</div>
         <div id="previewBio" class="preview-bio">Your bio here...</div>
-        <!-- DODAJ TO: -->
-        <div class="preview-social-links" id="previewSocialLinks" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap;"></div>
+        <div class="preview-social-links" id="previewSocialLinks"></div>
     </div>
 </div>
+
+<!-- Save -->
+<div class="save-section">
+    <button class="btn btn-primary" onclick="saveCustomization()" style="width:100%;">Save Changes</button>
+    <div id="customizeSaveStatus"></div>
+</div>
+
+        </div> <!-- ✅ Zamyka page-customize -->
 
         <!-- LINKS PAGE -->
         <div class="page-view" id="page-links">
@@ -1589,8 +1596,9 @@
                 <button class="btn btn-primary" onclick="saveLinks()" style="width:100%;">Save Links</button>
                 <div id="linksSaveStatus"></div>
             </div>
-        </div>
+        </div> <!-- ✅ Zamyka page-links -->
 
+    </div> <!-- ✅ Zamyka main-content -->
     <!-- Hidden YouTube Player -->
     <div id="youtube-player" style="display:none;"></div>
     
