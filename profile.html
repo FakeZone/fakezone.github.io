@@ -972,12 +972,7 @@
                     userData.iconsStyle || 'default', 
                     userData.iconsColor || '#ffffff'
                 );
-                
-                const profileCard = document.getElementById('profileCard');
-                if (userData.profileOpacity !== undefined) {
-                    profileCard.style.background = `rgba(17, 17, 17, ${userData.profileOpacity / 100})`;
-                }
-                
+                               
                 if (userData.bgAudio) {
                     debug('Audio URL found: ' + userData.bgAudio);
                     
