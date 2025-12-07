@@ -41,6 +41,7 @@
             margin-bottom: 20px;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 0 30px rgba(255,51,51,0.3);
+            object-fit: cover;
         }
 
         .avatar:hover {
@@ -59,6 +60,30 @@
             color: #888;
             margin-bottom: 30px;
             font-size: 16px;
+            max-width: 400px;
+        }
+
+        .discord-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(88, 101, 242, 0.1);
+            border: 1px solid rgba(88, 101, 242, 0.3);
+            border-radius: 8px;
+        }
+
+        .discord-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .discord-name {
+            color: #5865F2;
+            font-size: 14px;
         }
 
         .links {
@@ -112,10 +137,13 @@
             pointer-events: none;
         }
 
+        .error-container {
+            text-align: center;
+        }
+
         .error {
             color: #ff3333;
             font-size: 24px;
-            text-align: center;
         }
 
         .error-sub {
@@ -141,13 +169,15 @@
             transform: translateY(-2px);
         }
 
-        /* Glitch effect for username */
+        /* Glitch effect */
         .glitch {
             position: relative;
             color: #fff;
             font-size: 32px;
             font-weight: bold;
-            text-transform: uppercase;
+        }
+
+        .glitch:hover {
             text-shadow: 
                 0.05em 0 0 rgba(255,0,0,0.75),
                 -0.05em -0.025em 0 rgba(0,255,0,0.75),
@@ -205,7 +235,9 @@
     <canvas class="particles" id="particles"></canvas>
     
     <div class="container" id="profileContainer">
-        <!-- Profile will be loaded here -->
+        <div class="error-container">
+            <div class="error">Ładowanie...</div>
+        </div>
     </div>
 
     <script>
@@ -243,7 +275,6 @@
         }
         animate();
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -252,7 +283,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, getDoc, query, where, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBIjlu_2muS5ky7hTjsc5E9gV0uOwprX0o",
@@ -270,11 +301,11 @@
             const container = document.getElementById('profileContainer');
             
             // Get username from URL path
-            const path = window.location.pathname.substring(1); // Remove leading /
-            const username = path.toLowerCase();
+            const path = window.location.pathname.substring(1);
+            const username = path.toLowerCase().replace(/\/$/, ''); // Remove trailing slash
 
             // Skip if it's a system page
-            if (!username || username === 'index.html' || username === 'dashboard.html' || username === '404.html') {
+            if (!username || username === 'index.html' || username === 'dashboard.html' || username === '404.html' || username === 'discord-callback.html' || username === 'discord-callback') {
                 window.location.href = '/';
                 return;
             }
@@ -285,9 +316,11 @@
                 
                 if (!usernameDoc.exists()) {
                     container.innerHTML = `
-                        <div class="error">User not found</div>
-                        <div class="error-sub">@${username} doesn't exist</div>
-                        <a href="/" class="home-link">Go Home</a>
+                        <div class="error-container">
+                            <div class="error">Nie znaleziono użytkownika</div>
+                            <div class="error-sub">@${username} nie istnieje</div>
+                            <a href="/" class="home-link">Strona główna</a>
+                        </div>
                     `;
                     return;
                 }
@@ -299,15 +332,31 @@
                 
                 if (!userDoc.exists()) {
                     container.innerHTML = `
-                        <div class="error">Profile error</div>
-                        <a href="/" class="home-link">Go Home</a>
+                        <div class="error-container">
+                            <div class="error">Błąd profilu</div>
+                            <a href="/" class="home-link">Strona główna</a>
+                        </div>
                     `;
                     return;
                 }
 
                 const profile = userDoc.data();
                 
-                // Build profile HTML
+                // Use displayName if exists, otherwise use username
+                const displayName = profile.displayName || profile.username;
+                
+                // Build Discord HTML if connected
+                let discordHTML = '';
+                if (profile.discord) {
+                    discordHTML = `
+                        <div class="discord-info">
+                            <img class="discord-avatar" src="${profile.discord.avatar}" alt="Discord">
+                            <span class="discord-name">${profile.discord.username}#${profile.discord.discriminator || '0'}</span>
+                        </div>
+                    `;
+                }
+                
+                // Build links HTML
                 let linksHTML = '';
                 if (profile.links && profile.links.length > 0) {
                     profile.links.forEach(link => {
@@ -317,21 +366,25 @@
 
                 container.innerHTML = `
                     <img src="${profile.avatar || 'https://via.placeholder.com/120'}" alt="Avatar" class="avatar">
-                    <h1 class="glitch">@${profile.username}</h1>
+                    <h1 class="glitch">@${displayName}</h1>
                     <p class="bio">${profile.bio || 'Welcome to my zone'}</p>
+                    ${discordHTML}
                     <div class="links">
                         ${linksHTML}
                     </div>
                 `;
 
                 // Update page title
-                document.title = `@${profile.username} - FakeZone`;
+                document.title = `@${displayName} - FakeZone`;
 
             } catch (error) {
                 console.error('Error loading profile:', error);
                 container.innerHTML = `
-                    <div class="error">Error loading profile</div>
-                    <a href="/" class="home-link">Go Home</a>
+                    <div class="error-container">
+                        <div class="error">Błąd ładowania profilu</div>
+                        <div class="error-sub">${error.message}</div>
+                        <a href="/" class="home-link">Strona główna</a>
+                    </div>
                 `;
             }
         }
