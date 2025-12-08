@@ -564,17 +564,30 @@
 async function trackView(username, uid) {
     try {
         // Sprawdź cooldown z localStorage
-        const lastViewKey = `lastView_${username}`;
+        const lastViewKey = `lastView_${username.toLowerCase()}`;
         const lastView = localStorage.getItem(lastViewKey);
         const now = Date.now();
         const cooldownMs = 5 * 60 * 1000; // 5 minut w milisekundach
 
+        debug(`Checking cooldown for ${username}`);
+        debug(`Last view timestamp: ${lastView}`);
+        debug(`Current timestamp: ${now}`);
+
         // Jeśli ostatni view był mniej niż 5 minut temu, nie licz
-        if (lastView && (now - parseInt(lastView)) < cooldownMs) {
-            const timeLeft = Math.ceil((cooldownMs - (now - parseInt(lastView))) / 1000 / 60);
-            debug(`View cooldown active, ${timeLeft} min left`);
-            return false;
+        if (lastView) {
+            const timePassed = now - parseInt(lastView);
+            debug(`Time passed: ${timePassed}ms (${Math.floor(timePassed/1000)}s)`);
+            
+            if (timePassed < cooldownMs) {
+                const timeLeft = Math.ceil((cooldownMs - timePassed) / 1000 / 60);
+                debug(`View cooldown active, ${timeLeft} min left`);
+                return false;
+            }
         }
+
+        // Najpierw zapisz timestamp w localStorage (przed updateDoc)
+        localStorage.setItem(lastViewKey, now.toString());
+        debug(`Saved new timestamp to localStorage: ${now}`);
 
         // Zwiększ licznik viewsów
         const userRef = doc(db, 'users', uid);
@@ -582,14 +595,13 @@ async function trackView(username, uid) {
             views: increment(1) 
         });
         
-        // Zapisz timestamp w localStorage
-        localStorage.setItem(lastViewKey, now.toString());
-        
         debug('View counted for ' + username);
         return true;
     } catch (error) {
         debug('Error tracking view: ' + error.message);
         console.error('View tracking error:', error);
+        // Usuń timestamp jeśli wystąpił błąd
+        localStorage.removeItem(`lastView_${username.toLowerCase()}`);
         return false;
     }
 }
