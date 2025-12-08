@@ -560,28 +560,39 @@
             }
         }
 
-        // ============ VIEWS COUNTER ============
-        async function trackView(username, uid) {
-            try {
-                const userRef = doc(db, 'users', uid);
-                await updateDoc(userRef, { 
-                    views: increment(1) 
-                });
-                debug('View counted for ' + username);
-                return true;
-            } catch (error) {
-                try {
-                    const userRef = doc(db, 'users', uid);
-                    await updateDoc(userRef, { views: 1 });
-                    debug('Created views field with value 1');
-                    return true;
-                } catch (e) {
-                    debug('Error tracking view: ' + e.message);
-                    console.error('View tracking error:', e);
-                    return false;
-                }
-            }
+// ============ VIEWS COUNTER ============
+async function trackView(username, uid) {
+    try {
+        // Sprawdź cooldown z localStorage
+        const lastViewKey = `lastView_${username}`;
+        const lastView = localStorage.getItem(lastViewKey);
+        const now = Date.now();
+        const cooldownMs = 5 * 60 * 1000; // 5 minut w milisekundach
+
+        // Jeśli ostatni view był mniej niż 5 minut temu, nie licz
+        if (lastView && (now - parseInt(lastView)) < cooldownMs) {
+            const timeLeft = Math.ceil((cooldownMs - (now - parseInt(lastView))) / 1000 / 60);
+            debug(`View cooldown active, ${timeLeft} min left`);
+            return false;
         }
+
+        // Zwiększ licznik viewsów
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, { 
+            views: increment(1) 
+        });
+        
+        // Zapisz timestamp w localStorage
+        localStorage.setItem(lastViewKey, now.toString());
+        
+        debug('View counted for ' + username);
+        return true;
+    } catch (error) {
+        debug('Error tracking view: ' + error.message);
+        console.error('View tracking error:', error);
+        return false;
+    }
+}
 
         async function getAndDisplayViews(uid) {
             try {
