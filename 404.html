@@ -102,7 +102,6 @@
         (function() {
             var path = window.location.pathname;
             
-            // Lista znanych plików - NIE przekierowuj
             var knownFiles = [
                 '/',
                 '/index.html',
@@ -112,23 +111,18 @@
                 '/404.html'
             ];
             
-            // Sprawdź czy to znany plik
             var isKnownFile = knownFiles.some(function(file) {
                 return path === file || path.endsWith(file);
             });
             
-            // Jeśli to NIE jest znany plik = to jest username
             if (!isKnownFile && path && path !== '/') {
-                // Pokaż loader
                 document.getElementById('loader').classList.add('show');
                 document.querySelector('.error-code').style.display = 'none';
                 document.querySelector('.error-text').style.display = 'none';
                 document.querySelector('.home-btn').style.display = 'none';
                 
-                // Zapisz ścieżkę (username) w sessionStorage
                 sessionStorage.setItem('profilePath', path);
                 
-                // Przekieruj do profile.html po krótkiej chwili
                 setTimeout(function() {
                     window.location.replace('/profile.html');
                 }, 500);
