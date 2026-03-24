@@ -660,7 +660,7 @@
         }
 
         .preview-box {
-            background: rgba(17, 17, 17, 0.95); /* Zmień z #111 */
+            background: rgba(17, 17, 17, 0.95);
             border: 1px solid #1a1a1a;
             border-radius: 10px;
             padding: 40px;
@@ -903,7 +903,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&family=Montserrat:wght@400;600&family=Open+Sans:wght@400;600&family=Lato:wght@400;700&family=Oswald:wght@400;600&family=Playfair+Display:wght@400;700&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- Sidebar -->
 <div class="sidebar">
     <div class="logo">FakeZone</div>
     
@@ -926,11 +925,9 @@
         <div class="menu-dropdown" id="profile-dropdown">
             <a href="#" class="menu-link" onclick="showPage('customize', this)">Customize</a>
             <a href="#" class="menu-link" onclick="showPage('links', this)">Links</a>
-            <!-- Usunięte View Profile stąd -->
         </div>
     </div>
 
-    <!-- Nowy przycisk View Profile na dole -->
     <div class="sidebar-footer">
         <button class="view-profile-btn" onclick="viewProfile()">
             <svg viewBox="0 0 24 24">
@@ -941,10 +938,8 @@
     </div>
 </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         
-        <!-- OVERVIEW PAGE -->
         <div class="page-view active" id="page-overview">
             <div class="page-header">
                 <div>
@@ -978,7 +973,6 @@
             </div>
         </div>
 
-        <!-- SETTINGS PAGE -->
         <div class="page-view" id="page-settings">
             <div class="page-header">
                 <div>
@@ -993,7 +987,6 @@
 <div class="settings-section">
     <h3>Account Information</h3>
     
-    <!-- 1. Username (pierwszy) -->
     <div class="setting-item">
         <div class="setting-info">
             <div class="setting-label">Username</div>
@@ -1004,7 +997,6 @@
         </div>
     </div>
 
-    <!-- 2. Display Username (drugi) -->
     <div class="setting-item">
         <div class="setting-info">
             <div class="setting-label">Display Username</div>
@@ -1023,7 +1015,6 @@
         </div>
     </div>
 
-    <!-- 3. Email (trzeci) -->
     <div class="setting-item">
         <div class="setting-info">
             <div class="setting-label">Email</div>
@@ -1045,7 +1036,6 @@
         </div>
     </div>
 
-<!-- 4. Password (ostatni) -->
 <div class="setting-item">
     <div class="setting-info">
         <div class="setting-label">Password</div>
@@ -1081,7 +1071,7 @@
     </div>
 </div>
 
-</div> <!-- ✅ DODAJ TĘ LINIĘ - zamyka settings-section "Account Information" -->
+</div>
 
 <div class="settings-section">
     <h3>Connected Accounts</h3>
@@ -1125,10 +1115,9 @@
                         </div>
                     </div>
                 </div>
-            </div>  <!-- zamyka settings-section Danger Zone -->
-        </div>  <!-- zamyka page-settings -->
+            </div>
+        </div>
 
-        <!-- CUSTOMIZE PAGE -->
         <div class="page-view" id="page-customize">
             <div class="page-header">
                 <div>
@@ -1141,7 +1130,6 @@
                 </div>
             </div>
 
-            <!-- Assets Uploader -->
             <div class="section-title">Assets Uploader</div>
             <div class="tile-grid">
                 <div class="tile">
@@ -1190,7 +1178,6 @@
                 </div>
             </div>
 
-<!-- General Customization -->
 <div class="section-title">General Customization</div>
 <div class="tile-grid tile-grid-2">
     <div class="tile">
@@ -1308,9 +1295,8 @@
             <p style="font-size:11px; color:#666; margin-top:10px;">Custom color will override platform-specific colors on hover</p>
         </div>
     </div>
-</div> <!-- ✅ ZAMYKA tile-grid-2 dla General Customization -->
+</div>
 
-<!-- Profile Effects -->
 <div class="section-title">Profile Effects</div>
 <div class="tile-grid tile-grid-2">
     <div class="tile">
@@ -1332,9 +1318,8 @@
             </div>
         </div>
     </div>
-</div> <!-- ✅ ZAMYKA tile-grid-2 dla Profile Effects -->
+</div>
 
-<!-- Other Customization -->
 <div class="section-title">Other Customization</div>
 <div class="tile-grid">
     <div class="tile">
@@ -1389,9 +1374,8 @@
             <p style="font-size:11px; color:#666; margin-top:10px;">Shows your unique ID (#0002) on your profile page</p>
         </div>
     </div>
-</div> <!-- ✅ ZAMYKA tile-grid dla Other Customization -->
+</div>
 
-<!-- Preview -->
 <div class="section-title">Preview</div>
 <div class="preview-wrapper">
     <div class="preview-bg" id="preview-bg"></div>
@@ -1405,15 +1389,13 @@
     </div>
 </div>
 
-<!-- Save -->
 <div class="save-section">
     <button class="btn btn-primary" onclick="saveCustomization()" style="width:100%;">Save Changes</button>
     <div id="customizeSaveStatus"></div>
 </div>
 
-        </div> <!-- ✅ Zamyka page-customize -->
+        </div>
 
-        <!-- LINKS PAGE -->
         <div class="page-view" id="page-links">
             <div class="page-header">
                 <div>
@@ -1426,7 +1408,6 @@
                 </div>
             </div>
 
-            <!-- Social Media -->
             <div class="section-title">Social Media</div>
             <div class="tile-grid tile-grid-2">
                 <div class="tile">
@@ -1508,7 +1489,6 @@
                 </div>
             </div>
 
-            <!-- Gaming & Other -->
             <div class="section-title">Gaming & Other</div>
             <div class="tile-grid tile-grid-2">
                 <div class="tile">
@@ -1564,7 +1544,6 @@
                 </div>
             </div>
 
-            <!-- Custom Link -->
             <div class="section-title">Custom Link</div>
             <div class="tile-grid tile-grid-2">
                 <div class="tile">
@@ -1591,24 +1570,19 @@
                 </div>
             </div>
 
-            <!-- Save -->
             <div class="save-section">
                 <button class="btn btn-primary" onclick="saveLinks()" style="width:100%;">Save Links</button>
                 <div id="linksSaveStatus"></div>
             </div>
-        </div> <!-- ✅ Zamyka page-links -->
+        </div>
 
-    </div> <!-- ✅ Zamyka main-content -->
-    <!-- Hidden YouTube Player -->
+    </div>
     <div id="youtube-player" style="display:none;"></div>
     
-    <!-- Hidden Audio Element -->
     <audio id="test-audio" style="display:none;"></audio>
 
-    <!-- YouTube API -->
     <script src="https://www.youtube.com/iframe_api"></script>
     
-    <!-- YouTube API Ready Handler (musi być PRZED modułem) -->
     <script>
         var youtubeApiReady = false;
         function onYouTubeIframeAPIReady() {
@@ -1617,7 +1591,6 @@
         }
     </script>
 
-    <!-- Main Application -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { 
@@ -1664,7 +1637,6 @@
         let isPlaying = false;
         let emailVisible = false;
         let fullEmail = '';
-        // ============ SOCIAL ICONS ============
         const socialIcons = {
         discord: '<svg viewBox="0 0 127.14 96.36"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>',
         instagram: '<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>',
@@ -1839,9 +1811,8 @@ function playTestAudio(url, volume) {
                 
                 const now = Date.now();
                 const lastViewTime = viewsDoc.exists() ? viewsDoc.data().lastViewTime : 0;
-                const cooldownMs = 5 * 60 * 1000; // 5 minutes in milliseconds
+                const cooldownMs = 5 * 60 * 1000;
                 
-                // Only record view if cooldown has passed
                 if (now - lastViewTime >= cooldownMs) {
                     const currentViews = viewsDoc.exists() ? viewsDoc.data().count : 0;
                     
@@ -1870,7 +1841,6 @@ function playTestAudio(url, volume) {
                 document.getElementById('overview-profile-url').textContent = profileUrl;
                 document.getElementById('overview-uid').textContent = formatUid(userProfile.uidNumber || 1);
 
-                // Bezpieczne sprawdzanie elementów przed przypisaniem wartości
                 const usernameEl = document.getElementById('settings-username-display');
                 if (usernameEl) usernameEl.textContent = userProfile.username;
                 
@@ -1905,7 +1875,6 @@ function playTestAudio(url, volume) {
                 document.getElementById('toggle-avatar-decoration').checked = userProfile.showAvatarDecoration || false;
                 document.getElementById('toggle-show-uid').checked = userProfile.showUid ?? true;
 
-                // Load social links
                 document.getElementById('link-discord').value = userProfile.links?.discord || '';
                 document.getElementById('link-instagram').value = userProfile.links?.instagram || '';
                 document.getElementById('link-twitter').value = userProfile.links?.twitter || '';
@@ -1936,13 +1905,12 @@ function playTestAudio(url, volume) {
             updateBgOverlayOpacityLabel();
             updatePreview();
 
-            // Event listenery dla linków social media
             document.querySelectorAll('[id^="link-"]').forEach(input => {
                 input.addEventListener('input', updatePreviewLinks);
             });
 
-                        }  // Zamyka if (docSnap.exists())
-                    }      // Zamyka async function loadProfile()
+                        }
+                    }
 
         window.toggleEmailVisibility = function() {
             const emailDisplay = document.getElementById('settings-email-display');
@@ -2078,11 +2046,10 @@ function playTestAudio(url, volume) {
             const previewContainer = document.getElementById('preview-container');
             
             
-            // ============ TŁO (BANNER) ============
             if (bgImage) {
                 previewBg.style.backgroundImage = `url('${bgImage}')`;
                 previewBgOverlay.style.display = 'block';
-                previewBgOverlay.style.background = 'rgba(0, 0, 0, 0.6)'; // Stałe ciemnienie banneru
+                previewBgOverlay.style.background = 'rgba(0, 0, 0, 0.6)';
                 previewContainer.classList.add('has-bg');
             } else {
                 previewBg.style.backgroundImage = '';
@@ -2090,17 +2057,13 @@ function playTestAudio(url, volume) {
                 previewContainer.classList.remove('has-bg');
             }
             
-            // ============ KOLOR BOKSU PROFILU ============
             const boxColor = document.getElementById('bg-overlay-color').value;
             const boxOpacity = document.getElementById('bg-overlay-opacity').value;
             const rgb = hexToRgb(boxColor);
             
-            // Ustaw kolor boksu (nie tła!)
             if (bgImage) {
-                // Gdy jest banner, boks ma być przezroczysty z wybranym kolorem
                 previewContainer.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${boxOpacity / 100})`;
             } else {
-                // Gdy nie ma banneru, boks ma normalny kolor
                 previewContainer.style.background = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${boxOpacity / 100})`;
             }
             
@@ -2131,7 +2094,6 @@ function playTestAudio(url, volume) {
                 usernameEl.classList.add('effect-' + selectedEffect);
             }
 
-            // ============ UID PREVIEW ============
             const uidEl = document.getElementById('previewUid');
             const showUid = document.getElementById('toggle-show-uid').checked;
             if (uidEl) {
@@ -2149,7 +2111,6 @@ function playTestAudio(url, volume) {
             bioEl.style.fontFamily = `'${bioFont}', sans-serif`;
             bioEl.style.color = bioColor;
 
-            // Profile Opacity i Blur nadal działają
             previewContainer.style.opacity = opacity / 100;
             previewContainer.style.filter = `blur(${blur / 10}px)`;
             
@@ -2162,7 +2123,6 @@ function playTestAudio(url, volume) {
             });
             updatePreview();
         };
-        // ============ UPDATE PREVIEW LINKS ============
         function updatePreviewLinks() {
             const previewLinks = document.getElementById('previewSocialLinks');
             if (!previewLinks) return;
@@ -2179,7 +2139,6 @@ function playTestAudio(url, volume) {
             }
         });
     
-        // Custom link
         const customLink = document.getElementById('link-custom');
         if (customLink && customLink.value) {
             html += `<div class="preview-social-link" title="custom">
@@ -2361,7 +2320,6 @@ function playTestAudio(url, volume) {
 
                 userProfile.username = newUsername;
                 
-                // Bezpieczne aktualizowanie elementów
                 const usernameEl = document.getElementById('settings-username-display');
                 if (usernameEl) usernameEl.textContent = newUsername;
                 
@@ -2444,7 +2402,6 @@ function playTestAudio(url, volume) {
             window.location.href = '/';
         };
 
-        // Password visibility toggles
         window.toggleCurrentPasswordVisibility = function() {
             const input = document.getElementById('current-password');
             const icon = document.getElementById('current-password-icon');
@@ -2493,7 +2450,6 @@ function playTestAudio(url, volume) {
             }
         };
 
-        // Delete account functions
         window.startDeleteAccount = function() {
             document.getElementById('delete-view-mode').classList.add('hidden');
             document.getElementById('delete-edit-mode').classList.remove('hidden');
@@ -2514,48 +2470,38 @@ function playTestAudio(url, volume) {
             const email = document.getElementById('delete-email').value.trim();
             const password = document.getElementById('delete-password').value;
 
-            // Validate inputs
             if (!username || !email || !password) {
                 document.getElementById('delete-status').innerHTML = '<span class="status-error">Please fill all fields</span>';
                 return;
             }
 
-            // Check if username matches
             if (username !== userProfile.username) {
                 document.getElementById('delete-status').innerHTML = '<span class="status-error">Username does not match</span>';
                 return;
             }
-
-            // Check if email matches
+            
             if (email !== currentUser.email) {
                 document.getElementById('delete-status').innerHTML = '<span class="status-error">Email does not match</span>';
                 return;
             }
 
             try {
-                // Reauthenticate user
                 const credential = EmailAuthProvider.credential(email, password);
                 await reauthenticateWithCredential(currentUser, credential);
 
-                // Delete username from usernames collection
                 await deleteDoc(doc(db, 'usernames', userProfile.username));
 
-                // Delete user profile from users collection
                 await deleteDoc(doc(db, 'users', currentUser.uid));
 
-                // Delete profile views if exists
                 try {
                     await deleteDoc(doc(db, 'profileViews', currentUser.uid));
                 } catch (e) {
-                    // Ignore if doesn't exist
                 }
 
-                // Delete the user account
                 await currentUser.delete();
 
                 document.getElementById('delete-status').innerHTML = '<span class="status-success">Account deleted. Redirecting...</span>';
 
-                // Redirect to home
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 2000);
