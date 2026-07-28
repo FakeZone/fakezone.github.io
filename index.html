@@ -94,7 +94,7 @@
             box-shadow: 0 0 10px rgba(255,51,51,0.2);
         }
 
-        button[type="submit"] {
+        button[type="submit"], button[type="button"] {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, #ff3333, #cc0000);
@@ -107,14 +107,15 @@
             transition: all 0.3s;
         }
 
-        button[type="submit"]:hover {
+        button[type="submit"]:hover, button[type="button"]:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(255,51,51,0.4);
         }
 
-        button[type="submit"]:disabled {
+        button[type="submit"]:disabled, button[type="button"]:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .error {
@@ -326,10 +327,13 @@
             font-size: 13px;
             margin-top: 15px;
             transition: all 0.3s;
+            padding: 0;
         }
 
         .back-btn:hover {
             color: #fff;
+            transform: none;
+            box-shadow: none;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -446,7 +450,7 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, updatePassword, signInWithEmailAndPassword as signIn } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, updatePassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, updateDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -565,7 +569,7 @@
         };
 
         window.sendResetCode = async function() {
-            const email = document.getElementById('resetEmail').value;
+            const email = document.getElementById('resetEmail').value.trim();
             const sendBtn = document.getElementById('sendCodeBtn');
             
             if (!email) {
@@ -578,9 +582,11 @@
             document.getElementById('resetError').textContent = '';
 
             try {
-                const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', email));
+                const querySnapshot = await getDocs(q);
                 
-                if (usersSnapshot.empty) {
+                if (querySnapshot.empty) {
                     document.getElementById('resetError').textContent = 'No account found with this email';
                     sendBtn.disabled = false;
                     sendBtn.innerHTML = 'SEND CODE';
@@ -674,8 +680,18 @@
                     return;
                 }
 
-                const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', resetEmail)));
-                const userDoc = usersSnapshot.docs[0];
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, where('email', '==', resetEmail));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    document.getElementById('resetError').textContent = 'Account not found';
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = 'RESET PASSWORD';
+                    return;
+                }
+
+                const userDoc = querySnapshot.docs[0];
                 const userId = userDoc.id;
 
                 await updateDoc(doc(db, 'users', userId), {
