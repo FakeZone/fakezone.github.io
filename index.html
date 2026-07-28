@@ -381,9 +381,7 @@
                 <div id="registerSuccess" class="success"></div>
             </form>
 
-            <!-- Reset Password Form -->
             <form id="resetForm" class="hidden" onsubmit="handleResetSubmit(event)">
-                <!-- Step 1: Request Code -->
                 <div id="resetStep1">
                     <div class="reset-step">
                         <h3>Step 1</h3>
@@ -395,7 +393,6 @@
                     <button type="button" id="sendCodeBtn" onclick="sendResetCode()">SEND CODE</button>
                 </div>
 
-                <!-- Step 2: Enter Code and New Password -->
                 <div id="resetStep2" class="hidden">
                     <div class="reset-step">
                         <h3>Step 2</h3>
@@ -538,15 +535,12 @@
             const resetForm = document.getElementById('resetForm');
             const tabs = document.querySelectorAll('.tab-btn');
 
-            // Hide all forms
             loginForm.classList.add('hidden');
             registerForm.classList.add('hidden');
             resetForm.classList.add('hidden');
             
-            
             tabs.forEach(t => t.classList.remove('active'));
 
-            
             document.getElementById('loginError').textContent = '';
             document.getElementById('registerError').textContent = '';
             document.getElementById('registerSuccess').textContent = '';
@@ -561,7 +555,6 @@
                 tabs[1].classList.add('active');
             } else if (tab === 'reset') {
                 resetForm.classList.remove('hidden');
-                
                 document.getElementById('resetStep1').classList.remove('hidden');
                 document.getElementById('resetStep2').classList.add('hidden');
                 document.getElementById('resetEmail').value = '';
@@ -585,7 +578,6 @@
             document.getElementById('resetError').textContent = '';
 
             try {
-                
                 const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
                 
                 if (usersSnapshot.empty) {
@@ -595,21 +587,17 @@
                     return;
                 }
 
-                // Generate 6-digit code
                 generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
                 resetEmail = email;
 
-                
                 await setDoc(doc(db, 'passwordResets', email), {
                     code: generatedCode,
                     timestamp: Date.now(),
                     used: false,
-                    expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+                    expiresAt: Date.now() + (15 * 60 * 1000)
                 });
 
-                
                 document.getElementById('codeDisplay').textContent = generatedCode;
-                
                 
                 document.getElementById('resetStep1').classList.add('hidden');
                 document.getElementById('resetStep2').classList.remove('hidden');
@@ -634,7 +622,6 @@
             document.getElementById('resetError').textContent = '';
             document.getElementById('resetSuccess').textContent = '';
 
-            
             if (code.length !== 6) {
                 document.getElementById('resetError').textContent = 'Code must be 6 digits';
                 return;
@@ -654,7 +641,6 @@
             resetBtn.innerHTML = 'RESETTING<span class="loading-spinner"></span>';
 
             try {
-                // Verify code from Firestore
                 const resetDoc = await getDoc(doc(db, 'passwordResets', resetEmail));
                 
                 if (!resetDoc.exists()) {
@@ -666,7 +652,6 @@
 
                 const resetData = resetDoc.data();
 
-                // Check if code matches
                 if (resetData.code !== code) {
                     document.getElementById('resetError').textContent = 'Invalid code';
                     resetBtn.disabled = false;
@@ -674,7 +659,6 @@
                     return;
                 }
 
-                // Check if code is expired
                 if (Date.now() > resetData.expiresAt) {
                     document.getElementById('resetError').textContent = 'Code has expired. Please request a new one.';
                     await deleteDoc(doc(db, 'passwordResets', resetEmail));
@@ -683,7 +667,6 @@
                     return;
                 }
 
-                // Check if code was already used
                 if (resetData.used) {
                     document.getElementById('resetError').textContent = 'Code has already been used';
                     resetBtn.disabled = false;
@@ -691,26 +674,19 @@
                     return;
                 }
 
-                // Get user data
                 const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', resetEmail)));
                 const userDoc = usersSnapshot.docs[0];
                 const userId = userDoc.id;
 
-                // Store pending password change
                 await updateDoc(doc(db, 'users', userId), {
                     pendingPasswordChange: newPassword,
                     pendingChangeTimestamp: Date.now()
                 });
 
-                // Mark code as used
                 await updateDoc(doc(db, 'passwordResets', resetEmail), {
                     used: true
                 });
 
-                // Now we need to actually change the password
-                // Since Firebase requires the user to be authenticated to change password,
-                // we'll prompt them to log in with their OLD password one last time
-                
                 document.getElementById('resetSuccess').innerHTML = 
                     'Code verified! Please log in with your <strong>OLD password</strong> one last time.<br>Your new password will be activated automatically.';
                 
@@ -750,15 +726,12 @@
                     return;
                 }
 
-                // Check if there's a pending password change
                 const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
                 if (userDoc.exists() && userDoc.data().pendingPasswordChange) {
                     const newPassword = userDoc.data().pendingPasswordChange;
                     
-                    // Update the password
                     await updatePassword(userCredential.user, newPassword);
                     
-                    // Remove pending change
                     await updateDoc(doc(db, 'users', userCredential.user.uid), {
                         pendingPasswordChange: null,
                         pendingChangeTimestamp: null
