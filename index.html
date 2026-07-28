@@ -141,6 +141,7 @@
         .hidden {
             display: none !important;
         }
+
         .discord-btn {
             display: flex;
             align-items: center;
@@ -183,6 +184,56 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #ff3333;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .forgot-password a:hover {
+            color: #ff6666;
+            text-decoration: underline;
+        }
+
+        .reset-step {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,51,51,0.1);
+            border-radius: 8px;
+            border: 1px solid #ff3333;
+        }
+
+        .reset-step h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #ff3333;
+        }
+
+        .reset-step p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .code-display {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            color: #ff3333;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            border: 2px dashed #ff3333;
         }
 
         .profile-page {
@@ -266,6 +317,20 @@
         .audio-controls.show {
             opacity: 1;
         }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -288,6 +353,9 @@
                 </div>
                 <button type="submit" id="loginBtn">LOGIN</button>
                 <div id="loginError" class="error"></div>
+                <div class="forgot-password">
+                    <a onclick="showTab('reset')">Forgot Password?</a>
+                </div>
             </form>
 
             <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
@@ -311,6 +379,46 @@
                 <button type="submit" id="registerBtn">REGISTER</button>
                 <div id="registerError" class="error"></div>
                 <div id="registerSuccess" class="success"></div>
+            </form>
+
+            <!-- Reset Password Form -->
+            <form id="resetForm" class="hidden" onsubmit="handleResetSubmit(event)">
+                <!-- Step 1: Request Code -->
+                <div id="resetStep1">
+                    <div class="reset-step">
+                        <h3>Step 1</h3>
+                        <p>Enter your email to receive a reset code</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="resetEmail" placeholder="Email" required>
+                    </div>
+                    <button type="button" id="sendCodeBtn" onclick="sendResetCode()">SEND CODE</button>
+                </div>
+
+                <!-- Step 2: Enter Code and New Password -->
+                <div id="resetStep2" class="hidden">
+                    <div class="reset-step">
+                        <h3>Step 2</h3>
+                        <p>Your reset code:</p>
+                        <div class="code-display" id="codeDisplay">------</div>
+                        <p style="font-size: 11px; color: #666;">In production, this code would be sent to your email</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="resetCode" placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="newPassword" placeholder="New Password (min. 6 characters)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="confirmPassword" placeholder="Confirm New Password" required>
+                    </div>
+                    <button type="submit" id="resetSubmitBtn">RESET PASSWORD</button>
+                </div>
+
+                <div id="resetError" class="error"></div>
+                <div id="resetSuccess" class="success"></div>
+                
+                <button type="button" class="back-btn" onclick="showTab('login')">← Back to Login</button>
             </form>
         </div>
     </div>
@@ -339,9 +447,9 @@
     <div id="youtubePlayer" style="position:fixed; top:-1000px; left:-1000px;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-        <script type="module">
+    <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendEmailVerification, updatePassword, signInWithEmailAndPassword as signIn } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs, updateDoc, runTransaction } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -360,6 +468,8 @@
         let youtubePlayer = null;
         let audioElement = null;
         let isPlaying = false;
+        let generatedCode = null;
+        let resetEmail = null;
 
         async function getNextUidNumber() {
             const counterRef = doc(db, 'counters', 'uidCounter');
@@ -425,23 +535,200 @@
         window.showTab = function(tab) {
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
+            const resetForm = document.getElementById('resetForm');
             const tabs = document.querySelectorAll('.tab-btn');
 
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
-            }
+            // Hide all forms
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            resetForm.classList.add('hidden');
+            
+            
+            tabs.forEach(t => t.classList.remove('active'));
 
+            
             document.getElementById('loginError').textContent = '';
             document.getElementById('registerError').textContent = '';
             document.getElementById('registerSuccess').textContent = '';
+            document.getElementById('resetError').textContent = '';
+            document.getElementById('resetSuccess').textContent = '';
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                tabs[0].classList.add('active');
+            } else if (tab === 'register') {
+                registerForm.classList.remove('hidden');
+                tabs[1].classList.add('active');
+            } else if (tab === 'reset') {
+                resetForm.classList.remove('hidden');
+                
+                document.getElementById('resetStep1').classList.remove('hidden');
+                document.getElementById('resetStep2').classList.add('hidden');
+                document.getElementById('resetEmail').value = '';
+                document.getElementById('resetCode').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        };
+
+        window.sendResetCode = async function() {
+            const email = document.getElementById('resetEmail').value;
+            const sendBtn = document.getElementById('sendCodeBtn');
+            
+            if (!email) {
+                document.getElementById('resetError').textContent = 'Please enter your email';
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = 'SENDING<span class="loading-spinner"></span>';
+            document.getElementById('resetError').textContent = '';
+
+            try {
+                
+                const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', email)));
+                
+                if (usersSnapshot.empty) {
+                    document.getElementById('resetError').textContent = 'No account found with this email';
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = 'SEND CODE';
+                    return;
+                }
+
+                // Generate 6-digit code
+                generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+                resetEmail = email;
+
+                
+                await setDoc(doc(db, 'passwordResets', email), {
+                    code: generatedCode,
+                    timestamp: Date.now(),
+                    used: false,
+                    expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+                });
+
+                
+                document.getElementById('codeDisplay').textContent = generatedCode;
+                
+                
+                document.getElementById('resetStep1').classList.add('hidden');
+                document.getElementById('resetStep2').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error sending reset code:', error);
+                document.getElementById('resetError').textContent = 'Error sending code. Please try again.';
+            }
+
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = 'SEND CODE';
+        };
+
+        window.handleResetSubmit = async function(e) {
+            e.preventDefault();
+            
+            const code = document.getElementById('resetCode').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const resetBtn = document.getElementById('resetSubmitBtn');
+
+            document.getElementById('resetError').textContent = '';
+            document.getElementById('resetSuccess').textContent = '';
+
+            
+            if (code.length !== 6) {
+                document.getElementById('resetError').textContent = 'Code must be 6 digits';
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                document.getElementById('resetError').textContent = 'Password must be at least 6 characters';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('resetError').textContent = 'Passwords do not match';
+                return;
+            }
+
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = 'RESETTING<span class="loading-spinner"></span>';
+
+            try {
+                // Verify code from Firestore
+                const resetDoc = await getDoc(doc(db, 'passwordResets', resetEmail));
+                
+                if (!resetDoc.exists()) {
+                    document.getElementById('resetError').textContent = 'Invalid or expired code';
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = 'RESET PASSWORD';
+                    return;
+                }
+
+                const resetData = resetDoc.data();
+
+                // Check if code matches
+                if (resetData.code !== code) {
+                    document.getElementById('resetError').textContent = 'Invalid code';
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = 'RESET PASSWORD';
+                    return;
+                }
+
+                // Check if code is expired
+                if (Date.now() > resetData.expiresAt) {
+                    document.getElementById('resetError').textContent = 'Code has expired. Please request a new one.';
+                    await deleteDoc(doc(db, 'passwordResets', resetEmail));
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = 'RESET PASSWORD';
+                    return;
+                }
+
+                // Check if code was already used
+                if (resetData.used) {
+                    document.getElementById('resetError').textContent = 'Code has already been used';
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = 'RESET PASSWORD';
+                    return;
+                }
+
+                // Get user data
+                const usersSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', resetEmail)));
+                const userDoc = usersSnapshot.docs[0];
+                const userId = userDoc.id;
+
+                // Store pending password change
+                await updateDoc(doc(db, 'users', userId), {
+                    pendingPasswordChange: newPassword,
+                    pendingChangeTimestamp: Date.now()
+                });
+
+                // Mark code as used
+                await updateDoc(doc(db, 'passwordResets', resetEmail), {
+                    used: true
+                });
+
+                // Now we need to actually change the password
+                // Since Firebase requires the user to be authenticated to change password,
+                // we'll prompt them to log in with their OLD password one last time
+                
+                document.getElementById('resetSuccess').innerHTML = 
+                    'Code verified! Please log in with your <strong>OLD password</strong> one last time.<br>Your new password will be activated automatically.';
+                
+                resetBtn.innerHTML = 'SUCCESS!';
+
+                setTimeout(() => {
+                    showTab('login');
+                    document.getElementById('loginEmail').value = resetEmail;
+                    document.getElementById('loginError').innerHTML = 
+                        '<span style="color: #3399ff;">Please login with your OLD password to activate your new password</span>';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error resetting password:', error);
+                document.getElementById('resetError').textContent = 'Error resetting password. Please try again.';
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = 'RESET PASSWORD';
+            }
         };
 
         window.handleLogin = async (e) => {
@@ -460,6 +747,29 @@
                     document.getElementById('loginError').textContent = 'Please verify your email first. Check your inbox.';
                     loginBtn.disabled = false;
                     loginBtn.innerHTML = 'LOGIN';
+                    return;
+                }
+
+                // Check if there's a pending password change
+                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+                if (userDoc.exists() && userDoc.data().pendingPasswordChange) {
+                    const newPassword = userDoc.data().pendingPasswordChange;
+                    
+                    // Update the password
+                    await updatePassword(userCredential.user, newPassword);
+                    
+                    // Remove pending change
+                    await updateDoc(doc(db, 'users', userCredential.user.uid), {
+                        pendingPasswordChange: null,
+                        pendingChangeTimestamp: null
+                    });
+
+                    alert('Password successfully changed! Please login again with your new password.');
+                    await auth.signOut();
+                    
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'LOGIN';
+                    document.getElementById('loginPassword').value = '';
                     return;
                 }
                 
